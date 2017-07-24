@@ -23,16 +23,16 @@ export default class ActivityList extends React.Component {
         return (
             <div>
                 <div style={rowStyle}>
-                    <Button color="primary">
+                    <Button dense color="primary">
                         <RemoveIcon />
                     </Button>
-                    <Button color="primary">
+                    <Button dense color="primary">
                         <FolderIcon />
                     </Button>
-                    <Button color="primary">
+                    <Button dense color="primary">
                         <PlayIcon />
                     </Button>
-                    <Button color="primary">
+                    <Button dense color="primary">
                         <RetryIcon />
                     </Button>
                 </div>

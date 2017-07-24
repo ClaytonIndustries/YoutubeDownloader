@@ -13,8 +13,9 @@ import Menu, { MenuItem } from 'material-ui/Menu';
 import ActionMenu from './ActionMenu';
 
 import YoutubeUrlParser from '../util/YoutubeUrlParser';
+import AudioFormats from '../util/AudioFormats';
 
-const { clipboard, dialog, getCurrentWindow } = window.require('electron').remote;
+const { clipboard, dialog, getCurrentWindow, app } = window.require('electron').remote;
 
 export default class UrlEntry extends React.Component {
     constructor(props) {
@@ -22,35 +23,39 @@ export default class UrlEntry extends React.Component {
 
         this.state = {
             youtubeUrl: '',
-            videoQualities: ['sfsfsdfdfdfddfdfdfdfdfdfffdfdf', 'sfsfsdfdfdfddfdfdfdfdfdfffdfdf', 'sfsfsdfdfdfddfdfdfdfdfdfffdfdf'],
-            audioTypes: ['sfsfsdfdfdfddfdfdfdfdfdfffdfdf', 'sfsfsdfdfdfddfdfdfdfdfdfffdfdf', 'sfsfsdfdfdfddfdfdfdfdfdfffdfdf'],
+            videoQualities: [],
+            audioFormats: AudioFormats.getAllowedFormats(),
             videoQualityMenuOpen: false,
             audioTypeMenuOpen: false,
             menuAnchor: null,
-            selectedVideoQuality: 'None Selected',
-            selectedAudioType: 'Do Not Convert',
-            saveTo: '',
+            selectedVideoQuality: null,
+            selectedAudioFormat: AudioFormats.getAllowedFormats()[0],
+            saveTo: app.getPath("documents"),
             renameTo: '',
             startTime: 0,
             endTime: 0,
-            loading: false
+            gettingVideo: false
         };
 
         this.youtubeUrlParser = new YoutubeUrlParser();
     }
 
     showVideoQualityMenu(event) {
-        this.setState({
-            videoQualityMenuOpen: true,
-            menuAnchor: event.currentTarget
-        });
+        if(this.state.videoQualities.length > 0) {
+            this.setState({
+                videoQualityMenuOpen: true,
+                menuAnchor: event.currentTarget
+            });
+        }
     }
 
     showAudioTypeMenu(event) {
-        this.setState({
-            audioTypeMenuOpen: true,
-            menuAnchor: event.currentTarget
-        });
+        if(this.state.audioFormats.length > 0) {
+            this.setState({
+                audioTypeMenuOpen: true,
+                menuAnchor: event.currentTarget
+            });
+        }
     }
 
     videoQualityMenuClosed(index) {
@@ -63,7 +68,7 @@ export default class UrlEntry extends React.Component {
     audioTypeMenuClosed(index) {
         this.setState({
             audioTypeMenuOpen: false,
-            selectedAudioType : index != undefined ? this.state.audioTypes[index] : this.state.selectedAudioType
+            selectedAudioFormat : index != undefined ? this.state.audioFormats[index] : this.state.selectedAudioFormat
         });
     }
 
@@ -74,7 +79,26 @@ export default class UrlEntry extends React.Component {
     }
 
     getVideo() {
-        this.youtubeUrlParser.parse(this.state.youtubeUrl);
+        if(!this.state.gettingVideo) {
+            this.setState({
+                gettingVideo: true
+            }, () => {
+                this.youtubeUrlParser.parse(this.state.youtubeUrl, (success, result) => {
+                    if(success && result.videoQualities && result.videoQualities.length > 0) {
+                        this.setState({
+                            videoQualities: result.videoQualities,
+                            selectedVideoQuality: result.videoQualities[0],
+                            renameTo: result.title,
+                            endTime: result.videoLength
+                        });
+                    }
+
+                    this.setState({
+                       gettingVideo: false
+                    });
+                });
+            });       
+        }
     }
 
     selectSaveFolder() {
@@ -122,8 +146,8 @@ export default class UrlEntry extends React.Component {
 
         const downloadButtonStyle = {
             width: '100%',
-            marginTop: 100,
-            height: 45
+            marginTop: 30,
+            height: 40
         };
 
         return (
@@ -133,25 +157,29 @@ export default class UrlEntry extends React.Component {
                         onChange={(event) => {this.setState({youtubeUrl: event.target.value})}} />
                 </div>
                 <div style={topSpacingStyle}>
-                    <Button raised color="primary" style={leftItemStyle} onClick={() => {this.paste()}}>PASTE</Button>
-                    <Button raised color="primary" style={rightItemStyle} onClick={() => {this.getVideo()}}>GET VIDEO</Button>
+                    <Button raised dense color="primary" style={leftItemStyle} onClick={() => {this.paste()}}>PASTE</Button>
+                    <Button raised dense color="primary" style={rightItemStyle} onClick={() => {this.getVideo()}}>GET VIDEO</Button>
                 </div>
                 <div style={topSpacingStyle}>
-                    <LinearProgress />
+                    <LinearProgress mode={this.state.gettingVideo ? "query" : "determinate"} />
                 </div>
                 <div style={topSpacingStyle}>
                     <div style={rowStyle}>
                         <Typography type="subheading" style={fullWidthStyle}>Choose a video quality</Typography>
-                        <Button style={menuButtonStyle} onClick={(event) => {this.showVideoQualityMenu(event)}}>{this.state.selectedVideoQuality}</Button>
-                        <ActionMenu items={this.state.videoQualities} open={this.state.videoQualityMenuOpen} anchor={this.state.menuAnchor} 
+                        <Button style={menuButtonStyle} onClick={(event) => {this.showVideoQualityMenu(event)}}>
+                            {this.state.selectedVideoQuality != null ? this.state.selectedVideoQuality.description : "None Available"}
+                        </Button>
+                        <ActionMenu items={this.state.videoQualities} open={this.state.videoQualityMenuOpen} anchor={this.state.menuAnchor} selectedItem={this.state.selectedVideoQuality}
                             onClose={(index) => {this.videoQualityMenuClosed(index)}} />
                     </div>
                 </div>
                 <div style={topSpacingStyle}>
                     <div style={rowStyle}>
                         <Typography type="subheading" style={fullWidthStyle}>Automatically convert to</Typography>
-                        <Button style={menuButtonStyle} onClick={(event) => {this.showAudioTypeMenu(event)}}>{this.state.selectedAudioType}</Button>
-                        <ActionMenu items={this.state.audioTypes} open={this.state.audioTypeMenuOpen} anchor={this.state.menuAnchor} 
+                        <Button style={menuButtonStyle} onClick={(event) => {this.showAudioTypeMenu(event)}}>
+                            {this.state.selectedAudioFormat != null ? this.state.selectedAudioFormat.description : "None Available"}
+                        </Button>
+                        <ActionMenu items={this.state.audioFormats} open={this.state.audioTypeMenuOpen} anchor={this.state.menuAnchor} selectedItem={this.state.selectedAudioFormat}
                             onClose={(index) => {this.audioTypeMenuClosed(index)}} />
                     </div>
                 </div>
@@ -175,7 +203,7 @@ export default class UrlEntry extends React.Component {
                     </div>
                 </div>
                 <div style={topSpacingStyle}>
-                    <Button raised color="primary" style={downloadButtonStyle} onClick={() => this.download()}>DOWNLOAD</Button>
+                    <Button raised dense color="primary" style={downloadButtonStyle} onClick={() => this.download()}>DOWNLOAD</Button>
                 </div>
             </div>
         );

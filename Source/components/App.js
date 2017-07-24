@@ -29,7 +29,10 @@ export default class App extends React.Component {
         });
 
         const containerStyle = {
-            margin: 5
+            marginLeft: 5,
+            marginRight: 5,
+            marginTop: 5,
+            marginBottom: 0
         };
 
         return (

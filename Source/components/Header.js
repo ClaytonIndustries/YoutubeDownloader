@@ -12,12 +12,13 @@ export default class Header extends React.Component {
 
     render() {
         const cardStyle = {
-            display: 'flex'
+            display: 'flex',
+            margin: 0
         };
 
         const imageStyle = {
-          width: 110,
-          height: 110  
+          width: 90,
+          height: 90  
         };
 
         const detailsStyle = {
