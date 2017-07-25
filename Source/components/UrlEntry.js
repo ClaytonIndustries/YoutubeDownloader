@@ -11,9 +11,11 @@ import TextField from 'material-ui/TextField';
 import Menu, { MenuItem } from 'material-ui/Menu';
 
 import ActionMenu from './ActionMenu';
+import WarningDialog from './WarningDialog'
 
 import YoutubeUrlParser from '../util/YoutubeUrlParser';
 import AudioFormats from '../util/AudioFormats';
+import VideoValidator from '../util/VideoValidator';
 
 const { clipboard, dialog, getCurrentWindow, app } = window.require('electron').remote;
 
@@ -22,7 +24,7 @@ export default class UrlEntry extends React.Component {
         super(props);
 
         this.state = {
-            youtubeUrl: '',
+            youtubeUrl: "",
             videoQualities: [],
             audioFormats: AudioFormats.getAllowedFormats(),
             videoQualityMenuOpen: false,
@@ -31,13 +33,17 @@ export default class UrlEntry extends React.Component {
             selectedVideoQuality: null,
             selectedAudioFormat: AudioFormats.getAllowedFormats()[0],
             saveTo: app.getPath("documents"),
-            renameTo: '',
+            renameTo: "",
             startTime: 0,
             endTime: 0,
-            gettingVideo: false
+            mexVideoLength: 0,
+            gettingVideo: false,
+            warningDialogOpen: false,
+            validationMessage: ""
         };
 
         this.youtubeUrlParser = new YoutubeUrlParser();
+        this.videoValidator = new VideoValidator();
     }
 
     showVideoQualityMenu(event) {
@@ -89,7 +95,8 @@ export default class UrlEntry extends React.Component {
                             videoQualities: result.videoQualities,
                             selectedVideoQuality: result.videoQualities[0],
                             renameTo: result.title,
-                            endTime: result.videoLength
+                            endTime: result.videoLength,
+                            mexVideoLength: result.videoLength
                         });
                     }
 
@@ -112,6 +119,27 @@ export default class UrlEntry extends React.Component {
     }
 
     download() {
+        let validationResult = this.videoValidator.validateProperties(this.state.selectedVideoQuality, this.state.saveTo, this.state.renameTo);
+
+        if(validationResult.valid) {
+            this.clearCurrentVideo();
+        }
+        else {
+            this.setState({
+                warningDialogOpen: true,
+                validationMessage: validationResult.message
+            });
+        }
+    }
+
+    clearCurrentVideo() {
+        this.setState({
+            selectedVideoQuality: null,
+            videoQualities: [],
+            renameTo: "",
+            startTime: 0,
+            endTime: 0      
+        });
     }
 
     render() {
@@ -205,6 +233,8 @@ export default class UrlEntry extends React.Component {
                 <div style={topSpacingStyle}>
                     <Button raised dense color="primary" style={downloadButtonStyle} onClick={() => this.download()}>DOWNLOAD</Button>
                 </div>
+                <WarningDialog content={this.state.validationMessage} open={this.state.warningDialogOpen} 
+                    onClose={() => this.setState({warningDialogOpen: false})} />
             </div>
         );
     }
