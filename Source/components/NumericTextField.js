@@ -29,7 +29,7 @@ export default class NumericTextField extends React.Component {
 
 NumericTextField.propTypes = {
     label: PropTypes.string.isRequired,
-    value: PropTypes.any.isRequired,
+    value: PropTypes.string.isRequired,
     style: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired
 };

@@ -10,6 +10,15 @@ import Checkbox from 'material-ui/Checkbox';
 import { FormGroup, FormControlLabel } from 'material-ui/Form';
 import TextField from 'material-ui/TextField';
 import Menu, { MenuItem } from 'material-ui/Menu';
+import Avatar from 'material-ui/Avatar';
+
+import CheckIcon from 'material-ui-icons/Check';
+import CrossIcon from 'material-ui-icons/Close';
+import SearchIcon from 'material-ui-icons/Search';
+
+import green from 'material-ui/colors/green';
+import red from 'material-ui/colors/red';
+import grey from 'material-ui/colors/grey';
 
 import ActionMenu from './ActionMenu';
 import WarningDialog from './WarningDialog';
@@ -36,12 +45,13 @@ export default class UrlEntry extends React.Component {
             selectedAudioFormat: AudioFormats.getAllowedFormats()[0],
             saveTo: app.getPath("documents"),
             renameTo: "",
-            startTime: 0,
-            endTime: 0,
+            startTime: "0",
+            endTime: "0",
             mexVideoLength: 0,
             gettingVideo: false,
             warningDialogOpen: false,
-            validationMessage: ""
+            validationMessage: "",
+            searchStatus: "pending"
         };
 
         this.youtubeUrlParser = new YoutubeUrlParser();
@@ -88,6 +98,7 @@ export default class UrlEntry extends React.Component {
 
     getVideo() {
         if(!this.state.gettingVideo) {
+            this.clearCurrentVideo();
             this.setState({
                 gettingVideo: true
             }, () => {
@@ -103,7 +114,8 @@ export default class UrlEntry extends React.Component {
                     }
 
                     this.setState({
-                       gettingVideo: false
+                       gettingVideo: false,
+                       searchStatus: success && result.videoQualities.length > 0 ? "success" : "failed"
                     });
                 });
             });       
@@ -124,7 +136,7 @@ export default class UrlEntry extends React.Component {
         let validationResult = this.videoValidator.validateProperties(this.state.selectedVideoQuality, this.state.saveTo, 
             this.state.renameTo, this.state.startTime, this.state.endTime);
 
-        if(validationResult.valid) {
+        if(validationResult.isValid) {
             this.props.onDownload({
                 title: this.state.renameTo,
                 destinationFolder: this.state.saveTo,
@@ -150,8 +162,9 @@ export default class UrlEntry extends React.Component {
             selectedVideoQuality: null,
             videoQualities: [],
             renameTo: "",
-            startTime: 0,
-            endTime: 0      
+            startTime: "0",
+            endTime: "0",
+            searchStatus: "pending"   
         });
     }
 
@@ -191,11 +204,20 @@ export default class UrlEntry extends React.Component {
             height: 40
         };
 
+        const statusIndicatorStyle = {
+            background: this.state.searchStatus == "success" ? green[500] : this.state.searchStatus == "failed" ? red[500] : grey[500] 
+        };
+
         return (
             <div>
                 <div style={topSpacingStyle}>
-                    <Input fullWidth placeholder="Enter the video url here and press get video" value={this.state.youtubeUrl} 
-                        onChange={(event) => {this.setState({youtubeUrl: event.target.value})}} />
+                    <div style={rowStyle}>
+                        <Input fullWidth placeholder="Enter the video url here and press get video" value={this.state.youtubeUrl} 
+                            onChange={(event) => {this.setState({youtubeUrl: event.target.value})}} />
+                        <Avatar style={statusIndicatorStyle}>
+                            {this.state.searchStatus == "success" ? <CheckIcon /> : this.state.searchStatus == "failed" ? <CrossIcon /> : <SearchIcon /> }
+                        </Avatar>           
+                    </div>
                 </div>
                 <div style={topSpacingStyle}>
                     <Button raised dense color="primary" style={leftItemStyle} onClick={() => {this.paste()}}>PASTE</Button>

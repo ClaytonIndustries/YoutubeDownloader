@@ -3,26 +3,26 @@ const electronFs = remote.require('fs');
 
 export default class VideoValidator {
     validateProperties(selectedVideoQuality, folderToSaveTo, renameVideoTo, startTime, endTime) {
-        let result = {isvalid: true, message: ""};
+        let result = {isValid: true, message: ""};
 
         if(selectedVideoQuality == null) {
-            result.isvalid = false;
+            result.isValid = false;
             result.message = "Please choose a video quality";
         }
         else if(!folderToSaveTo || !electronFs.existsSync(folderToSaveTo)) {
-            result.isvalid = false;
+            result.isValid = false;
             result.message = "Folder to save to does not exist";
         }
         else if(!renameVideoTo || renameVideoTo.length === 0 || !renameVideoTo.trim()) {
-            result.isvalid = false;
+            result.isValid = false;
             result.message = "Rename to cannot be empty";
         }
-        else if(!isNumber(startTime)) {
-            result.isvalid = false;
+        else if(!new RegExp("^[0-9]+$").test(startTime)) {
+            result.isValid = false;
             result.message = "Start time must be a number";
         }
-        else if(!isNumber(endTime)) {
-            result.isvalid = false;
+        else if(!new RegExp("^[0-9]+$").test(endTime)) {
+            result.isValid = false;
             result.message = "End time must be a number";
         }
 
