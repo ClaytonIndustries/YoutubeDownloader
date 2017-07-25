@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
 import Button from 'material-ui/Button';
 import Input from 'material-ui/Input/Input';
@@ -11,7 +12,8 @@ import TextField from 'material-ui/TextField';
 import Menu, { MenuItem } from 'material-ui/Menu';
 
 import ActionMenu from './ActionMenu';
-import WarningDialog from './WarningDialog'
+import WarningDialog from './WarningDialog';
+import NumericTextField from './NumericTextField';
 
 import YoutubeUrlParser from '../util/YoutubeUrlParser';
 import AudioFormats from '../util/AudioFormats';
@@ -119,9 +121,20 @@ export default class UrlEntry extends React.Component {
     }
 
     download() {
-        let validationResult = this.videoValidator.validateProperties(this.state.selectedVideoQuality, this.state.saveTo, this.state.renameTo);
+        let validationResult = this.videoValidator.validateProperties(this.state.selectedVideoQuality, this.state.saveTo, 
+            this.state.renameTo, this.state.startTime, this.state.endTime);
 
         if(validationResult.valid) {
+            this.props.onDownload({
+                title: this.state.renameTo,
+                destinationFolder: this.state.saveTo,
+                audioFormat: this.state.selectedAudioFormat,
+                videoQuality: this.state.selectedVideoQuality,
+                youtubeUrl: this.state.youtubeUrl,
+                startTime: this.state.startTime,
+                endTime: this.state.endTime
+            });
+
             this.clearCurrentVideo();
         }
         else {
@@ -224,10 +237,10 @@ export default class UrlEntry extends React.Component {
                 <div style={topSpacingStyle}>
                     <Typography type="subheading">Modify start / end time (enter time in seconds, you do not need to enter both)</Typography>
                     <div style={rowStyle}>
-                        <TextField label="Start Time" type="number" margin="dense" style={leftItemStyle} value={this.state.startTime} 
-                            onChange={(event) => {this.setState({startTime: event.target.value})}} />
-                        <TextField label="End Time" type="number" margin="dense" style={rightItemStyle} value={this.state.endTime} 
-                            onChange={(event) => {this.setState({endTime: event.target.value})}} />
+                        <NumericTextField label={"Start Time"} style={leftItemStyle} value={this.state.startTime} 
+                            onChange={(value) => {this.setState({startTime: value})}}  />
+                        <NumericTextField label={"End Time"} style={rightItemStyle} value={this.state.endTime} 
+                            onChange={(value) => {this.setState({endTime: value})}}  />
                     </div>
                 </div>
                 <div style={topSpacingStyle}>
@@ -239,3 +252,7 @@ export default class UrlEntry extends React.Component {
         );
     }
 }
+
+UrlEntry.propTypes = {
+    onDownload: PropTypes.func.isRequired
+};

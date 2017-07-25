@@ -21,6 +21,9 @@ export default class TabContainer extends React.Component {
         });
     };
 
+    startDownload(video) {
+    }
+
     render() {
         const tabContainerStyle = {
             marginTop: 10
@@ -43,7 +46,7 @@ export default class TabContainer extends React.Component {
                 </AppBar>
                 <div style={childContainerStyle}>
                     {this.state.index == 0 &&
-                        <UrlEntry />
+                        <UrlEntry onDownload={(video) => {this.startDownload(video)}} />
                     }
                     {this.state.index == 1 &&
                         <ActivityList />
