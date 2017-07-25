@@ -47,7 +47,7 @@ export default class UrlEntry extends React.Component {
             renameTo: "",
             startTime: "0",
             endTime: "0",
-            mexVideoLength: 0,
+            maxVideoLength: 0,
             gettingVideo: false,
             warningDialogOpen: false,
             validationMessage: "",
@@ -109,7 +109,7 @@ export default class UrlEntry extends React.Component {
                             selectedVideoQuality: result.videoQualities[0],
                             renameTo: result.title,
                             endTime: result.videoLength,
-                            mexVideoLength: result.videoLength
+                            maxVideoLength: result.videoLength
                         });
                     }
 
@@ -144,7 +144,8 @@ export default class UrlEntry extends React.Component {
             youtubeVideo.videoQuality = this.state.selectedVideoQuality;
             youtubeVideo.youtubeUrl = this.state.youtubeUrl;
             youtubeVideo.startTime = this.state.startTime;
-            youtubeVideo.endTime = this.state.endTime;
+            youtubeVideo.originalEndTime = this.state.maxVideoLength;
+            youtubeVideo.newEndTime = this.state.endTime;
             youtubeVideo.status = "Pending";
 
             this.props.onDownload(youtubeVideo);

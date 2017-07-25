@@ -18,13 +18,25 @@ export default class ActivityList extends React.Component {
     }
 
     startNewDownload() {
-        let video = this.props.videos.find((item) => {
+        if(this.canNewDownloadBeStarted()) {
+            let video = this.props.videos.find((item) => {
+                return item.isPending();
+            });
+
+            video.start();
+        }
+    }
+
+    canNewDownloadBeStarted() {
+        let activeDownloads = this.props.videos.reduce((total, item) => {
+            return item.isActive() ? total + 1 : total;
+        }, 0);
+
+        let pendingDownloads = this.props.some((item) => {
             return item.isPending();
         });
 
-        if(video != undefined) {
-            video.download();
-        }
+        return activeDownloads < 2 && pendingDownloads > 0;
     }
 
     componentDidMount() {
