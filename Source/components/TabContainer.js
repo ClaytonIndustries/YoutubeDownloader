@@ -11,7 +11,8 @@ export default class TabContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            index: 0
+            index: 0,
+            videos: []
         };
     }
 
@@ -22,6 +23,13 @@ export default class TabContainer extends React.Component {
     };
 
     startDownload(video) {
+        let videos= this.state.videos.slice();
+        videos.push(video);
+
+        this.setState({
+            videos: videos,
+            index: 1
+        });
     }
 
     render() {
@@ -49,7 +57,7 @@ export default class TabContainer extends React.Component {
                         <UrlEntry onDownload={(video) => {this.startDownload(video)}} />
                     }
                     {this.state.index == 1 &&
-                        <ActivityList />
+                        <ActivityList videos={this.state.videos} />
                     }
                 </div>
           </div>

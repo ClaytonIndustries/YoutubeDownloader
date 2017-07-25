@@ -27,13 +27,13 @@ import NumericTextField from './NumericTextField';
 import YoutubeUrlParser from '../util/YoutubeUrlParser';
 import AudioFormats from '../util/AudioFormats';
 import VideoValidator from '../util/VideoValidator';
+import YoutubeVideo from '../util/YoutubeVideo';
 
 const { clipboard, dialog, getCurrentWindow, app } = window.require('electron').remote;
 
 export default class UrlEntry extends React.Component {
     constructor(props) {
         super(props);
-
         this.state = {
             youtubeUrl: "",
             videoQualities: [],
@@ -137,15 +137,17 @@ export default class UrlEntry extends React.Component {
             this.state.renameTo, this.state.startTime, this.state.endTime);
 
         if(validationResult.isValid) {
-            this.props.onDownload({
-                title: this.state.renameTo,
-                destinationFolder: this.state.saveTo,
-                audioFormat: this.state.selectedAudioFormat,
-                videoQuality: this.state.selectedVideoQuality,
-                youtubeUrl: this.state.youtubeUrl,
-                startTime: this.state.startTime,
-                endTime: this.state.endTime
-            });
+            let youtubeVideo = new YoutubeVideo();
+            youtubeVideo.title = this.state.renameTo;
+            youtubeVideo.destinationFolder = this.state.saveTo;
+            youtubeVideo.audioFormat = this.state.selectedAudioFormat;
+            youtubeVideo.videoQuality = this.state.selectedVideoQuality;
+            youtubeVideo.youtubeUrl = this.state.youtubeUrl;
+            youtubeVideo.startTime = this.state.startTime;
+            youtubeVideo.endTime = this.state.endTime;
+            youtubeVideo.status = "pending";
+
+            this.props.onDownload(youtubeVideo);
 
             this.clearCurrentVideo();
         }
@@ -193,6 +195,10 @@ export default class UrlEntry extends React.Component {
             flex: '1 0 auto',
         };
 
+        const statusIndicatorStyle = {
+            background: this.state.searchStatus == "success" ? green[500] : this.state.searchStatus == "failed" ? red[500] : grey[500] 
+        };
+
         const menuButtonStyle = {
             width: '50%',
             background: '#EDEDED'
@@ -202,10 +208,6 @@ export default class UrlEntry extends React.Component {
             width: '100%',
             marginTop: 30,
             height: 40
-        };
-
-        const statusIndicatorStyle = {
-            background: this.state.searchStatus == "success" ? green[500] : this.state.searchStatus == "failed" ? red[500] : grey[500] 
         };
 
         return (
