@@ -4,16 +4,35 @@ import PropTypes from 'prop-types';
 
 import Button from 'material-ui/Button';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
-import { LinearProgress } from 'material-ui/Progress';
 
 import RemoveIcon from 'material-ui-icons/Delete';
 import FolderIcon from 'material-ui-icons/Folder';
 import PlayIcon from 'material-ui-icons/PlayArrow';
 import RetryIcon from 'material-ui-icons/Refresh';
 
+import VideoRow from './VideoRow';
+
 export default class ActivityList extends React.Component {
     constructor(props) {
         super(props);
+    }
+
+    startNewDownload() {
+        let video = this.props.videos.find((item) => {
+            return item.isPending();
+        });
+
+        if(video != undefined) {
+            video.download();
+        }
+    }
+
+    componentDidMount() {
+        this.timer = setInterval(() => this.startNewDownload(), 1000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timer);
     }
 
     render() {
@@ -50,20 +69,7 @@ export default class ActivityList extends React.Component {
                     <TableBody>
                         {this.props.videos.map((item, index) => {
                             return (
-                                <TableRow hover key={index}>
-                                    <TableCell>
-                                        {item.title}
-                                    </TableCell>
-                                    <TableCell>
-                                        {item.size}
-                                    </TableCell>
-                                    <TableCell>
-                                        <LinearProgress mode="determinate" value={item.progress} />
-                                    </TableCell>
-                                    <TableCell>
-                                        {item.status}
-                                    </TableCell>
-                            </TableRow>
+                                <VideoRow key={index} title={item.title} size={item.size} progress={item.progress} status={item.status} />
                             );
                         })}
                     </TableBody>
