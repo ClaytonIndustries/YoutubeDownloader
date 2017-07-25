@@ -6,6 +6,8 @@ import HttpClient from './HttpClient';
 
 export default class YoutubeVideo {
     constructor() {
+        this.size = 0;
+        this.progress = 0;
     }
 
     destinationVideoPath() {
@@ -17,7 +19,7 @@ export default class YoutubeVideo {
     }
 
     isPending() {
-        return this.status === "pending";
+        return this.status === "Pending";
     }
 
     convertToAudio() {
@@ -33,19 +35,30 @@ export default class YoutubeVideo {
     }
 
     download() {
-        this.setVideoStatus("downloading");
+        this.setVideoStatus("Downloading");
 
         let httpClient = new HttpClient();
         httpClient.get(this.videoQuality.downloadUrl, (action, value) => {
-            if(action == "size") {
-                this.size = value;
-            }
-            else if(action == "progress") {
-                this.setProgress(value);
-            }
-            else if(action == "done") {
-                electronFs.writeFile(this.destinationVideoPath(), value);
-                this.setVideoStatus("complete");
+            switch(action) {
+                case "size":
+                    this.size = value;
+                    break;
+                case "progress":
+                    this.setProgress(value);
+                    break;
+                case "complete":
+                    electronFs.writeFile(this.destinationVideoPath(), value, (error) => {
+                        if(!error) {
+                            this.setVideoStatus("Complete");
+                        }
+                        else {
+                            this.setVideoStatus("DownloadFailed");
+                        }
+                    });              
+                    break;
+                case "error":
+                    this.setVideoStatus("DownloadFailed");
+                    break;
             }
         });
     }

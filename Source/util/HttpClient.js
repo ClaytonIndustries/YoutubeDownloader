@@ -5,14 +5,17 @@ export default class HttpClient {
          httpRequest.onreadystatechange = function () {
             if (httpRequest.readyState == 2) {
                 callback("size", httpRequest.getResponseHeader("Content-Length"));
-            }
-            else if(httpRequest.readyState == 4) {
-                let byteArray = new Uint8Array(httpRequest.response);
-                callback("done", byteArray);
-            }           
+            }          
         }
         httpRequest.onprogress = function (evt) {
             callback("progress", evt.loaded);
+        }
+        httpRequest.onload = function() {
+            let byteArray = new Uint8Array(httpRequest.response);
+            callback("complete", byteArray);
+        }
+        httpRequest.onerror = function() {
+            callback("error");
         }
         httpRequest.open("GET", url, true);
         httpRequest.responseType = "arraybuffer";

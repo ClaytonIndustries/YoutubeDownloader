@@ -145,7 +145,7 @@ export default class UrlEntry extends React.Component {
             youtubeVideo.youtubeUrl = this.state.youtubeUrl;
             youtubeVideo.startTime = this.state.startTime;
             youtubeVideo.endTime = this.state.endTime;
-            youtubeVideo.status = "pending";
+            youtubeVideo.status = "Pending";
 
             this.props.onDownload(youtubeVideo);
 
