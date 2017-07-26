@@ -139,6 +139,42 @@ export default class UrlEntry extends React.Component {
         });
     }
 
+    validateStartAndEndTime(value, field) {
+        let valueAsNumber = Number(value);
+        if(field === "start") {
+            let endTime = Number(this.state.endTime);
+
+            if(valueAsNumber > this.state.maxVideoLength) {
+                valueAsNumber = this.state.maxVideoLength;
+            }
+            
+            if(endTime < valueAsNumber) {
+                endTime = valueAsNumber;
+            }
+
+            this.setState({
+                startTime: valueAsNumber.toString(),
+                endTime: endTime.toString()
+            });
+        }
+        else {
+            let startTime = Number(this.state.startTime);
+
+            if(valueAsNumber > this.state.maxVideoLength) {
+                valueAsNumber = this.state.maxVideoLength;
+            }
+
+            if(startTime > valueAsNumber) {
+                startTime = valueAsNumber;
+            }
+
+            this.setState({
+                endTime: valueAsNumber.toString(),
+                startTime: startTime.toString()
+            });
+        }
+    }
+
     download() {
         let validationResult = this.videoValidator.validateProperties(this.state.selectedVideoQuality, this.state.saveTo, 
             this.state.renameTo, this.state.startTime, this.state.endTime);
@@ -270,9 +306,9 @@ export default class UrlEntry extends React.Component {
                     <Typography type="subheading">Modify start / end time (enter time in seconds, you do not need to enter both)</Typography>
                     <div style={rowStyle}>
                         <NumericTextField label={"Start Time"} style={leftItemStyle} value={this.state.startTime} 
-                            onChange={(value) => {this.setState({startTime: value})}}  />
+                            onChange={(value) => {this.validateStartAndEndTime(value, "start")}}  />
                         <NumericTextField label={"End Time"} style={rightItemStyle} value={this.state.endTime} 
-                            onChange={(value) => {this.setState({endTime: value})}}  />
+                            onChange={(value) => {this.validateStartAndEndTime(value, "end")}}  />
                     </div>
                 </div>
                 <div style={topSpacingStyle}>
