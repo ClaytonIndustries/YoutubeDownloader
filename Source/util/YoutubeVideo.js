@@ -20,7 +20,7 @@ export default class YoutubeVideo {
         return path.join(this.destinationFolder, this.title + this.audioFormat.extension);
     }
 
-    convertAudio() {
+    shouldConvertAudio() {
         return this.audioFormat.extension !== "";
     }
 
@@ -86,7 +86,7 @@ export default class YoutubeVideo {
     }
 
     convertAudio(callback) {
-        if(this.convertAudio()) {
+        if(!this.shouldConvertAudio()) {
             return true;
         }
 
@@ -99,7 +99,6 @@ export default class YoutubeVideo {
         ];
 
         execFile(pathToFFmpeg, args , (error, stdout, stderr) => {
-            console.log(error);
             if(error) {
                 this.setVideoStatus("ConversionFailed");
                 this.deleteFile(this.destinationAudioPath());
@@ -112,7 +111,7 @@ export default class YoutubeVideo {
     }
 
     cutVideo(callback) {
-        if(this.startTime == 0 || this.newEndTime == this.originalEndTime) {
+        if(this.startTime == 0 && this.newEndTime == this.originalEndTime) {
             return true;
         }
 
@@ -120,16 +119,24 @@ export default class YoutubeVideo {
 
         let pathToFFmpeg = path.resolve('dist/FFmpeg/bin/ffmpeg.exe');
 
-        // calculate if we are cutting the original video or the extracted audio
+        let cuttingVideo = !this.shouldConvertAudio();
+        let mediaPath = cuttingVideo ? this.destinationVideoPath() : this.destinationAudioPath();
+        let renamedMediaPath = mediaPath.slice(0, mediaPath.lastIndexOf('\\') + 1) + "~" + mediaPath.slice(mediaPath.lastIndexOf('\\') + 1);
+
+        electronFs.renameSync(mediaPath, renamedMediaPath);
 
         let args = [
-            "-i", this.destinationVideoPath(), "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", this.destinationAudioPath(), "-y"
+            "-i", renamedMediaPath, "-ss", this.startTime, "-t", this.newEndTime, mediaPath
         ];
 
         execFile(pathToFFmpeg, args, (error, stdout, stderr) => {
             if(error) {
                 this.setVideoStatus("CuttingFailed");
+                this.deleteFile(mediaPath);
             }
+
+            this.deleteFile(renamedMediaPath);
+
             callback(error ? false : true);
         });
     }
