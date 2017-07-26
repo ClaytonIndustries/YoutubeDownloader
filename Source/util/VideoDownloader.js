@@ -1,5 +1,5 @@
 
-export default class HttpClient {
+export default class VideoDownloader {
     get(url, callback) {
         let httpRequest = new XMLHttpRequest();
          httpRequest.onreadystatechange = function () {
