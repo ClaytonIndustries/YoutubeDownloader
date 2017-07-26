@@ -50,6 +50,7 @@ export default class UrlEntry extends React.Component {
             startTime: "0",
             endTime: "0",
             maxVideoLength: 0,
+            videoId: "",
             gettingVideo: false,
             warningDialogOpen: false,
             validationMessage: "",
@@ -112,7 +113,8 @@ export default class UrlEntry extends React.Component {
                             selectedVideoQuality: result.videoQualities[0],
                             renameTo: result.title,
                             endTime: result.videoLength,
-                            maxVideoLength: result.videoLength
+                            maxVideoLength: result.videoLength,
+                            videoId: result.id
                         });
                     }
 
@@ -188,6 +190,7 @@ export default class UrlEntry extends React.Component {
         if(validationResult.isValid) {
             let youtubeVideo = new YoutubeVideo();
             youtubeVideo.title = this.state.renameTo;
+            youtubeVideo.videoId = this.state.videoId;
             youtubeVideo.destinationFolder = this.state.saveTo;
             youtubeVideo.audioFormat = this.state.selectedAudioFormat;
             youtubeVideo.videoQuality = this.state.selectedVideoQuality;
@@ -216,6 +219,8 @@ export default class UrlEntry extends React.Component {
             renameTo: "",
             startTime: "0",
             endTime: "0",
+            maxVideoLength: 0,
+            videoId: "",
             searchStatus: "pending"   
         });
     }

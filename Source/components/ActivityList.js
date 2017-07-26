@@ -146,7 +146,7 @@ export default class ActivityList extends React.Component {
                     <TableBody>
                         {this.props.videos.map((item, index) => {
                             return (
-                                <VideoRow key={index} id={index} video={item} isSelected={index === this.state.selectedIndex} 
+                                <VideoRow key={item.videoId} id={index} video={item} isSelected={index === this.state.selectedIndex} 
                                     onSelected={(id) => this.videoClicked(id)} />
                             );
                         })}
