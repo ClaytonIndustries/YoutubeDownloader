@@ -1,10 +1,9 @@
 import HttpClient from './HttpClient';
+import ProcessStarter from './ProcessStarter';
 
 const path = window.require('path');
 const remote = window.require('electron').remote;
 const electronFs = remote.require('fs');
-
-const execFile = window.require('child_process').execFile;
 
 export default class YoutubeVideo {
     constructor() {
@@ -12,6 +11,8 @@ export default class YoutubeVideo {
         this.sizeInMBs = 0;
         this.progress = 0;
         this.changed;
+
+        this.processStarter = new ProcessStarter();
     }
 
     destinationVideoPath() {
@@ -121,15 +122,15 @@ export default class YoutubeVideo {
             "-i", this.destinationVideoPath(), "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", this.destinationAudioPath(), "-y"
         ];
 
-        execFile(pathToFFmpeg, args , (error, stdout, stderr) => {
-            if(error) {
+        this.processStarter.start(pathToFFmpeg, args, (success) => {
+            if(!success) {
                 this.setVideoStatus("ConversionFailed");
                 this.deleteFile(this.destinationAudioPath());
             }
 
             this.deleteFile(this.destinationVideoPath());
 
-            callback(error ? false : true);
+            callback(success);
         });
     }
 
@@ -153,15 +154,15 @@ export default class YoutubeVideo {
             "-i", renamedMediaPath, "-ss", this.startTime, "-t", this.newEndTime, mediaPath
         ];
 
-        execFile(pathToFFmpeg, args, (error, stdout, stderr) => {
-            if(error) {
+        this.processStarter.start(pathToFFmpeg, args, (success) => {
+            if(!success) {
                 this.setVideoStatus("CuttingFailed");
                 this.deleteFile(mediaPath);
             }
 
             this.deleteFile(renamedMediaPath);
 
-            callback(error ? false : true);
+            callback(success);
         });
     }
 
