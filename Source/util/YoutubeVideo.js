@@ -34,6 +34,14 @@ export default class YoutubeVideo {
         return this.status === "Downloading" || this.status === "Converting" || this.status === "Cutting";
     }
 
+    isComplete() {
+        return this.status === "Complete";
+    }
+
+    hasFailed() {
+        return this.status === "DownloadFailed" || this.status === "ConversionFailed" || this.status === "CuttingFailed";
+    }
+
     setSize(size) {
         this.size = size;
         this.sizeInMBs = Number(size / 1000000).toFixed(2);
@@ -64,6 +72,10 @@ export default class YoutubeVideo {
                 });
             }
         });
+    }
+
+    cancel() {
+        // cancel all actions   
     }
 
     download(callback) {
@@ -157,5 +169,10 @@ export default class YoutubeVideo {
         if(electronFs.existsSync(filepath)) {
             electronFs.unlinkSync(filepath);
         }
+    }
+
+    resetStatus() {
+        this.setProgress(0);
+        this.setVideoStatus("Pending");
     }
 }

@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
+import { TableCell, TableRow } from 'material-ui/Table';
 import { LinearProgress } from 'material-ui/Progress';
+import Checkbox from 'material-ui/Checkbox';
 
 export default class VideoRow extends React.Component {
     constructor(props) {
@@ -32,7 +33,10 @@ export default class VideoRow extends React.Component {
 
     render() {
         return (
-            <TableRow hover>
+            <TableRow hover selected={this.props.isSelected} onClick={() => this.props.onSelected(this.props.id)}>
+                <TableCell checkbox>
+                    <Checkbox checked={this.props.isSelected} />
+                </TableCell>
                 <TableCell>
                     {this.state.title}
                 </TableCell>
@@ -51,5 +55,7 @@ export default class VideoRow extends React.Component {
 }
 
 VideoRow.propTypes = {
-    video: PropTypes.object.isRequired
+    video: PropTypes.object.isRequired,
+    isSelected: PropTypes.bool.isRequired,
+    onSelected: PropTypes.func.isRequired
 };

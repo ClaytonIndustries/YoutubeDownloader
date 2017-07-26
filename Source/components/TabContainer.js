@@ -16,7 +16,7 @@ export default class TabContainer extends React.Component {
         };
     }
 
-    handleChange(event, index) {
+    handleTabChange(event, index) {
         this.setState({ 
             index: index
         });
@@ -29,6 +29,15 @@ export default class TabContainer extends React.Component {
         this.setState({
             videos: videos,
             index: 1
+        });
+    }
+
+    removeVideo(index) {
+        let videos = this.state.videos.slice();
+        videos.splice(index, 1);
+
+        this.setState({
+            videos: videos
         });
     }
 
@@ -47,7 +56,7 @@ export default class TabContainer extends React.Component {
         return (
             <div style={tabContainerStyle}>
                 <AppBar position="static">
-                    <Tabs fullWidth centered index={this.state.index} onChange={(event, index) => {this.handleChange(event, index)}}>
+                    <Tabs fullWidth centered index={this.state.index} onChange={(event, index) => {this.handleTabChange(event, index)}}>
                         <Tab label="DOWNLOAD" />
                         <Tab label="ACTIVITY" />
                     </Tabs>
@@ -57,7 +66,7 @@ export default class TabContainer extends React.Component {
                         <UrlEntry onDownload={(video) => {this.startDownload(video)}} />
                     }
                     {this.state.index == 1 &&
-                        <ActivityList videos={this.state.videos} />
+                        <ActivityList videos={this.state.videos} onRemoveVideo={(index) => {this.removeVideo(index)}} />
                     }
                 </div>
           </div>
