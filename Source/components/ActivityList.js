@@ -32,7 +32,7 @@ export default class ActivityList extends React.Component {
             return item.isActive() ? total + 1 : total;
         }, 0);
 
-        let pendingDownloads = this.props.some((item) => {
+        let pendingDownloads = this.props.videos.some((item) => {
             return item.isPending();
         });
 

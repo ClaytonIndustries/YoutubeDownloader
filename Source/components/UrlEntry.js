@@ -28,8 +28,9 @@ import YoutubeUrlParser from '../util/YoutubeUrlParser';
 import AudioFormats from '../util/AudioFormats';
 import VideoValidator from '../util/VideoValidator';
 import YoutubeVideo from '../util/YoutubeVideo';
+import ClipboardManager from '../util/ClipboardManager';
 
-const { clipboard, dialog, getCurrentWindow, app } = window.require('electron').remote;
+const { dialog, getCurrentWindow, app } = window.require('electron').remote;
 
 export default class UrlEntry extends React.Component {
     constructor(props) {
@@ -56,6 +57,11 @@ export default class UrlEntry extends React.Component {
 
         this.youtubeUrlParser = new YoutubeUrlParser();
         this.videoValidator = new VideoValidator();
+        this.clipboardManager = new ClipboardManager();
+
+        this.clipboardManager.register(() => {
+            this.paste();
+        });
     }
 
     showVideoQualityMenu(event) {
@@ -92,7 +98,7 @@ export default class UrlEntry extends React.Component {
 
     paste() {
         this.setState({
-            youtubeUrl: clipboard.readText()        
+            youtubeUrl: this.clipboardManager.readText()     
         });
     }
 
