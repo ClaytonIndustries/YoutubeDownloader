@@ -20,6 +20,10 @@ export default class YoutubeVideo {
         return path.join(this.destinationFolder, this.title + this.audioFormat.extension);
     }
 
+    convertAudio() {
+        return this.audioFormat.extension !== "";
+    }
+
     isPending() {
         return this.status === "Pending";
     }
@@ -39,11 +43,11 @@ export default class YoutubeVideo {
     start() {
         this.download((success) => {
             if(success) {
-                convertAudio((success) => {
+                this.convertAudio((success) => {
                     if(success) {
-                        cutVideo((success) => {
+                        this.cutVideo((success) => {
                             if(success) {
-                                this.setVideoStatus("Complete");
+                                 this.setVideoStatus("Complete");
                             }
                         });
                     }
@@ -66,13 +70,11 @@ export default class YoutubeVideo {
                     break;
                 case "complete":
                     electronFs.writeFile(this.destinationVideoPath(), value, (error) => {
-                        if(!error) {
-                            callback(true);
-                        }
-                        else {
+                        if(error) {
                             this.setVideoStatus("DownloadFailed");
-                            callback(false);
+                            this.deleteFile(this.destinationVideoPath());
                         }
+                        callback(error ? false : true);
                     });              
                     break;
                 case "error":
@@ -84,16 +86,27 @@ export default class YoutubeVideo {
     }
 
     convertAudio(callback) {
-        if(this.audioFormat.extension === "") {
+        if(this.convertAudio()) {
             return true;
         }
 
         this.setVideoStatus("Converting");
 
-        execFile("..\\dist\\FFmpeg\\bin\\ffmpeg.exe", ['-i "' + this.destinationVideoPath() + '" -vn -ab 128k -ac 2 -ar 44100 "' + this.destinationAudioPath() + '" -y'] , (error, stdout, stderr) => {
+        let pathToFFmpeg = path.resolve('dist/FFmpeg/bin/ffmpeg.exe');
+
+        let args = [
+            "-i", this.destinationVideoPath(), "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", this.destinationAudioPath(), "-y"
+        ];
+
+        execFile(pathToFFmpeg, args , (error, stdout, stderr) => {
+            console.log(error);
             if(error) {
                 this.setVideoStatus("ConversionFailed");
-            }          
+                this.deleteFile(this.destinationAudioPath());
+            }
+
+            this.deleteFile(this.destinationVideoPath());
+
             callback(error ? false : true);
         });
     }
@@ -105,11 +118,25 @@ export default class YoutubeVideo {
 
         this.setVideoStatus("Cutting");
 
-        execFile("..\\dist\\FFmpeg\\bin\\ffmpeg.exe", [""], (error, stdout, stderr) => {
+        let pathToFFmpeg = path.resolve('dist/FFmpeg/bin/ffmpeg.exe');
+
+        // calculate if we are cutting the original video or the extracted audio
+
+        let args = [
+            "-i", this.destinationVideoPath(), "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", this.destinationAudioPath(), "-y"
+        ];
+
+        execFile(pathToFFmpeg, args, (error, stdout, stderr) => {
             if(error) {
                 this.setVideoStatus("CuttingFailed");
             }
             callback(error ? false : true);
         });
+    }
+
+    deleteFile(filepath) {
+        if(electronFs.existsSync(filepath)) {
+            electronFs.unlinkSync(filepath);
+        }
     }
 }
