@@ -9,6 +9,7 @@ const execFile = window.require('child_process').execFile;
 export default class YoutubeVideo {
     constructor() {
         this.size = 0;
+        this.sizeInMBs = 0;
         this.progress = 0;
         this.changed;
     }
@@ -35,6 +36,7 @@ export default class YoutubeVideo {
 
     setSize(size) {
         this.size = size;
+        this.sizeInMBs = Number(size / 1000000).toFixed(2);
         if(this.changed) this.changed();
     }
 

@@ -12,16 +12,22 @@ export default class VideoRow extends React.Component {
             title: this.props.video.title,
             status: this.props.video.status,
             progress: this.props.video.progress,
-            size: this.props.video.size
+            size: this.props.video.sizeInMBs
         };
+    }
 
+    componentDidMount() {
         this.props.video.changed = () => {
             this.setState({
                 status: this.props.video.status,
                 progress: this.props.video.progress,
-                size: this.props.video.size
+                size: this.props.video.sizeInMBs
             });
         };
+    }
+
+    componentWillUnmount() {
+        this.props.video.changed = null;
     }
 
     render() {
