@@ -8,22 +8,36 @@ import { LinearProgress } from 'material-ui/Progress';
 export default class VideoRow extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            title: this.props.video.title,
+            status: this.props.video.status,
+            progress: this.props.video.progress,
+            size: this.props.video.size
+        };
+
+        this.props.video.changed = () => {
+            this.setState({
+                status: this.props.video.status,
+                progress: this.props.video.progress,
+                size: this.props.video.size
+            });
+        };
     }
 
     render() {
         return (
             <TableRow hover>
                 <TableCell>
-                    {this.props.title}
+                    {this.state.title}
                 </TableCell>
                 <TableCell>
-                    {this.props.size}
+                    {this.state.size}
                 </TableCell>
                 <TableCell>
-                    <LinearProgress mode="determinate" value={this.props.progress} />
+                    <LinearProgress mode="determinate" value={this.state.progress} />
                 </TableCell>
                 <TableCell>
-                    {this.props.status}
+                    {this.state.status}
                 </TableCell>
             </TableRow>
         );
@@ -31,8 +45,5 @@ export default class VideoRow extends React.Component {
 }
 
 VideoRow.propTypes = {
-    title: PropTypes.string.isRequired,
-    size: PropTypes.number.isRequired,
-    progress: PropTypes.number.isRequired,
-    status: PropTypes.string.isRequired,
+    video: PropTypes.object.isRequired
 };

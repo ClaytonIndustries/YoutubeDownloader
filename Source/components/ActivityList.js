@@ -81,7 +81,7 @@ export default class ActivityList extends React.Component {
                     <TableBody>
                         {this.props.videos.map((item, index) => {
                             return (
-                                <VideoRow key={index} title={item.title} size={item.size} progress={item.progress} status={item.status} />
+                                <VideoRow key={index} video={item} />
                             );
                         })}
                     </TableBody>

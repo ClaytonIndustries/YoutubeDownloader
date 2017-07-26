@@ -10,6 +10,7 @@ export default class YoutubeVideo {
     constructor() {
         this.size = 0;
         this.progress = 0;
+        this.changed;
     }
 
     destinationVideoPath() {
@@ -32,12 +33,19 @@ export default class YoutubeVideo {
         return this.status === "Downloading" || this.status === "Converting" || this.status === "Cutting";
     }
 
+    setSize(size) {
+        this.size = size;
+        if(this.changed) this.changed();
+    }
+
     setProgress(bytesReceived) {
         this.progress = (bytesReceived / this.size) * 100;
+        if(this.changed) this.changed();
     }
 
     setVideoStatus(newStatus) {
         this.status = newStatus;
+        if(this.changed) this.changed();
     }
 
     start() {
@@ -47,7 +55,7 @@ export default class YoutubeVideo {
                     if(success) {
                         this.cutVideo((success) => {
                             if(success) {
-                                 this.setVideoStatus("Complete");
+                                this.setVideoStatus("Complete");
                             }
                         });
                     }
@@ -63,7 +71,7 @@ export default class YoutubeVideo {
         httpClient.get(this.videoQuality.downloadUrl, (action, value) => {
             switch(action) {
                 case "size":
-                    this.size = value;
+                    this.setSize(value);
                     break;
                 case "progress":
                     this.setProgress(value);
@@ -87,7 +95,8 @@ export default class YoutubeVideo {
 
     convertAudio(callback) {
         if(!this.shouldConvertAudio()) {
-            return true;
+            callback(true);
+            return;
         }
 
         this.setVideoStatus("Converting");
@@ -112,7 +121,8 @@ export default class YoutubeVideo {
 
     cutVideo(callback) {
         if(this.startTime == 0 && this.newEndTime == this.originalEndTime) {
-            return true;
+            callback(true);
+            return;
         }
 
         this.setVideoStatus("Cutting");
