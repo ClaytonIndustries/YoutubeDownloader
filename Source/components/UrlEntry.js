@@ -59,10 +59,6 @@ export default class UrlEntry extends React.Component {
         this.youtubeUrlParser = new YoutubeUrlParser();
         this.videoValidator = new VideoValidator();
         this.clipboardManager = new ClipboardManager();
-
-        this.clipboardManager.register(() => {
-            this.paste();
-        });
     }
 
     showVideoQualityMenu(event) {
@@ -173,6 +169,16 @@ export default class UrlEntry extends React.Component {
                 startTime: startTime.toString()
             });
         }
+    }
+
+    componentDidMount() {
+        this.clipboardManager.callback= () => {
+            this.paste();
+        };
+    }
+
+    componentWillUnmount() {
+        this.clipboardManager.callback = null;
     }
 
     download() {
