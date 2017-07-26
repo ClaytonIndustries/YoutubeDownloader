@@ -1,5 +1,6 @@
 import HttpClient from './HttpClient';
 import ProcessStarter from './ProcessStarter';
+import { VS_PENDING, VS_DOWNLOADING, VS_CONVERTING, VS_CUTTING, VS_COMPLETE, VS_DOWNLOAD_FAILED, VS_CONVERSION_FAILED, VS_CUTTING_FAILED } from './VideoState'
 
 const path = window.require('path');
 const remote = window.require('electron').remote;
@@ -28,19 +29,19 @@ export default class YoutubeVideo {
     }
 
     isPending() {
-        return this.status === "Pending";
+        return this.status === VS_PENDING;
     }
 
     isActive() {
-        return this.status === "Downloading" || this.status === "Converting" || this.status === "Cutting";
+        return this.status === VS_DOWNLOADING || this.status === VS_CONVERTING || this.status === VS_CUTTING;
     }
 
     isComplete() {
-        return this.status === "Complete";
+        return this.status === VS_COMPLETE;
     }
 
     hasFailed() {
-        return this.status === "DownloadFailed" || this.status === "ConversionFailed" || this.status === "CuttingFailed";
+        return this.status === VS_DOWNLOAD_FAILED || this.status === VS_CONVERSION_FAILED || this.status === VS_CUTTING_FAILED;
     }
 
     setSize(size) {
@@ -66,7 +67,7 @@ export default class YoutubeVideo {
                     if(success) {
                         this.cutVideo((success) => {
                             if(success) {
-                                this.setVideoStatus("Complete");
+                                this.setVideoStatus(VS_COMPLETE);
                             }
                         });
                     }
@@ -80,7 +81,7 @@ export default class YoutubeVideo {
     }
 
     download(callback) {
-        this.setVideoStatus("Downloading");
+        this.setVideoStatus(VS_DOWNLOADING);
 
         let httpClient = new HttpClient();
         httpClient.get(this.videoQuality.downloadUrl, (action, value) => {
@@ -94,14 +95,14 @@ export default class YoutubeVideo {
                 case "complete":
                     electronFs.writeFile(this.destinationVideoPath(), value, (error) => {
                         if(error) {
-                            this.setVideoStatus("DownloadFailed");
+                            this.setVideoStatus(VS_DOWNLOAD_FAILED);
                             this.deleteFile(this.destinationVideoPath());
                         }
                         callback(error ? false : true);
                     });              
                     break;
                 case "error":
-                    this.setVideoStatus("DownloadFailed");
+                    this.setVideoStatus(VS_DOWNLOAD_FAILED);
                     callback(false);
                     break;
             }
@@ -114,7 +115,7 @@ export default class YoutubeVideo {
             return;
         }
 
-        this.setVideoStatus("Converting");
+        this.setVideoStatus(VS_CONVERTING);
 
         let pathToFFmpeg = path.resolve('dist/FFmpeg/bin/ffmpeg.exe');
 
@@ -124,7 +125,7 @@ export default class YoutubeVideo {
 
         this.processStarter.start(pathToFFmpeg, args, (success) => {
             if(!success) {
-                this.setVideoStatus("ConversionFailed");
+                this.setVideoStatus(VS_CONVERSION_FAILED);
                 this.deleteFile(this.destinationAudioPath());
             }
 
@@ -140,7 +141,7 @@ export default class YoutubeVideo {
             return;
         }
 
-        this.setVideoStatus("Cutting");
+        this.setVideoStatus(VS_CUTTING);
 
         let pathToFFmpeg = path.resolve('dist/FFmpeg/bin/ffmpeg.exe');
 
@@ -156,7 +157,7 @@ export default class YoutubeVideo {
 
         this.processStarter.start(pathToFFmpeg, args, (success) => {
             if(!success) {
-                this.setVideoStatus("CuttingFailed");
+                this.setVideoStatus(VS_CUTTING_FAILED);
                 this.deleteFile(mediaPath);
             }
 
@@ -174,6 +175,6 @@ export default class YoutubeVideo {
 
     resetStatus() {
         this.setProgress(0);
-        this.setVideoStatus("Pending");
+        this.setVideoStatus(VS_PENDING);
     }
 }

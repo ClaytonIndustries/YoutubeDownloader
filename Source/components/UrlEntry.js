@@ -29,6 +29,7 @@ import AudioFormats from '../util/AudioFormats';
 import VideoValidator from '../util/VideoValidator';
 import YoutubeVideo from '../util/YoutubeVideo';
 import ClipboardManager from '../util/ClipboardManager';
+import { VS_PENDING } from '../util/VideoState';
 
 const { dialog, getCurrentWindow, app } = window.require('electron').remote;
 
@@ -152,7 +153,7 @@ export default class UrlEntry extends React.Component {
             youtubeVideo.startTime = this.state.startTime;
             youtubeVideo.originalEndTime = this.state.maxVideoLength;
             youtubeVideo.newEndTime = this.state.endTime;
-            youtubeVideo.status = "Pending";
+            youtubeVideo.status = VS_PENDING;
 
             this.props.onDownload(youtubeVideo);
 
