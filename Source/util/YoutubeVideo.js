@@ -1,3 +1,5 @@
+import Moment from 'moment';
+
 import VideoDownloader from './VideoDownloader';
 import ProcessStarter from './ProcessStarter';
 import { VS_PENDING, VS_DOWNLOADING, VS_CONVERTING, VS_CUTTING, VS_COMPLETE, VS_DOWNLOAD_FAILED, VS_CONVERSION_FAILED, VS_CUTTING_FAILED } from './VideoState'
@@ -11,6 +13,7 @@ export default class YoutubeVideo {
         this.size = 0;
         this.sizeInMBs = 0;
         this.progress = 0;
+        this.lastUpdateTime = Moment();
         this.changed;
 
         this.processStarter = new ProcessStarter();
@@ -44,6 +47,10 @@ export default class YoutubeVideo {
         return this.status === VS_DOWNLOAD_FAILED || this.status === VS_CONVERSION_FAILED || this.status === VS_CUTTING_FAILED;
     }
 
+    noContentDownloadedInLastTenSeconds() {
+        return this.status === VS_DOWNLOADING && Moment().isBetween(this.lastUpdateTime, Moment().add(10, 'seconds'));
+    }
+
     setSize(size) {
         this.size = size;
         this.sizeInMBs = Number(size / 1000000).toFixed(2);
@@ -51,11 +58,15 @@ export default class YoutubeVideo {
     }
 
     setProgress(bytesReceived) {
+        this.lastUpdateTime = Moment();
         this.progress = (bytesReceived / this.size) * 100;
         if(this.changed) this.changed();
     }
 
     setVideoStatus(newStatus) {
+        if(this.status === VS_DOWNLOADING) {
+            this.lastUpdateTime = Moment();
+        }
         this.status = newStatus;
         if(this.changed) this.changed();
     }

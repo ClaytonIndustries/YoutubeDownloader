@@ -34,6 +34,14 @@ export default class ActivityList extends React.Component {
         }
     }
 
+    cancelStalledDownloads() {
+        this.props.videos.forEach((item) => {
+            if(item.noContentDownloadedInLastTenSeconds()) {
+                item.cancel();
+            }
+        });
+    }
+
     canNewDownloadBeStarted() {
         let activeDownloads = this.props.videos.reduce((total, item) => {
             return item.isActive() ? total + 1 : total;
@@ -104,7 +112,7 @@ export default class ActivityList extends React.Component {
     }
 
     componentDidMount() {
-        this.timer = setInterval(() => this.startNewDownload(), 1000);
+        this.timer = setInterval(() => {this.cancelStalledDownloads(); this.startNewDownload();}, 1000);
     }
 
     componentWillUnmount() {
