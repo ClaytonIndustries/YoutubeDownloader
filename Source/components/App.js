@@ -7,15 +7,33 @@ import createPalette from 'material-ui/styles/palette';
 import Header from './Header';
 import TabContainer from './TabContainer';
 
+import SettingsManager from '../util/SettingsManager';
+
 export default class App extends React.Component {
     constructor(props) {
         super(props);
+
+        this.settingsManager = new SettingsManager();
+        
+        this.state = {
+            settings: this.settingsManager.settings
+        };
+    }
+
+    settingsChanged(settings) {
+        this.settingsManager.save(settings);
+
+        this.setState({
+            settings: Object.assign({}, settings)
+        });
     }
 
     componentDidMount() {
-    }
-
-    componentWillUnmount() {
+        this.settingsManager.load((settings) => {
+            this.setState({
+                settings: settings
+            });
+        });
     }
 
     render() {
@@ -36,8 +54,8 @@ export default class App extends React.Component {
         return (
             <MuiThemeProvider theme={theme}>
                 <div style={containerStyle}>
-                    <Header />
-                    <TabContainer />
+                    <Header settings={this.state.settings} onSettingsChanged={(settings) => this.settingsChanged(settings)} />
+                    <TabContainer settings={this.state.settings} />
                 </div>
             </MuiThemeProvider>
         );

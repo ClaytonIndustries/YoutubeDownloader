@@ -1,13 +1,32 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
 import Button from 'material-ui/Button';
+import IconButton from 'material-ui/IconButton';
 import Card, { CardContent } from 'material-ui/Card';
 import Typography from 'material-ui/Typography';
+
+import DeleteIcon from 'material-ui-icons/Settings';
+
+import SettingsDialog from './SettingsDialog';
 
 export default class Header extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            settingsDialogOpen: false
+        };
+    }
+
+    settingsDialogClose(save, settings) {
+        this.setState({
+            settingsDialogOpen: false
+        });
+        
+        if(save) {
+            this.props.onSettingsChanged(settings);
+        }
     }
 
     render() {
@@ -32,6 +51,11 @@ export default class Header extends React.Component {
             marginRight: 20
         };
 
+        const settingIconStyle = {
+            width: 35,
+            height: 35
+        };
+
         return (
             <div style={cardStyle}>
                 <Button style={buttonStyle}>
@@ -42,7 +66,17 @@ export default class Header extends React.Component {
                     <Typography type="headline" color="secondary">Youtube Downloader</Typography>
                     <Typography type="headline" color="secondary">Version 1.0</Typography>
                 </div>
+                <IconButton onClick={() => {this.setState({settingsDialogOpen: true})}}>
+                    <DeleteIcon style={settingIconStyle} />
+                </IconButton>
+                <SettingsDialog open={this.state.settingsDialogOpen} settings={this.props.settings} 
+                        onClose={(save, settings) => {this.settingsDialogClose(save, settings)}} />
             </div>
         );
     }
 }
+
+Header.propTypes = {
+    settings: PropTypes.object.isRequired,
+    onSettingsChanged: PropTypes.func.isRequired
+};

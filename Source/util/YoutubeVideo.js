@@ -208,6 +208,7 @@ export default class YoutubeVideo {
     }
 
     resetStatus() {
+        this.activeProcess = null;
         this.setProgress(0);
         this.setVideoStatus(VS_PENDING);
     }

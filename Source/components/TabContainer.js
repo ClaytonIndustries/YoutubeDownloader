@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
@@ -63,7 +64,7 @@ export default class TabContainer extends React.Component {
                 </AppBar>
                 <div style={childContainerStyle}>
                     {this.state.index == 0 &&
-                        <UrlEntry onDownload={(video) => {this.startDownload(video)}} />
+                        <UrlEntry settings={this.props.settings} onDownload={(video) => {this.startDownload(video)}} />
                     }
                     {this.state.index == 1 &&
                         <ActivityList videos={this.state.videos} onRemoveVideo={(index) => {this.removeVideo(index)}} />
@@ -73,3 +74,7 @@ export default class TabContainer extends React.Component {
         );
     }
 }
+
+TabContainer.propTypes = {
+    settings: PropTypes.object.isRequired
+};

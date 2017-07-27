@@ -97,6 +97,10 @@ export default class UrlEntry extends React.Component {
     paste() {
         this.setState({
             youtubeUrl: this.clipboardManager.readText()     
+        }, () => {
+            if(this.props.settings.automaticallyGetVideo) {
+                this.getVideo();
+            }
         });
     }
 
@@ -115,6 +119,10 @@ export default class UrlEntry extends React.Component {
                             endTime: result.videoLength,
                             maxVideoLength: result.videoLength,
                             videoId: result.id
+                        }, () => {
+                            if(this.props.settings.automaticallyDownload) {
+                                this.download();
+                            }
                         });
                     }
 
@@ -175,7 +183,9 @@ export default class UrlEntry extends React.Component {
 
     componentDidMount() {
         this.clipboardManager.callback= () => {
-            this.paste();
+            if(this.props.settings.automaticallyPaste) {
+                this.paste();
+            }
         };
     }
 
@@ -278,7 +288,10 @@ export default class UrlEntry extends React.Component {
                 </div>
                 <div style={topSpacingStyle}>
                     <Button raised dense color="primary" style={leftItemStyle} onClick={() => {this.paste()}}>PASTE</Button>
-                    <Button raised dense color="primary" style={rightItemStyle} onClick={() => {this.getVideo()}}>GET VIDEO</Button>
+                    <Button raised dense disabled={this.state.gettingVideo} color="primary" style={rightItemStyle} 
+                        onClick={() => {this.getVideo()}}>
+                        GET VIDEO
+                    </Button>
                 </div>
                 <div style={topSpacingStyle}>
                     <LinearProgress mode={this.state.gettingVideo ? "query" : "determinate"} />
@@ -333,5 +346,6 @@ export default class UrlEntry extends React.Component {
 }
 
 UrlEntry.propTypes = {
+    settings: PropTypes.object.isRequired,
     onDownload: PropTypes.func.isRequired
 };
