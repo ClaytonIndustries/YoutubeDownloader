@@ -21,7 +21,7 @@ export default class NumericTextField extends React.Component {
 
     render() {
         return (
-            <TextField margin="dense" label={this.props.label} style={this.props.style} value={this.props.value} 
+            <TextField margin="dense" disabled={this.props.disabled} label={this.props.label} style={this.props.style} value={this.props.value} 
                 onChange={(event) => {this.validateEntry(event)}} />
         );
     }
@@ -29,6 +29,7 @@ export default class NumericTextField extends React.Component {
 
 NumericTextField.propTypes = {
     label: PropTypes.string.isRequired,
+    disabled: PropTypes.bool.isRequired,
     value: PropTypes.string.isRequired,
     style: PropTypes.object.isRequired,
     onChange: PropTypes.func.isRequired

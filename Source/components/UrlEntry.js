@@ -181,18 +181,6 @@ export default class UrlEntry extends React.Component {
         }
     }
 
-    componentDidMount() {
-        this.clipboardManager.callback= () => {
-            if(this.props.settings.automaticallyPaste) {
-                this.paste();
-            }
-        };
-    }
-
-    componentWillUnmount() {
-        this.clipboardManager.callback = null;
-    }
-
     download() {
         let validationResult = this.videoValidator.validateProperties(this.state.selectedVideoQuality, this.state.saveTo, 
             this.state.renameTo, this.state.startTime, this.state.endTime);
@@ -233,6 +221,22 @@ export default class UrlEntry extends React.Component {
             videoId: "",
             searchStatus: "pending"   
         });
+    }
+
+    noVideo() {
+        return this.state.videoQualities.length === 0;
+    }
+
+    componentDidMount() {
+        this.clipboardManager.callback= () => {
+            if(this.props.settings.automaticallyPaste) {
+                this.paste();
+            }
+        };
+    }
+
+    componentWillUnmount() {
+        this.clipboardManager.callback = null;
     }
 
     render() {
@@ -299,7 +303,7 @@ export default class UrlEntry extends React.Component {
                 <div style={topSpacingStyle}>
                     <div style={rowStyle}>
                         <Typography type="subheading" style={fullWidthStyle}>Choose a video quality</Typography>
-                        <Button style={menuButtonStyle} onClick={(event) => {this.showVideoQualityMenu(event)}}>
+                        <Button disabled={this.noVideo()} style={menuButtonStyle} onClick={(event) => {this.showVideoQualityMenu(event)}}>
                             {this.state.selectedVideoQuality != null ? this.state.selectedVideoQuality.description : "None Available"}
                         </Button>
                         <ActionMenu items={this.state.videoQualities} open={this.state.videoQualityMenuOpen} anchor={this.state.menuAnchor} selectedItem={this.state.selectedVideoQuality}
@@ -309,7 +313,7 @@ export default class UrlEntry extends React.Component {
                 <div style={topSpacingStyle}>
                     <div style={rowStyle}>
                         <Typography type="subheading" style={fullWidthStyle}>Automatically convert to</Typography>
-                        <Button style={menuButtonStyle} onClick={(event) => {this.showAudioTypeMenu(event)}}>
+                        <Button disabled={this.noVideo()} style={menuButtonStyle} onClick={(event) => {this.showAudioTypeMenu(event)}}>
                             {this.state.selectedAudioFormat != null ? this.state.selectedAudioFormat.description : "None Available"}
                         </Button>
                         <ActionMenu items={this.state.audioFormats} open={this.state.audioTypeMenuOpen} anchor={this.state.menuAnchor} selectedItem={this.state.selectedAudioFormat}
@@ -318,25 +322,26 @@ export default class UrlEntry extends React.Component {
                 </div>
                 <div>
                     <div style={rowStyle}>
-                        <TextField fullWidth label="Save to" margin="dense" value={this.state.saveTo} onClick={() => {this.selectSaveFolder()}}
-                            onChange={(event) => {this.setState({saveTo: event.target.value})}} />
+                        <TextField fullWidth disabled={this.noVideo()} label="Save to" margin="dense" value={this.state.saveTo} 
+                            onClick={() => {this.selectSaveFolder()}} onChange={(event) => {this.setState({saveTo: event.target.value})}} />
                     </div>
                     <div style={rowStyle}>
-                        <TextField fullWidth label="Rename to" margin="dense" value={this.state.renameTo} 
-                            onChange={(event) => {this.setState({renameTo: event.target.value})}} />
+                        <TextField fullWidth disabled={this.noVideo()} label="Rename to" margin="dense" 
+                            value={this.state.renameTo} onChange={(event) => {this.setState({renameTo: event.target.value})}} />
                     </div>
                 </div>
                 <div style={topSpacingStyle}>
                     <Typography type="subheading">Modify start / end time (enter time in seconds, you do not need to enter both)</Typography>
                     <div style={rowStyle}>
-                        <NumericTextField label={"Start Time"} style={leftItemStyle} value={this.state.startTime} 
-                            onChange={(value) => {this.validateStartAndEndTime(value, "start")}}  />
-                        <NumericTextField label={"End Time"} style={rightItemStyle} value={this.state.endTime} 
-                            onChange={(value) => {this.validateStartAndEndTime(value, "end")}}  />
+                        <NumericTextField label={"Start Time"} disabled={this.noVideo()} style={leftItemStyle} 
+                            value={this.state.startTime} onChange={(value) => {this.validateStartAndEndTime(value, "start")}}  />
+                        <NumericTextField label={"End Time"} disabled={this.noVideo()} style={rightItemStyle}
+                            value={this.state.endTime} onChange={(value) => {this.validateStartAndEndTime(value, "end")}}  />
                     </div>
                 </div>
                 <div style={topSpacingStyle}>
-                    <Button raised dense color="primary" style={downloadButtonStyle} onClick={() => this.download()}>DOWNLOAD</Button>
+                    <Button raised dense disabled={this.noVideo()} color="primary" style={downloadButtonStyle} 
+                        onClick={() => this.download()}>DOWNLOAD</Button>
                 </div>
                 <WarningDialog content={this.state.validationMessage} open={this.state.warningDialogOpen} 
                     onClose={() => this.setState({warningDialogOpen: false})} />
