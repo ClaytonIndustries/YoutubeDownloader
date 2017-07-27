@@ -25,7 +25,7 @@ export default class SettingsDialog extends React.Component {
         });
     }
 
-    componentDidMount() {
+    componentWillReceiveProps() {
         this.setState({
             settings: this.props.settings
         });
@@ -37,7 +37,7 @@ export default class SettingsDialog extends React.Component {
         };
 
         return (
-            <Dialog open={this.props.open} onRequestClose={() => {this.props.onClose(this.state.settings)}}>
+            <Dialog open={this.props.open} onRequestClose={() => this.props.onClose(false, this.state.settings)}>
                 <DialogTitle>
                     Settings
                 </DialogTitle>
