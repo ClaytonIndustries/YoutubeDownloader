@@ -49,7 +49,7 @@ export default class YoutubeVideo {
     }
 
     noContentDownloadedInLastTenSeconds() {
-        return this.status === VS_DOWNLOADING && Moment().isBetween(this.lastUpdateTime, Moment().add(10, 'seconds'));
+        return this.status === VS_DOWNLOADING && (Moment().unix() - this.lastUpdateTime.unix()) >= 10;
     }
 
     setSize(size) {
@@ -65,7 +65,7 @@ export default class YoutubeVideo {
     }
 
     setVideoStatus(newStatus) {
-        if(this.status === VS_DOWNLOADING) {
+        if(newStatus === VS_DOWNLOADING) {
             this.lastUpdateTime = Moment();
         }
         this.status = newStatus;
