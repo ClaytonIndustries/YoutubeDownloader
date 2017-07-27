@@ -136,7 +136,7 @@ export default class UrlEntry extends React.Component {
     }
 
     selectSaveFolder() {
-        if(!this.noVideo()) {}
+        if(!this.noVideo()) {
             dialog.showOpenDialog(getCurrentWindow(), {properties: ['openDirectory']}, (folder) => {
                 if(folder != undefined) {
                     this.setState({
