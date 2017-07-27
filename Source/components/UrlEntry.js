@@ -14,7 +14,6 @@ import Avatar from 'material-ui/Avatar';
 
 import CheckIcon from 'material-ui-icons/Check';
 import CrossIcon from 'material-ui-icons/Close';
-import SearchIcon from 'material-ui-icons/Search';
 
 import green from 'material-ui/colors/green';
 import red from 'material-ui/colors/red';
@@ -288,7 +287,7 @@ export default class UrlEntry extends React.Component {
                         <Input fullWidth placeholder="Enter the video url here and press get video" value={this.state.youtubeUrl} 
                             onChange={(event) => {this.setState({youtubeUrl: event.target.value})}} />
                         <Avatar style={statusIndicatorStyle}>
-                            {this.state.searchStatus == "success" ? <CheckIcon /> : this.state.searchStatus == "failed" ? <CrossIcon /> : <SearchIcon /> }
+                            {this.state.searchStatus == "success" ? <CheckIcon /> : this.state.searchStatus == "failed" ? <CrossIcon /> : <CheckIcon /> }
                         </Avatar>           
                     </div>
                 </div>
