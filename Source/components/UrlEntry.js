@@ -136,13 +136,15 @@ export default class UrlEntry extends React.Component {
     }
 
     selectSaveFolder() {
-        dialog.showOpenDialog(getCurrentWindow(), {properties: ['openDirectory']}, (folder) => {
-            if(folder != undefined) {
-                this.setState({
-                    saveTo: folder
-                });
-            }
-        });
+        if(!this.noVideo()) {}
+            dialog.showOpenDialog(getCurrentWindow(), {properties: ['openDirectory']}, (folder) => {
+                if(folder != undefined) {
+                    this.setState({
+                        saveTo: folder
+                    });
+                }
+            });
+        }
     }
 
     validateStartAndEndTime(value, field) {
