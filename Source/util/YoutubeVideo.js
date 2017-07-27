@@ -15,6 +15,7 @@ export default class YoutubeVideo {
         this.progress = 0;
         this.lastUpdateTime = Moment();
         this.changed;
+        this.activeProcess;
 
         this.processStarter = new ProcessStarter();
     }
@@ -71,6 +72,10 @@ export default class YoutubeVideo {
         if(this.changed) this.changed();
     }
 
+    setActiveProcess(process, type) {
+        this.activeProcess = {process: process, type: type};
+    }
+
     start() {
         this.download((success) => {
             if(success) {
@@ -88,14 +93,32 @@ export default class YoutubeVideo {
     }
 
     cancel() {
-        // cancel all actions   
+        if(this.activeProcess) {
+            if(this.activeProcess.type === "xhr" && this.status === VS_DOWNLOADING) {
+                try {
+                    this.activeProcess.process.abort();
+                }
+                catch(e) {       
+                }
+            }
+            else if(this.activeProcess.type === "process" && this.status === VS_CONVERTING || this.status === VS_CUTTING) {
+                try {
+                    this.activeProcess.process.kill();
+                }
+                catch(e) {                
+                }
+            }
+        }
+
+        this.deleteFile(this.destinationVideoPath());
+        this.deleteFile(this.destinationAudioPath());
     }
 
     download(callback) {
         this.setVideoStatus(VS_DOWNLOADING);
 
         let videoDownloader = new VideoDownloader();
-        videoDownloader.get(this.videoQuality.downloadUrl, (action, value) => {
+        let process = videoDownloader.get(this.videoQuality.downloadUrl, (action, value) => {
             switch(action) {
                 case "size":
                     this.setSize(value);
@@ -118,6 +141,7 @@ export default class YoutubeVideo {
                     break;
             }
         });
+        this.setActiveProcess(process, "xhr");
     }
 
     convertAudio(callback) {
@@ -134,7 +158,7 @@ export default class YoutubeVideo {
             "-i", this.destinationVideoPath(), "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", this.destinationAudioPath(), "-y"
         ];
 
-        this.processStarter.start(pathToFFmpeg, args, (success) => {
+        let process = this.processStarter.start(pathToFFmpeg, args, (success) => {
             if(!success) {
                 this.setVideoStatus(VS_CONVERSION_FAILED);
                 this.deleteFile(this.destinationAudioPath());
@@ -144,6 +168,7 @@ export default class YoutubeVideo {
 
             callback(success);
         });
+        this.setActiveProcess(process, "process");
     }
 
     cutVideo(callback) {
@@ -166,7 +191,7 @@ export default class YoutubeVideo {
             "-i", renamedMediaPath, "-ss", this.startTime, "-t", this.newEndTime, mediaPath
         ];
 
-        this.processStarter.start(pathToFFmpeg, args, (success) => {
+        let process = this.processStarter.start(pathToFFmpeg, args, (success) => {
             if(!success) {
                 this.setVideoStatus(VS_CUTTING_FAILED);
                 this.deleteFile(mediaPath);
@@ -176,6 +201,7 @@ export default class YoutubeVideo {
 
             callback(success);
         });
+        this.setActiveProcess(process, "process");
     }
 
     deleteFile(filepath) {
