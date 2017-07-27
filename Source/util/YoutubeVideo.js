@@ -109,9 +109,6 @@ export default class YoutubeVideo {
                 }
             }
         }
-
-        this.deleteFile(this.destinationVideoPath());
-        this.deleteFile(this.destinationAudioPath());
     }
 
     download(callback) {
