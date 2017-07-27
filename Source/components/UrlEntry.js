@@ -115,7 +115,7 @@ export default class UrlEntry extends React.Component {
                             videoQualities: result.videoQualities,
                             selectedVideoQuality: result.videoQualities[0],
                             renameTo: result.title,
-                            endTime: result.videoLength,
+                            endTime: result.videoLength.toString(),
                             maxVideoLength: result.videoLength,
                             videoId: result.id
                         }, () => {
