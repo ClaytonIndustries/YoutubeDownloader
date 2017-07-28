@@ -364,7 +364,7 @@ export default class UrlEntry extends React.Component {
                     </div>
                 </div>
                 <div style={topSpacingStyle}>
-                    <Typography type="subheading">Modify start / end time (enter time in seconds, you do not need to enter both)</Typography>
+                    <Typography type="subheading">Modify start / end time (enter time in seconds)</Typography>
                     <div style={rowStyle}>
                         <NumericTextField label={"Start Time"} disabled={this.noVideo()} style={leftItemStyle} 
                             value={this.state.startTime} onChange={(value) => {this.validateStartAndEndTime(value, "start")}}  />
