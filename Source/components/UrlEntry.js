@@ -23,12 +23,12 @@ import ActionMenu from './ActionMenu';
 import WarningDialog from './WarningDialog';
 import NumericTextField from './NumericTextField';
 
-import YoutubeUrlParser from '../util/YoutubeUrlParser';
-import AudioFormats from '../util/AudioFormats';
-import VideoValidator from '../util/VideoValidator';
-import YoutubeVideo from '../util/YoutubeVideo';
-import ClipboardManager from '../util/ClipboardManager';
-import { VS_PENDING } from '../util/VideoState';
+import YoutubeUrlParser from '../models/YoutubeUrlParser';
+import AudioFormats from '../models/AudioFormats';
+import VideoValidator from '../models/VideoValidator';
+import YoutubeVideo from '../models/YoutubeVideo';
+import ClipboardManager from '../models/ClipboardManager';
+import { VS_PENDING } from '../models/VideoState';
 
 const { dialog, getCurrentWindow, app } = window.require('electron').remote;
 

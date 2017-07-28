@@ -7,7 +7,7 @@ import createPalette from 'material-ui/styles/palette';
 import Header from './Header';
 import TabContainer from './TabContainer';
 
-import SettingsManager from '../util/SettingsManager';
+import SettingsManager from '../models/SettingsManager';
 
 export default class App extends React.Component {
     constructor(props) {

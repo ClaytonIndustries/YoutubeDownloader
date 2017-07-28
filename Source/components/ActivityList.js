@@ -12,7 +12,7 @@ import RetryIcon from 'material-ui-icons/Refresh';
 
 import VideoRow from './VideoRow';
 
-import ProcessStarter from '../util/ProcessStarter';
+import ProcessStarter from '../models/ProcessStarter';
 
 export default class ActivityList extends React.Component {
     constructor(props) {
