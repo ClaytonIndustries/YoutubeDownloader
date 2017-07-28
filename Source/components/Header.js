@@ -11,12 +11,20 @@ import DeleteIcon from 'material-ui-icons/Settings';
 
 import SettingsDialog from './SettingsDialog';
 
+import ProcessStarter from '../models/ProcessStarter';
+
 export default class Header extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             settingsDialogOpen: false
         };
+
+        this.processStarter = new ProcessStarter();
+    }
+
+    openYoutube() {
+        this.processStarter.openItem("https://www.youtube.com");
     }
 
     settingsDialogClose(save, settings) {
@@ -58,7 +66,7 @@ export default class Header extends React.Component {
 
         return (
             <div style={cardStyle}>
-                <Button style={buttonStyle}>
+                <Button style={buttonStyle} onClick={() => {this.openYoutube()}}>
                     <img style={imageStyle} src={'images\\YoutubeIcon.png'} />
                 </Button>
                 <div style={detailsStyle}>
