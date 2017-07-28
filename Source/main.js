@@ -14,7 +14,7 @@ function createWindow() {
     const winWidth = 800;
     const winHeight = 665;
 
-    win = new BrowserWindow({ width: winWidth, height: winHeight, useContentSize: true })
+    win = new BrowserWindow({ width: winWidth, height: winHeight, useContentSize: true, icon: './images/YoutubeIcon.png' })
 
     // and load the index.html of the app.
     win.loadURL(url.format({
