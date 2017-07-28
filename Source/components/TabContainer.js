@@ -12,14 +12,15 @@ export default class TabContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            index: 0,
-            videos: []
+            selectedTabIndex: 0,
+            videos: [],
+            lastUrlEntryState: null
         };
     }
 
     handleTabChange(event, index) {
         this.setState({ 
-            index: index
+            selectedTabIndex: index
         });
     };
 
@@ -29,7 +30,7 @@ export default class TabContainer extends React.Component {
 
         this.setState({
             videos: videos,
-            index: 1
+            selectedTabIndex: 1
         });
     }
 
@@ -57,16 +58,17 @@ export default class TabContainer extends React.Component {
         return (
             <div style={tabContainerStyle}>
                 <AppBar position="static">
-                    <Tabs fullWidth centered index={this.state.index} onChange={(event, index) => {this.handleTabChange(event, index)}}>
+                    <Tabs fullWidth centered index={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(event, index)}}>
                         <Tab label="DOWNLOAD" />
                         <Tab label="ACTIVITY" />
                     </Tabs>
                 </AppBar>
                 <div style={childContainerStyle}>
-                    {this.state.index == 0 &&
-                        <UrlEntry settings={this.props.settings} onDownload={(video) => {this.startDownload(video)}} />
+                    {this.state.selectedTabIndex == 0 &&
+                        <UrlEntry settings={this.props.settings} lastState={this.state.lastUrlEntryState} 
+                            onDownload={(video) => {this.startDownload(video)}} onSaveState={(savedState) => {this.setState({lastUrlEntryState: savedState})}} />
                     }
-                    {this.state.index == 1 &&
+                    {this.state.selectedTabIndex == 1 &&
                         <ActivityList videos={this.state.videos} onRemoveVideo={(index) => {this.removeVideo(index)}} />
                     }
                 </div>

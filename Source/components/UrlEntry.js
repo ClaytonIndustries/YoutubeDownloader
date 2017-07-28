@@ -199,9 +199,9 @@ export default class UrlEntry extends React.Component {
             youtubeVideo.newEndTime = this.state.endTime;
             youtubeVideo.status = VS_PENDING;
 
-            this.props.onDownload(youtubeVideo);
-
-            this.clearCurrentVideo();
+            this.clearCurrentVideo(() => {
+                this.props.onDownload(youtubeVideo);
+            });
         }
         else {
             this.setState({
@@ -211,7 +211,7 @@ export default class UrlEntry extends React.Component {
         }
     }
 
-    clearCurrentVideo() {
+    clearCurrentVideo(callback) {
         this.setState({
             selectedVideoQuality: null,
             videoQualities: [],
@@ -221,6 +221,8 @@ export default class UrlEntry extends React.Component {
             maxVideoLength: 0,
             videoId: "",
             searchStatus: "pending"   
+        }, () => {
+            if(callback) callback();
         });
     }
 
@@ -234,10 +236,40 @@ export default class UrlEntry extends React.Component {
                 this.paste();
             }
         };
+
+        if(this.props.lastState) {
+            this.setState({
+                youtubeUrl: this.props.lastState.youtubeUrl,
+                videoQualities: this.props.lastState.videoQualities,
+                selectedVideoQuality: this.props.lastState.selectedVideoQuality,
+                selectedAudioFormat: this.props.lastState.selectedAudioFormat,
+                saveTo: this.props.lastState.saveTo,
+                renameTo: this.props.lastState.renameTo,
+                startTime: this.props.lastState.startTime,
+                endTime: this.props.lastState.endTime,
+                maxVideoLength: this.props.lastState.maxVideoLength,
+                videoId: this.props.lastState.videoId,
+                searchStatus: this.props.lastState.searchStatus
+            });
+        }
     }
 
     componentWillUnmount() {
         this.clipboardManager.callback = null;
+
+        this.props.onSaveState({         
+            youtubeUrl: this.state.youtubeUrl,
+            videoQualities: this.state.videoQualities,
+            selectedVideoQuality: this.state.selectedVideoQuality,
+            selectedAudioFormat: this.state.selectedAudioFormat,
+            saveTo: this.state.saveTo,
+            renameTo: this.state.renameTo,
+            startTime: this.state.startTime,
+            endTime: this.state.endTime,
+            maxVideoLength: this.state.maxVideoLength,
+            videoId: this.state.videoId,
+            searchStatus: this.state.searchStatus
+        });
     }
 
     render() {
@@ -353,5 +385,7 @@ export default class UrlEntry extends React.Component {
 
 UrlEntry.propTypes = {
     settings: PropTypes.object.isRequired,
-    onDownload: PropTypes.func.isRequired
+    lastState: PropTypes.object,
+    onDownload: PropTypes.func.isRequired,
+    onSaveState: PropTypes.func.isRequired
 };
