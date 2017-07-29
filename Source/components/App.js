@@ -6,6 +6,7 @@ import createPalette from 'material-ui/styles/palette';
 
 import Header from './Header';
 import TabContainer from './TabContainer';
+import Updater from './Updater';
 
 import SettingsManager from '../models/SettingsManager';
 
@@ -56,6 +57,7 @@ export default class App extends React.Component {
                 <div style={containerStyle}>
                     <Header settings={this.state.settings} onSettingsChanged={(settings) => this.settingsChanged(settings)} />
                     <TabContainer settings={this.state.settings} />
+                    <Updater />
                 </div>
             </MuiThemeProvider>
         );

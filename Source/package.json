@@ -26,5 +26,8 @@
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "typeface-roboto": "0.0.31"
+  },
+  "dependencies": {
+    "adm-zip": "^0.4.7"
   }
 }
