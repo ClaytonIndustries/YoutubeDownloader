@@ -40,16 +40,8 @@ export default class UpdateManager {
             if(httpRequest.status == 200) {
                 try {
                     let byteArray = new Uint8Array(httpRequest.response);
-
                     electronFs.writeFile(update.downloadLocation(), byteArray, (error) => {
-                        if(!error) {
-                            let zip = new admZip(update.downloadLocation());
-                            zip.extractAllTo(update.extractedLocation(), true);
-                            callback(true);
-                        }
-                        else {
-                            callback(false);
-                        }
+                        callback(!error && this.unpackZipFile(update));
                     });  
                 }
                 catch(e) {
@@ -68,5 +60,16 @@ export default class UpdateManager {
         httpRequest.send();
 
         return httpRequest;
+    }
+
+    unpackZipFile(update) {
+        try {
+            let zip = new admZip(update.downloadLocation());
+            zip.extractAllTo(update.extractedLocation(), true);
+            return true;
+        }
+        catch(e) {
+            return false;
+        }
     }
 }
