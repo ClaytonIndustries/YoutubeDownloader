@@ -28,7 +28,7 @@ import AudioFormats from '../models/AudioFormats';
 import VideoValidator from '../models/VideoValidator';
 import YoutubeVideo from '../models/YoutubeVideo';
 import ClipboardManager from '../models/ClipboardManager';
-import { VS_PENDING } from '../models/VideoState';
+import { VS_PENDING } from '../models/Constants';
 
 const { dialog, getCurrentWindow, app } = window.require('electron').remote;
 

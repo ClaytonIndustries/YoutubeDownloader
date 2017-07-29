@@ -2,7 +2,7 @@ import Moment from 'moment';
 
 import VideoDownloader from './VideoDownloader';
 import ProcessStarter from './ProcessStarter';
-import { VS_PENDING, VS_DOWNLOADING, VS_CONVERTING, VS_CUTTING, VS_COMPLETE, VS_DOWNLOAD_FAILED, VS_CONVERSION_FAILED, VS_CUTTING_FAILED } from './VideoState'
+import { VS_PENDING, VS_DOWNLOADING, VS_CONVERTING, VS_CUTTING, VS_COMPLETE, VS_DOWNLOAD_FAILED, VS_CONVERSION_FAILED, VS_CUTTING_FAILED } from './Constants';
 
 const path = window.require('path');
 const remote = window.require('electron').remote;

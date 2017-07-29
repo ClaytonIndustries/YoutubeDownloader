@@ -14,6 +14,8 @@ import CloseIcon from 'material-ui-icons/Close';
 import UpdateManager from '../models/UpdateManager';
 import ProcessStarter from '../models/ProcessStarter';
 
+import { UD_UPDATE_AVAILABLE, UD_DOWNLOADING_UPDATE, UD_RETRY_DOWNLOAD, UD_INSTALL_READY } from '../models/Constants';
+
 const remote = window.require('electron').remote;
 
 export default class Updater extends React.Component {
@@ -23,7 +25,7 @@ export default class Updater extends React.Component {
             open: false,
             update: null,
             message: "A new version is available",
-            status: "updateAvailable"
+            status: UD_UPDATE_AVAILABLE
         };
 
         this.updateManager = new UpdateManager();
@@ -42,19 +44,19 @@ export default class Updater extends React.Component {
     downloadUpdate() {
         this.setState({
             message: "Downloading update",
-            status: "downloadingUpdate"
+            status: UD_DOWNLOADING_UPDATE
         }, () => {
             this.activeDownload = this.updateManager.downloadUpdate(this.state.update, (success) => {
                 if(success) {
                     this.setState({
                         message: "Download complete",
-                        status: "installReady"
+                        status: UD_INSTALL_READY
                     });
                 }
                 else {
                     this.setState({
                         message: "Download failed, retry?",
-                        status: "retryDownload"
+                        status: UD_RETRY_DOWNLOAD
                     });
                 }
             });
@@ -68,7 +70,7 @@ export default class Updater extends React.Component {
 
     handleRequestClose() {
         try {
-            if(this.activeDownload && this.state.status === "downloadingUpdate") {
+            if(this.activeDownload && this.state.status === UD_DOWNLOADING_UPDATE) {
                 this.activeDownload.abort();
             }
         }
@@ -90,7 +92,7 @@ export default class Updater extends React.Component {
             width: 100
         };
 
-        const content = this.state.status === "updateAvailable" || this.state.status === "retryDownload" ? 
+        const content = this.state.status === UD_UPDATE_AVAILABLE || this.state.status === UD_RETRY_DOWNLOAD ? 
             [
                 <Button key="download" color="accent" dense onClick={() => {this.downloadUpdate()}}>
                     {this.state.status === "updateAvailable" ? "DOWNLOAD" : "RETRY"}
@@ -99,7 +101,7 @@ export default class Updater extends React.Component {
                     <CloseIcon />
                 </IconButton>
             ]
-        : this.state.status === "downloadingUpdate" ?
+        : this.state.status === UD_DOWNLOADING_UPDATE ?
             [
                 <LinearProgress key="progress" style={progressBarStyle} />,
                 <IconButton key="close" color="inherit" onClick={() => {this.handleRequestClose()}}>

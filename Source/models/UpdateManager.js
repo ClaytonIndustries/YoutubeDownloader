@@ -62,7 +62,7 @@ export default class UpdateManager {
         }
         httpRequest.onerror = () => callback(false);
         httpRequest.onabort = () => callback(false);
-        httpRequest.open("GET", update.url, true);
+        httpRequest.open("GET", update.platfromSpecificUrl(), true);
         httpRequest.setRequestHeader("Authorization", "AEE3024137A829E1");
         httpRequest.responseType = "arraybuffer";
         httpRequest.send();
