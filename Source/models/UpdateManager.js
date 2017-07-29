@@ -42,7 +42,8 @@ export default class UpdateManager {
                     let byteArray = new Uint8Array(httpRequest.response);
                     electronFs.writeFile(update.downloadLocation(), byteArray, (error) => {
                         callback(!error && this.unpackZipFile(update));
-                    });  
+                        this.deleteFile(update.downloadLocation());
+                    });
                 }
                 catch(e) {
                     callback(false);
@@ -70,6 +71,12 @@ export default class UpdateManager {
         }
         catch(e) {
             return false;
+        }
+    }
+
+    deleteFile(filepath) {
+        if(electronFs.existsSync(filepath)) {
+            electronFs.unlinkSync(filepath);
         }
     }
 }
