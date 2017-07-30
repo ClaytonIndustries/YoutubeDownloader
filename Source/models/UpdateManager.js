@@ -1,5 +1,5 @@
 import Update from './Update';
-import { VERSION_NUMBER, URL_VERSION } from '../models/Constants';
+import { VERSION_NUMBER, URL_VERSION, AUTH_CODE } from '../models/Constants';
 
 const remote = window.require('electron').remote;
 const electronFs = remote.require('fs');
@@ -27,6 +27,7 @@ export default class UpdateManager {
         httpRequest.onerror = () => callback();
         httpRequest.onabort = () => callback();
         httpRequest.open("GET", URL_VERSION, true);
+        httpRequest.setRequestHeader("Authorization", AUTH_CODE);
         httpRequest.send();
     }
 
@@ -56,7 +57,7 @@ export default class UpdateManager {
         httpRequest.onerror = () => callback(false);
         httpRequest.onabort = () => callback(false);
         httpRequest.open("GET", update.platfromSpecificUrl(), true);
-        httpRequest.setRequestHeader("Authorization", "AEE3024137A829E1");
+        httpRequest.setRequestHeader("Authorization", AUTH_CODE);
         httpRequest.responseType = "arraybuffer";
         httpRequest.send();
 

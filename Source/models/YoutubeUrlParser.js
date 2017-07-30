@@ -1,3 +1,4 @@
+import { URL_PARSE, AUTH_CODE } from '../models/Constants';
 
 export default class YoutubeUrlParser {
     parse(youtubeUrl, callback) {
@@ -16,8 +17,8 @@ export default class YoutubeUrlParser {
                     }
                 }
             };
-            request.open("GET", "http://claytoninds.com/services/youtubedownloader/parse/" + videoId, true);
-            request.setRequestHeader("Authorization", "AEE3024137A829E1");
+            request.open("GET", URL_PARSE + videoId, true);
+            request.setRequestHeader("Authorization", AUTH_CODE);
             request.send();
         }
         catch(e) {

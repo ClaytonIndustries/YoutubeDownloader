@@ -19,3 +19,6 @@ export const OS_WINDOWS = "windows";
 export const OS_MACOS = "macOS";
 
 export const URL_VERSION = "http://www.claytoninds.com/services/youtubedownloader/version/number";
+export const URL_PARSE = "http://claytoninds.com/services/youtubedownloader/parse/";
+
+export const AUTH_CODE = "AEE3024137A829E1";
