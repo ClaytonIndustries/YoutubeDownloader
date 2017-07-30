@@ -1,5 +1,5 @@
 import Update from './Update';
-import { VERSION_NUMBER } from '../models/Constants';
+import { VERSION_NUMBER, URL_VERSION } from '../models/Constants';
 
 const remote = window.require('electron').remote;
 const electronFs = remote.require('fs');
@@ -8,7 +8,6 @@ const admZip = window.require('adm-zip');
 export default class UpdateManager {
     checkForUpdates(callback) {
         let httpRequest = new XMLHttpRequest();
-        let url = "http://www.claytoninds.com/services/youtubedownloader/version/number";
         httpRequest.onload = () => {
             try {
                 let content = JSON.parse(httpRequest.responseText);
@@ -27,7 +26,7 @@ export default class UpdateManager {
         }
         httpRequest.onerror = () => callback();
         httpRequest.onabort = () => callback();
-        httpRequest.open("GET", url, true);
+        httpRequest.open("GET", URL_VERSION, true);
         httpRequest.send();
     }
 

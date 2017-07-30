@@ -17,3 +17,5 @@ export const UD_INSTALL_READY = "installReady";
 
 export const OS_WINDOWS = "windows";
 export const OS_MACOS = "macOS";
+
+export const URL_VERSION = "http://www.claytoninds.com/services/youtubedownloader/version/number";
