@@ -15,6 +15,9 @@ export const UD_DOWNLOADING_UPDATE = "downloadingUpdate";
 export const UD_RETRY_DOWNLOAD = "retryDownload";
 export const UD_INSTALL_READY = "installReady";
 
+export const PR_XHR = "xhr";
+export const PR_FFMPEG = "ffmpeg";
+
 export const OS_WINDOWS = "windows";
 export const OS_MACOS = "macOS";
 

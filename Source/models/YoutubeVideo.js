@@ -3,7 +3,7 @@ import Moment from 'moment';
 import VideoDownloader from './VideoDownloader';
 import ProcessStarter from './ProcessStarter';
 import FileAccess from './FileAccess';
-import { VS_PENDING, VS_DOWNLOADING, VS_CONVERTING, VS_CUTTING, VS_COMPLETE, VS_DOWNLOAD_FAILED, VS_CONVERSION_FAILED, VS_CUTTING_FAILED } from './Constants';
+import { VS_PENDING, VS_DOWNLOADING, VS_CONVERTING, VS_CUTTING, VS_COMPLETE, VS_DOWNLOAD_FAILED, VS_CONVERSION_FAILED, VS_CUTTING_FAILED, PR_XHR, PR_FFMPEG } from './Constants';
 
 const path = window.require('path');
 
@@ -94,14 +94,14 @@ export default class YoutubeVideo {
 
     cancel() {
         if(this.activeProcess) {
-            if(this.activeProcess.type === "xhr" && this.status === VS_DOWNLOADING) {
+            if(this.activeProcess.type === PR_XHR && this.status === VS_DOWNLOADING) {
                 try {
                     this.activeProcess.process.abort();
                 }
                 catch(e) {       
                 }
             }
-            else if(this.activeProcess.type === "process" && this.status === VS_CONVERTING || this.status === VS_CUTTING) {
+            else if(this.activeProcess.type === PR_FFMPEG && (this.status === VS_CONVERTING || this.status === VS_CUTTING)) {
                 try {
                     this.activeProcess.process.kill();
                 }
@@ -138,7 +138,7 @@ export default class YoutubeVideo {
                     break;
             }
         });
-        this.setActiveProcess(process, "xhr");
+        this.setActiveProcess(process, PR_XHR);
     }
 
     convertAudio(callback) {
@@ -165,7 +165,7 @@ export default class YoutubeVideo {
 
             callback(success);
         });
-        this.setActiveProcess(process, "process");
+        this.setActiveProcess(process, PR_FFMPEG);
     }
 
     cutVideo(callback) {
@@ -198,7 +198,7 @@ export default class YoutubeVideo {
 
             callback(success);
         });
-        this.setActiveProcess(process, "process");
+        this.setActiveProcess(process, PR_FFMPEG);
     }
 
     deleteFile(filepath) {
