@@ -28,13 +28,20 @@ import AudioFormats from '../models/AudioFormats';
 import VideoValidator from '../models/VideoValidator';
 import YoutubeVideo from '../models/YoutubeVideo';
 import ClipboardManager from '../models/ClipboardManager';
+import FileAccess from '../models/FileAccess';
 import { VS_PENDING } from '../models/Constants';
 
-const { dialog, getCurrentWindow, app } = window.require('electron').remote;
+const { dialog, getCurrentWindow } = window.require('electron').remote;
 
 export default class UrlEntry extends React.Component {
     constructor(props) {
         super(props);
+
+        this.youtubeUrlParser = new YoutubeUrlParser();
+        this.videoValidator = new VideoValidator();
+        this.clipboardManager = new ClipboardManager();
+        this.fileAccess = new FileAccess();
+
         this.state = {
             youtubeUrl: "",
             videoQualities: [],
@@ -44,7 +51,7 @@ export default class UrlEntry extends React.Component {
             menuAnchor: null,
             selectedVideoQuality: null,
             selectedAudioFormat: AudioFormats.getAllowedFormats()[0],
-            saveTo: app.getPath("documents"),
+            saveTo: this.fileAccess.getPath("documents"),
             renameTo: "",
             startTime: "0",
             endTime: "0",
@@ -55,10 +62,6 @@ export default class UrlEntry extends React.Component {
             validationMessage: "",
             searchStatus: "pending"
         };
-
-        this.youtubeUrlParser = new YoutubeUrlParser();
-        this.videoValidator = new VideoValidator();
-        this.clipboardManager = new ClipboardManager();
     }
 
     showVideoQualityMenu(event) {

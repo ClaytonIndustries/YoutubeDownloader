@@ -1,6 +1,6 @@
 import Update from './Update';
 import FileAccess from './FileAccess';
-import { VERSION_NUMBER, URL_VERSION, AUTH_CODE } from '../models/Constants';
+import { VERSION_NUMBER, URL_VERSION, AUTH_CODE } from './Constants';
 
 export default class UpdateManager {
     constructor() {
