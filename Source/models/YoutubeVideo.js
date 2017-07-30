@@ -149,7 +149,7 @@ export default class YoutubeVideo {
 
         this.setVideoStatus(VS_CONVERTING);
 
-        let pathToFFmpeg = path.resolve('dist/FFmpeg/bin/ffmpeg.exe');
+        let pathToFFmpeg = path.join(path.dirname(window.require.main.filename), 'dist/FFmpeg/bin/ffmpeg.exe');
 
         let args = [
             "-i", this.destinationVideoPath(), "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", this.destinationAudioPath(), "-y"
@@ -176,7 +176,7 @@ export default class YoutubeVideo {
 
         this.setVideoStatus(VS_CUTTING);
 
-        let pathToFFmpeg = path.resolve('dist/FFmpeg/bin/ffmpeg.exe');
+        let pathToFFmpeg = path.join(path.dirname(window.require.main.filename), 'dist/FFmpeg/bin/ffmpeg.exe');
 
         let cuttingVideo = !this.shouldConvertAudio();
         let mediaPath = cuttingVideo ? this.destinationVideoPath() : this.destinationAudioPath();
