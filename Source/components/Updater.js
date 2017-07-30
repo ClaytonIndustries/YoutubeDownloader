@@ -64,7 +64,7 @@ export default class Updater extends React.Component {
     }
 
     installUpdate() {
-        this.processStarter.start(this.state.update.extractedLocation(), []);
+        this.processStarter.openItem(this.state.update.extractedLocation());
         remote.getCurrentWindow().close();
     }
 

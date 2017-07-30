@@ -66,7 +66,7 @@ export default class UpdateManager {
     unpackZipFile(update) {
         try {
             let zip = new admZip(update.downloadLocation());
-            zip.extractAllTo(update.extractedLocation(), true);
+            zip.extractAllTo(update.downloadFolder(), true);
             return true;
         }
         catch(e) {

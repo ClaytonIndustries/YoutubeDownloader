@@ -8,12 +8,16 @@ export default class Update {
         return path.join(this.url, this.getPlatform());
     }
 
+    downloadFolder() {
+        return os.tmpdir();
+    }
+
     downloadLocation() {
-        return path.join(os.tmpdir(), "YoutubeDownloaderSetup.zip");
+        return path.join(this.downloadFolder(), "YoutubeDownloaderSetup.zip");
     }
 
     extractedLocation() {
-        return path.join(os.tmpdir(), "YoutubeDownloaderSetup", this.getPlatform() === OS_WINDOWS ? ".msi" : ".exe");
+        return path.join(this.downloadFolder(), "YoutubeDownloaderSetup" + (this.getPlatform() === OS_WINDOWS ? ".msi" : ".exe"));
     }
 
     getPlatform() {
