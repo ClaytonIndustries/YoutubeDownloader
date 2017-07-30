@@ -273,80 +273,43 @@ export default class UrlEntry extends React.Component {
     }
 
     render() {
-        const topSpacingStyle = {
-            marginTop: 15
-        };
-
-        const leftItemStyle = {
-            width: '49.5%',
-            marginRight: '0.5%'
-        };
-
-        const rightItemStyle = {
-            width: '49.5%',
-            marginLeft: '0.5%'
-        };
-
-        const rowStyle = {
-            display: 'flex'
-        };
-
-        const fullWidthStyle = {
-            display: 'flex',
-            flexDirection: 'column',
-            flex: '1 0 auto',
-        };
-
-        const statusIndicatorStyle = {
-            background: this.state.searchStatus == "success" ? green[500] : this.state.searchStatus == "failed" ? red[500] : grey[500] 
-        };
-
-        const menuButtonStyle = {
-            width: '50%',
-            background: '#EDEDED'
-        };
-
-        const downloadButtonStyle = {
-            width: '100%',
-            marginTop: 30,
-            height: 40
-        };
+        const styleSheet = this.getStyles();
 
         return (
             <div>
-                <div style={topSpacingStyle}>
-                    <div style={rowStyle}>
+                <div style={styleSheet.topSpacing}>
+                    <div style={styleSheet.row}>
                         <Input fullWidth placeholder="Enter the video url here and press get video" value={this.state.youtubeUrl} 
                             onChange={(event) => {this.setState({youtubeUrl: event.target.value})}} />
-                        <Avatar style={statusIndicatorStyle}>
+                        <Avatar style={styleSheet.statusIndicator}>
                             {this.state.searchStatus == "success" ? <CheckIcon /> : this.state.searchStatus == "failed" ? <CrossIcon /> : <CheckIcon /> }
                         </Avatar>           
                     </div>
                 </div>
-                <div style={topSpacingStyle}>
-                    <Button raised dense color="primary" style={leftItemStyle} onClick={() => {this.paste()}}>PASTE</Button>
-                    <Button raised dense disabled={this.state.gettingVideo} color="primary" style={rightItemStyle} 
+                <div style={styleSheet.topSpacing}>
+                    <Button raised dense color="primary" style={styleSheet.leftItem} onClick={() => {this.paste()}}>PASTE</Button>
+                    <Button raised dense disabled={this.state.gettingVideo} color="primary" style={styleSheet.rightItem} 
                         onClick={() => {this.getVideo()}}>
                         GET VIDEO
                     </Button>
                 </div>
-                <div style={topSpacingStyle}>
+                <div style={styleSheet.topSpacing}>
                     <LinearProgress mode={this.state.gettingVideo ? "query" : "determinate"} />
                 </div>
-                <div style={topSpacingStyle}>
-                    <div style={rowStyle}>
-                        <Typography type="subheading" style={fullWidthStyle}>Choose a video quality</Typography>
-                        <Button disabled={this.noVideo()} style={menuButtonStyle} onClick={(event) => {this.showVideoQualityMenu(event)}}>
+                <div style={styleSheet.topSpacing}>
+                    <div style={styleSheet.row}>
+                        <Typography type="subheading" style={styleSheet.fullWidth}>Choose a video quality</Typography>
+                        <Button disabled={this.noVideo()} style={styleSheet.menuButton} onClick={(event) => {this.showVideoQualityMenu(event)}}>
                             {this.state.selectedVideoQuality != null ? this.state.selectedVideoQuality.description : "None Available"}
                         </Button>
                         <ActionMenu items={this.state.videoQualities} open={this.state.videoQualityMenuOpen} anchor={this.state.menuAnchor} selectedItem={this.state.selectedVideoQuality}
                             onClose={(index) => {this.videoQualityMenuClosed(index)}} />
                     </div>
                 </div>
-                <div style={topSpacingStyle}>
-                    <div style={rowStyle}>
-                        <Typography type="subheading" style={fullWidthStyle}>Automatically convert to</Typography>
-                        <Button disabled={this.noVideo()} style={menuButtonStyle} onClick={(event) => {this.showAudioTypeMenu(event)}}>
+                <div style={styleSheet.topSpacing}>
+                    <div style={styleSheet.row}>
+                        <Typography type="subheading" style={styleSheet.fullWidth}>Automatically convert to</Typography>
+                        <Button disabled={this.noVideo()} style={styleSheet.menuButton} onClick={(event) => {this.showAudioTypeMenu(event)}}>
                             {this.state.selectedAudioFormat != null ? this.state.selectedAudioFormat.description : "None Available"}
                         </Button>
                         <ActionMenu items={this.state.audioFormats} open={this.state.audioTypeMenuOpen} anchor={this.state.menuAnchor} selectedItem={this.state.selectedAudioFormat}
@@ -354,32 +317,68 @@ export default class UrlEntry extends React.Component {
                     </div>
                 </div>
                 <div>
-                    <div style={rowStyle}>
+                    <div style={styleSheet.row}>
                         <TextField fullWidth disabled={this.noVideo()} label="Save to" margin="dense" value={this.state.saveTo} 
                             onClick={() => {this.selectSaveFolder()}} onChange={(event) => {this.setState({saveTo: event.target.value})}} />
                     </div>
-                    <div style={rowStyle}>
+                    <div style={styleSheet.row}>
                         <TextField fullWidth disabled={this.noVideo()} label="Rename to" margin="dense" 
                             value={this.state.renameTo} onChange={(event) => {this.setState({renameTo: event.target.value})}} />
                     </div>
                 </div>
-                <div style={topSpacingStyle}>
+                <div style={styleSheet.topSpacing}>
                     <Typography type="subheading">Modify start / end time (enter time in seconds)</Typography>
-                    <div style={rowStyle}>
-                        <NumericTextField label={"Start Time"} disabled={this.noVideo()} style={leftItemStyle} 
+                    <div style={styleSheet.row}>
+                        <NumericTextField label={"Start Time"} disabled={this.noVideo()} style={styleSheet.leftItem} 
                             value={this.state.startTime} onChange={(value) => {this.validateStartAndEndTime(value, "start")}}  />
-                        <NumericTextField label={"End Time"} disabled={this.noVideo()} style={rightItemStyle}
+                        <NumericTextField label={"End Time"} disabled={this.noVideo()} style={styleSheet.rightItem}
                             value={this.state.endTime} onChange={(value) => {this.validateStartAndEndTime(value, "end")}}  />
                     </div>
                 </div>
-                <div style={topSpacingStyle}>
-                    <Button raised dense disabled={this.noVideo()} color="primary" style={downloadButtonStyle} 
+                <div style={styleSheet.topSpacing}>
+                    <Button raised dense disabled={this.noVideo()} color="primary" style={styleSheet.downloadButton} 
                         onClick={() => this.download()}>DOWNLOAD</Button>
                 </div>
                 <WarningDialog content={this.state.validationMessage} open={this.state.warningDialogOpen} 
                     onClose={() => this.setState({warningDialogOpen: false})} />
             </div>
         );
+    }
+
+    getStyles() {
+        return {
+            topSpacing: {
+                marginTop: 15
+            },
+            leftItem: {
+                width: '49.5%',
+                marginRight: '0.5%'
+            },
+            rightItem: {
+                width: '49.5%',
+                marginLeft: '0.5%'
+            },
+            row: {
+                display: 'flex'
+            },
+            fullWidth: {
+                display: 'flex',
+                flexDirection: 'column',
+                flex: '1 0 auto',
+            },
+            statusIndicator: {
+                background: this.state.searchStatus == "success" ? green[500] : this.state.searchStatus == "failed" ? red[500] : grey[500] 
+            },
+            menuButton: {
+                width: '50%',
+                background: '#EDEDED'
+            },
+            downloadButton: {
+                width: '100%',
+                marginTop: 30,
+                height: 40
+            }
+        };
     }
 }
 

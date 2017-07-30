@@ -39,49 +39,51 @@ export default class Header extends React.Component {
     }
 
     render() {
-        const cardStyle = {
-            display: 'flex',
-            margin: 0
-        };
-
-        const imageStyle = {
-          width: 90,
-          height: 90  
-        };
-
-        const detailsStyle = {
-            display: 'flex',
-            flexDirection: 'column',
-            flex: '1 0 auto'
-        };
-
-        const buttonStyle = {
-            padding: 0,
-            marginRight: 20
-        };
-
-        const settingIconStyle = {
-            width: 35,
-            height: 35
-        };
+        const styleSheet = this.getStyles();
 
         return (
-            <div style={cardStyle}>
-                <Button style={buttonStyle} onClick={() => {this.openYoutube()}}>
-                    <img style={imageStyle} src={'images\\YoutubeIcon.png'} />
+            <div style={styleSheet.card}>
+                <Button style={styleSheet.button} onClick={() => {this.openYoutube()}}>
+                    <img style={styleSheet.image} src={'images\\YoutubeIcon.png'} />
                 </Button>
-                <div style={detailsStyle}>
+                <div style={styleSheet.details}>
                     <Typography type="headline" color="secondary">Clayton Industries</Typography>
                     <Typography type="headline" color="secondary">Youtube Downloader</Typography>
                     <Typography type="headline" color="secondary">{"Version " + VERSION_NUMBER}</Typography>
                 </div>
                 <IconButton onClick={() => {this.setState({settingsDialogOpen: true})}}>
-                    <DeleteIcon style={settingIconStyle} />
+                    <DeleteIcon style={styleSheet.settingIcon} />
                 </IconButton>
                 <SettingsDialog open={this.state.settingsDialogOpen} settings={this.props.settings} 
                         onClose={(save, settings) => {this.settingsDialogClose(save, settings)}} />
             </div>
         );
+    }
+
+    getStyles() {
+        return {
+            card: {
+                display: 'flex',
+                margin: 0
+            },
+            image: {
+                width: 90,
+                height: 90
+            },
+            details: {
+                display: 'flex',
+                flexDirection: 'column',
+                flex: '1 0 auto'
+            },
+            button: {
+                padding: 0,
+                marginRight: 20
+            },
+            settingIcon: {
+                width: 35,
+                height: 35
+            }
+        };
     }
 }
 

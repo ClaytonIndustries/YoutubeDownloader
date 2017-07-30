@@ -44,26 +44,17 @@ export default class TabContainer extends React.Component {
     }
 
     render() {
-        const tabContainerStyle = {
-            marginTop: 10
-        };
-
-        const childContainerStyle = {
-            marginLeft: 5,
-            marginRight: 5,
-            marginTop: 15,
-            marginBottom: 5
-        };
+        const styleSheet = this.getStyles();
 
         return (
-            <div style={tabContainerStyle}>
+            <div style={styleSheet.tabContainer}>
                 <AppBar position="static">
                     <Tabs fullWidth centered index={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(event, index)}}>
                         <Tab label="DOWNLOAD" />
                         <Tab label="ACTIVITY" />
                     </Tabs>
                 </AppBar>
-                <div style={childContainerStyle}>
+                <div style={styleSheet.childContainer}>
                     {this.state.selectedTabIndex == 0 &&
                         <UrlEntry settings={this.props.settings} lastState={this.state.lastUrlEntryState} 
                             onDownload={(video) => {this.startDownload(video)}} onSaveState={(savedState) => {this.setState({lastUrlEntryState: savedState})}} />
@@ -74,6 +65,20 @@ export default class TabContainer extends React.Component {
                 </div>
           </div>
         );
+    }
+
+    getStyles() {
+        return {
+            tabContainer: {
+                marginTop: 10
+            },
+            childContainer: {
+                marginLeft: 5,
+                marginRight: 5,
+                marginTop: 15,
+                marginBottom: 5
+            }
+        };
     }
 }
 

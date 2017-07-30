@@ -83,14 +83,7 @@ export default class Updater extends React.Component {
     }
 
     render() {
-        const snackbarContentStyle = {
-            marginLeft: 150,
-            marginRight: 150
-        };
-
-        const progressBarStyle = {
-            width: 100
-        };
+        const styleSheet = this.getStyles();
 
         const content = this.state.status === UD_UPDATE_AVAILABLE || this.state.status === UD_RETRY_DOWNLOAD ? 
             [
@@ -103,7 +96,7 @@ export default class Updater extends React.Component {
             ]
         : this.state.status === UD_DOWNLOADING_UPDATE ?
             [
-                <LinearProgress key="progress" style={progressBarStyle} />,
+                <LinearProgress key="progress" style={styleSheet.progressBar} />,
                 <IconButton key="close" color="inherit" onClick={() => {this.handleRequestClose()}}>
                     <CloseIcon />
                 </IconButton>
@@ -127,11 +120,23 @@ export default class Updater extends React.Component {
                 open={this.state.open}
                 transition={<Slide direction={'down'} />}>               
                 <SnackbarContent
-                    style={snackbarContentStyle}
+                    style={styleSheet.snackbarContent}
                     message={this.state.message}
                     action={content}>
                 </SnackbarContent>
             </Snackbar>
         );
+    }
+
+    getStyles() {
+        return {
+            snackbarContent: {
+                marginLeft: 150,
+                marginRight: 150
+            },
+            progressBar: {
+                width: 100
+            }
+        };
     }
 }

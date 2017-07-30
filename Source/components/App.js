@@ -45,21 +45,27 @@ export default class App extends React.Component {
             }),
         });
 
-        const containerStyle = {
-            marginLeft: 5,
-            marginRight: 5,
-            marginTop: 5,
-            marginBottom: 0
-        };
+        const styleSheet = this.getStyles();
 
         return (
             <MuiThemeProvider theme={theme}>
-                <div style={containerStyle}>
+                <div style={styleSheet.container}>
                     <Header settings={this.state.settings} onSettingsChanged={(settings) => this.settingsChanged(settings)} />
                     <TabContainer settings={this.state.settings} />
                     <Updater />
                 </div>
             </MuiThemeProvider>
         );
+    }
+
+    getStyles() {
+        return {
+            container: {
+                marginLeft: 5,
+                marginRight: 5,
+                marginTop: 5,
+                marginBottom: 0
+            }
+        };
     }
 }

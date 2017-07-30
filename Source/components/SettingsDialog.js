@@ -32,9 +32,7 @@ export default class SettingsDialog extends React.Component {
     }
 
     render() {
-        const listStyle = {
-            width: 300
-        };
+        const styleSheet = this.getStyles();
 
         return (
             <Dialog open={this.props.open} onRequestClose={() => this.props.onClose(false, this.state.settings)}>
@@ -42,7 +40,7 @@ export default class SettingsDialog extends React.Component {
                     Settings
                 </DialogTitle>
                 <DialogContent>
-                     <List style={listStyle}>
+                     <List style={styleSheet.list}>
                         <ListItem>
                             <ListItemText primary="Automatically paste" />
                             <ListItemSecondaryAction>
@@ -73,6 +71,14 @@ export default class SettingsDialog extends React.Component {
                 </DialogActions>
             </Dialog>
         );
+    }
+
+    getStyles() {
+        return {
+            list: {
+                width: 300
+            }
+        };
     }
 }
 

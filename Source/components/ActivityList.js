@@ -120,14 +120,11 @@ export default class ActivityList extends React.Component {
     }
 
     render() {
-        const rowStyle = {
-            display: 'flex',
-            justifyContent: 'center'
-        };
+        const styleSheet = this.getStyles();
 
         return (
             <div>
-                <div style={rowStyle}>
+                <div style={styleSheet.row}>
                     <Button dense color="primary" onClick={() => this.removeVideo()}>
                         <RemoveIcon />
                     </Button>
@@ -162,6 +159,15 @@ export default class ActivityList extends React.Component {
                 </Table>
             </div>
         );
+    }
+
+    getStyles() {
+        return {
+            row: {
+                display: 'flex',
+                justifyContent: 'center'
+            }
+        };
     }
 }
 
