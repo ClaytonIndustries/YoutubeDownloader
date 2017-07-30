@@ -1,7 +1,10 @@
-const remote = window.require('electron').remote;
-const electronFs = remote.require('fs');
+import FileAccess from './FileAccess';
 
 export default class VideoValidator {
+    constructor() {
+        this.fileAccess = new FileAccess();
+    }
+
     validateProperties(selectedVideoQuality, folderToSaveTo, renameVideoTo, startTime, endTime) {
         let result = {isValid: true, message: ""};
 
@@ -9,7 +12,7 @@ export default class VideoValidator {
             result.isValid = false;
             result.message = "Please choose a video quality";
         }
-        else if(!folderToSaveTo || !electronFs.existsSync(folderToSaveTo)) {
+        else if(!folderToSaveTo || !this.fileAccess.exists(folderToSaveTo)) {
             result.isValid = false;
             result.message = "Folder to save to does not exist";
         }

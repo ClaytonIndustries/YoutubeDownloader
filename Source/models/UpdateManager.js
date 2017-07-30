@@ -1,11 +1,12 @@
 import Update from './Update';
+import FileAccess from './FileAccess';
 import { VERSION_NUMBER, URL_VERSION, AUTH_CODE } from '../models/Constants';
 
-const remote = window.require('electron').remote;
-const electronFs = remote.require('fs');
-const admZip = window.require('adm-zip');
-
 export default class UpdateManager {
+    constructor() {
+        this.fileAccess = new FileAccess();
+    }
+
     checkForUpdates(callback) {
         let httpRequest = new XMLHttpRequest();
         httpRequest.onload = () => {
@@ -41,7 +42,7 @@ export default class UpdateManager {
             if(httpRequest.status == 200) {
                 try {
                     let byteArray = new Uint8Array(httpRequest.response);
-                    electronFs.writeFile(update.downloadLocation(), byteArray, (error) => {
+                    this.fileAccess.write(update.downloadLocation(), byteArray, (error) => {
                         callback(!error && this.unpackZipFile(update));
                         this.deleteFile(update.downloadLocation());
                     });
@@ -66,8 +67,7 @@ export default class UpdateManager {
 
     unpackZipFile(update) {
         try {
-            let zip = new admZip(update.downloadLocation());
-            zip.extractAllTo(update.downloadFolder(), true);
+            this.fileAccess.unpackZipFile(update.downloadLocation(), update.downloadFolder());
             return true;
         }
         catch(e) {
@@ -76,8 +76,8 @@ export default class UpdateManager {
     }
 
     deleteFile(filepath) {
-        if(electronFs.existsSync(filepath)) {
-            electronFs.unlinkSync(filepath);
+        if(this.fileAccess.exists(filepath)) {
+            this.fileAccess.delete(filepath);
         }
     }
 }

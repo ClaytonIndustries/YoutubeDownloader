@@ -1,4 +1,4 @@
-import { URL_PARSE, AUTH_CODE } from '../models/Constants';
+import { URL_PARSE, AUTH_CODE } from './Constants';
 
 export default class YoutubeUrlParser {
     parse(youtubeUrl, callback) {

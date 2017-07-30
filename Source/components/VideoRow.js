@@ -41,7 +41,7 @@ export default class VideoRow extends React.Component {
                     {this.state.title}
                 </TableCell>
                 <TableCell compact disablePadding>
-                    {this.state.size}
+                    {this.state.size === 0 ? "" : this.state.size}
                 </TableCell>
                 <TableCell compact disablePadding>
                     <LinearProgress mode="determinate" value={this.state.progress} />

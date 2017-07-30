@@ -2,11 +2,10 @@ import Moment from 'moment';
 
 import VideoDownloader from './VideoDownloader';
 import ProcessStarter from './ProcessStarter';
+import FileAccess from './FileAccess';
 import { VS_PENDING, VS_DOWNLOADING, VS_CONVERTING, VS_CUTTING, VS_COMPLETE, VS_DOWNLOAD_FAILED, VS_CONVERSION_FAILED, VS_CUTTING_FAILED } from './Constants';
 
 const path = window.require('path');
-const remote = window.require('electron').remote;
-const electronFs = remote.require('fs');
 
 export default class YoutubeVideo {
     constructor() {
@@ -18,6 +17,7 @@ export default class YoutubeVideo {
         this.activeProcess;
 
         this.processStarter = new ProcessStarter();
+        this.fileAccess = new FileAccess();
     }
 
     destinationVideoPath() {
@@ -124,7 +124,7 @@ export default class YoutubeVideo {
                     this.setProgress(value);
                     break;
                 case "complete":
-                    electronFs.writeFile(this.destinationVideoPath(), value, (error) => {
+                    this.fileAccess.write(this.destinationVideoPath(), value, (error) => {
                         if(error) {
                             this.setVideoStatus(VS_DOWNLOAD_FAILED);
                             this.deleteFile(this.destinationVideoPath());
@@ -182,7 +182,7 @@ export default class YoutubeVideo {
         let mediaPath = cuttingVideo ? this.destinationVideoPath() : this.destinationAudioPath();
         let renamedMediaPath = mediaPath.slice(0, mediaPath.lastIndexOf('\\') + 1) + "~" + mediaPath.slice(mediaPath.lastIndexOf('\\') + 1);
 
-        electronFs.renameSync(mediaPath, renamedMediaPath);
+        this.fileAccess.rename(mediaPath, renamedMediaPath);
 
         let args = [
             "-i", renamedMediaPath, "-ss", this.startTime, "-t", this.newEndTime, mediaPath
@@ -202,8 +202,8 @@ export default class YoutubeVideo {
     }
 
     deleteFile(filepath) {
-        if(electronFs.existsSync(filepath)) {
-            electronFs.unlinkSync(filepath);
+        if(this.fileAccess.exists(filepath)) {
+            this.fileAccess.delete(filepath);
         }
     }
 
