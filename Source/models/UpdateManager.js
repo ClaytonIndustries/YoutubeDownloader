@@ -1,4 +1,5 @@
 import Update from './Update';
+import { VERSION_NUMBER } from '../models/Constants';
 
 const remote = window.require('electron').remote;
 const electronFs = remote.require('fs');
@@ -11,7 +12,7 @@ export default class UpdateManager {
         httpRequest.onload = () => {
             try {
                 let content = JSON.parse(httpRequest.responseText);
-                if(this.getFormattedVersionNumberFromString(content[0]) > this.getFormattedVersionNumberFromString("1.0")) {
+                if(this.getFormattedVersionNumberFromString(content[0]) > this.getFormattedVersionNumberFromString(VERSION_NUMBER)) {
                     let update = new Update();
                     update.url = content[1];
                     callback(update);

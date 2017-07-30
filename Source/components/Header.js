@@ -12,6 +12,7 @@ import DeleteIcon from 'material-ui-icons/Settings';
 import SettingsDialog from './SettingsDialog';
 
 import ProcessStarter from '../models/ProcessStarter';
+import { VERSION_NUMBER } from '../models/Constants';
 
 export default class Header extends React.Component {
     constructor(props) {
@@ -72,7 +73,7 @@ export default class Header extends React.Component {
                 <div style={detailsStyle}>
                     <Typography type="headline" color="secondary">Clayton Industries</Typography>
                     <Typography type="headline" color="secondary">Youtube Downloader</Typography>
-                    <Typography type="headline" color="secondary">Version 1.0</Typography>
+                    <Typography type="headline" color="secondary">{"Version " + VERSION_NUMBER}</Typography>
                 </div>
                 <IconButton onClick={() => {this.setState({settingsDialogOpen: true})}}>
                     <DeleteIcon style={settingIconStyle} />

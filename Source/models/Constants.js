@@ -1,4 +1,6 @@
 
+export const VERSION_NUMBER = "1.0";
+
 export const VS_PENDING = "Pending";
 export const VS_DOWNLOADING = "Downloading";
 export const VS_CONVERTING = "Converting";
