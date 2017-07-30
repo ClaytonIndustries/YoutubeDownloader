@@ -49,7 +49,7 @@ export default class Updater extends React.Component {
             this.activeDownload = this.updateManager.downloadUpdate(this.state.update, (success) => {
                 if(success) {
                     this.setState({
-                        message: "Download complete",
+                        message: "Download complete, close and install?",
                         status: UD_INSTALL_READY
                     });
                 }

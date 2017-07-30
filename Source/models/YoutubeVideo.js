@@ -3,6 +3,7 @@ import Moment from 'moment';
 import VideoDownloader from './VideoDownloader';
 import ProcessStarter from './ProcessStarter';
 import FileAccess from './FileAccess';
+import FFmpeg from './FFmpeg';
 import { VS_PENDING, VS_DOWNLOADING, VS_CONVERTING, VS_CUTTING, VS_COMPLETE, VS_DOWNLOAD_FAILED, VS_CONVERSION_FAILED, VS_CUTTING_FAILED, PR_XHR, PR_FFMPEG } from './Constants';
 
 const path = window.require('path');
@@ -16,8 +17,8 @@ export default class YoutubeVideo {
         this.changed;
         this.activeProcess;
 
-        this.processStarter = new ProcessStarter();
         this.fileAccess = new FileAccess();
+        this.ffmpeg = new FFmpeg();
     }
 
     destinationVideoPath() {
@@ -149,13 +150,7 @@ export default class YoutubeVideo {
 
         this.setVideoStatus(VS_CONVERTING);
 
-        let pathToFFmpeg = path.join(path.dirname(window.require.main.filename), 'dist/FFmpeg/bin/ffmpeg.exe');
-
-        let args = [
-            "-i", this.destinationVideoPath(), "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", this.destinationAudioPath(), "-y"
-        ];
-
-        let process = this.processStarter.start(pathToFFmpeg, args, (success) => {
+        let process = this.ffmpeg.extractVideoAudio(this.destinationVideoPath(), this.destinationAudioPath(), (success) => {
             if(!success) {
                 this.setVideoStatus(VS_CONVERSION_FAILED);
                 this.deleteFile(this.destinationAudioPath());
@@ -165,6 +160,7 @@ export default class YoutubeVideo {
 
             callback(success);
         });
+        
         this.setActiveProcess(process, PR_FFMPEG);
     }
 
@@ -176,19 +172,13 @@ export default class YoutubeVideo {
 
         this.setVideoStatus(VS_CUTTING);
 
-        let pathToFFmpeg = path.join(path.dirname(window.require.main.filename), 'dist/FFmpeg/bin/ffmpeg.exe');
-
         let cuttingVideo = !this.shouldConvertAudio();
         let mediaPath = cuttingVideo ? this.destinationVideoPath() : this.destinationAudioPath();
         let renamedMediaPath = mediaPath.slice(0, mediaPath.lastIndexOf('\\') + 1) + "~" + mediaPath.slice(mediaPath.lastIndexOf('\\') + 1);
 
         this.fileAccess.rename(mediaPath, renamedMediaPath);
 
-        let args = [
-            "-i", renamedMediaPath, "-ss", this.startTime, "-t", this.newEndTime, mediaPath
-        ];
-
-        let process = this.processStarter.start(pathToFFmpeg, args, (success) => {
+        let process = this.ffmpeg.cutVideo(renamedMediaPath, mediaPath, this.startTime, this.newEndTime, (success) => {
             if(!success) {
                 this.setVideoStatus(VS_CUTTING_FAILED);
                 this.deleteFile(mediaPath);
@@ -198,6 +188,7 @@ export default class YoutubeVideo {
 
             callback(success);
         });
+
         this.setActiveProcess(process, PR_FFMPEG);
     }
 
