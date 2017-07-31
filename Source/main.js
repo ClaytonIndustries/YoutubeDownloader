@@ -1,7 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const url = require('url');
-const fs = require('fs');
 
 require('electron-reload')(__dirname);
 
@@ -12,9 +11,9 @@ let win
 function createWindow() {
     // Create the browser window.
     const winWidth = 800;
-    const winHeight = 665;
+    const winHeight = 700;
 
-    win = new BrowserWindow({ width: winWidth, height: winHeight, useContentSize: true, icon: './images/YoutubeIcon.png' })
+    win = new BrowserWindow({ width: winWidth, height: winHeight, useContentSize: false, icon: './images/YoutubeIcon.png' })
 
     // and load the index.html of the app.
     win.loadURL(url.format({
