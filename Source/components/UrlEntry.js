@@ -6,10 +6,7 @@ import Button from 'material-ui/Button';
 import Input from 'material-ui/Input/Input';
 import { LinearProgress } from 'material-ui/Progress';
 import Typography from 'material-ui/Typography';
-import Checkbox from 'material-ui/Checkbox';
-import { FormGroup, FormControlLabel } from 'material-ui/Form';
 import TextField from 'material-ui/TextField';
-import Menu, { MenuItem } from 'material-ui/Menu';
 import Avatar from 'material-ui/Avatar';
 
 import Slider from 'rc-slider';
