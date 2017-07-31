@@ -24,7 +24,6 @@ import blue from 'material-ui/colors/blue';
 
 import ActionMenu from './ActionMenu';
 import WarningDialog from './WarningDialog';
-import NumericTextField from './NumericTextField';
 
 import YoutubeUrlParser from '../models/YoutubeUrlParser';
 import AudioFormats from '../models/AudioFormats';
