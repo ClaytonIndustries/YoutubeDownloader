@@ -12,12 +12,15 @@ import TextField from 'material-ui/TextField';
 import Menu, { MenuItem } from 'material-ui/Menu';
 import Avatar from 'material-ui/Avatar';
 
+import Slider from 'rc-slider';
+
 import CheckIcon from 'material-ui-icons/Check';
 import CrossIcon from 'material-ui-icons/Close';
 
 import green from 'material-ui/colors/green';
 import red from 'material-ui/colors/red';
 import grey from 'material-ui/colors/grey';
+import blue from 'material-ui/colors/blue';
 
 import ActionMenu from './ActionMenu';
 import WarningDialog from './WarningDialog';
@@ -32,6 +35,9 @@ import FileAccess from '../models/FileAccess';
 import { VS_PENDING } from '../models/Constants';
 
 const { dialog, getCurrentWindow } = window.require('electron').remote;
+
+const createSliderWithTooltip = Slider.createSliderWithTooltip;
+const Range = createSliderWithTooltip(Slider.Range);
 
 export default class UrlEntry extends React.Component {
     constructor(props) {
@@ -53,8 +59,8 @@ export default class UrlEntry extends React.Component {
             selectedAudioFormat: AudioFormats.getAllowedFormats()[0],
             saveTo: this.fileAccess.getPath("documents"),
             renameTo: "",
-            startTime: "0",
-            endTime: "0",
+            startTime: 0,
+            endTime: 0,
             maxVideoLength: 0,
             videoId: "",
             gettingVideo: false,
@@ -118,8 +124,8 @@ export default class UrlEntry extends React.Component {
                             videoQualities: result.videoQualities,
                             selectedVideoQuality: result.videoQualities[0],
                             renameTo: result.title,
-                            endTime: result.videoLength.toString(),
-                            maxVideoLength: result.videoLength,
+                            endTime: Number(result.videoLength),
+                            maxVideoLength: Number(result.videoLength),
                             videoId: result.id
                         }, () => {
                             if(this.props.settings.automaticallyDownload) {
@@ -149,40 +155,17 @@ export default class UrlEntry extends React.Component {
         }
     }
 
-    validateStartAndEndTime(value, field) {
-        let valueAsNumber = Number(value);
-        if(field === "start") {
-            let endTime = Number(this.state.endTime);
+    timeChanged(values) {
+        this.setState({
+            startTime: values[0],
+            endTime: values[1]
+        });
+    }
 
-            if(valueAsNumber > this.state.maxVideoLength) {
-                valueAsNumber = this.state.maxVideoLength;
-            }
-            
-            if(endTime < valueAsNumber) {
-                endTime = valueAsNumber;
-            }
-
-            this.setState({
-                startTime: valueAsNumber.toString(),
-                endTime: endTime.toString()
-            });
-        }
-        else {
-            let startTime = Number(this.state.startTime);
-
-            if(valueAsNumber > this.state.maxVideoLength) {
-                valueAsNumber = this.state.maxVideoLength;
-            }
-
-            if(startTime > valueAsNumber) {
-                startTime = valueAsNumber;
-            }
-
-            this.setState({
-                endTime: valueAsNumber.toString(),
-                startTime: startTime.toString()
-            });
-        }
+    formatTime(value) {
+        let minutes = Math.floor(value / 60);
+        let seconds = value % 60;
+        return minutes + ":" + (seconds >= 10 ? seconds : "0" + seconds);
     }
 
     download() {
@@ -219,8 +202,8 @@ export default class UrlEntry extends React.Component {
             selectedVideoQuality: null,
             videoQualities: [],
             renameTo: "",
-            startTime: "0",
-            endTime: "0",
+            startTime: 0,
+            endTime: 0,
             maxVideoLength: 0,
             videoId: "",
             searchStatus: "pending"   
@@ -330,13 +313,10 @@ export default class UrlEntry extends React.Component {
                     </div>
                 </div>
                 <div style={styleSheet.topSpacing}>
-                    <Typography type="subheading">Modify start / end time (enter time in seconds)</Typography>
-                    <div style={styleSheet.row}>
-                        <NumericTextField label={"Start Time"} disabled={this.noVideo()} style={styleSheet.leftItem} 
-                            value={this.state.startTime} onChange={(value) => {this.validateStartAndEndTime(value, "start")}}  />
-                        <NumericTextField label={"End Time"} disabled={this.noVideo()} style={styleSheet.rightItem}
-                            value={this.state.endTime} onChange={(value) => {this.validateStartAndEndTime(value, "end")}}  />
-                    </div>
+                    <Typography type="subheading">Modify start / end time</Typography>
+                    <Range min={0} max={this.state.maxVideoLength} value={[this.state.startTime, this.state.endTime]} style={styleSheet.slider} 
+                        tipFormatter={value => this.formatTime(value)} allowCross={false} disabled={this.noVideo()} trackStyle={[styleSheet.track]}
+                        railStyle={styleSheet.rail} onChange={(values) => {this.timeChanged(values)}} />
                 </div>
                 <div style={styleSheet.topSpacing}>
                     <Button raised dense disabled={this.noVideo()} color="primary" style={styleSheet.downloadButton} 
@@ -380,6 +360,17 @@ export default class UrlEntry extends React.Component {
                 width: '100%',
                 marginTop: 30,
                 height: 40
+            },
+            slider: {
+                marginTop: 15,
+                marginLeft: 5,
+                width: '99%'
+            },
+            track: {
+                background: blue[400]
+            },
+            rail: {
+                background: blue[200]
             }
         };
     }
