@@ -1,17 +1,30 @@
 import SignatureDecryptor from './SignatureDecryptor';
-import { URL_PARSE, AUTH_CODE } from './Constants';
+import { URL_QUALITY, AUTH_CODE } from './Constants';
 
 import Moment from 'moment';
 
 export default class YoutubeUrlParser {
     constructor() {
         this.signatureDecryptor = new SignatureDecryptor();
+        this.videoQualities = [];
     }
 
     // clean filename
 
     parse(youtubeUrl, callback) {
-        this.downloadWebpage(youtubeUrl, callback);
+        if(!this.videoQualities || this.videoQualities.length == 0){
+            this.downloadQualities((success) => {
+                if(success) {
+                    this.downloadWebpage(youtubeUrl, callback);
+                }
+                else {
+                    callback(false, null);
+                }
+            });
+        }
+        else {
+            this.downloadWebpage(youtubeUrl, callback);
+        }
     }
 
     downloadWebpage(youtubeUrl, callback) {
@@ -27,7 +40,7 @@ export default class YoutubeUrlParser {
                         return;
                     }
 
-                    if(this.isSignatureEncrypted(webpageData.adaptiveFmtSection)) {
+                    if(this.isSignatureEncrypted(webpageData.adaptiveFmtSection) && !this.signatureDecryptor.isDecrypted()) {
                         this.downloadPlayer(webpageData, callback);
                     }
                     else {
@@ -48,30 +61,47 @@ export default class YoutubeUrlParser {
     }
 
     downloadPlayer(webpageData, callback) {
-        if(this.signatureDecryptor.isDecrypted()) {
-            this.extractQualities(webpageData, callback);
-        }
-        else {
-            let httpRequest = new XMLHttpRequest();
-            httpRequest.onload = () => {
-                if(httpRequest.status == 200) {
-                    try {
-                        let player = httpRequest.responseText;
-                        this.signatureDecryptor.getCryptoFunctions(player);
-                        this.extractQualities(webpageData, callback);
-                    }
-                    catch(e) {
-                        callback();
-                    }
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.onload = () => {
+            if(httpRequest.status == 200) {
+                try {
+                    let player = httpRequest.responseText;
+                    this.signatureDecryptor.getCryptoFunctions(player);
+                    this.extractQualities(webpageData, callback);
                 }
-                else {
+                catch(e) {
                     callback();
                 }
-            };
-            httpRequest.onerror = () => callback();
-            httpRequest.open("GET", webpageData.playerUrl, true);
-            httpRequest.send();
-        }
+            }
+            else {
+                callback();
+            }
+        };
+        httpRequest.onerror = () => callback();
+        httpRequest.open("GET", webpageData.playerUrl, true);
+        httpRequest.send();
+    }
+
+    downloadQualities(callback) {
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.onload = () => {
+            if(httpRequest.status == 200) {
+                try {
+                    this.videoQualities = JSON.parse(httpRequest.responseText);
+                    callback(true);
+                }
+                catch(e) {
+                    callback(false);
+                }
+            }
+            else {
+                callback(false);
+            }
+        };
+        httpRequest.onerror = () => callback(false);
+        httpRequest.open("GET", URL_QUALITY, true);
+        httpRequest.setRequestHeader("Authorization", AUTH_CODE);
+        httpRequest.send();
     }
 
     extractQualities(webpageData, callback) {
@@ -209,15 +239,22 @@ export default class YoutubeUrlParser {
     createVideoQuality(downloadUrl, qualities) {
         let itag = new RegExp("itag=(\\d+)").exec(downloadUrl)[1];
 
-        let description = "";
+        let videoQuality = null;
 
-        if(itag && !this.qualityAlreadyExists(qualities, description)) {
+        for(let i = 0; i < this.videoQualities.length; i++) {
+            if(itag === this.videoQualities[i].itag) {
+                videoQuality = this.videoQualities[i];
+                break;
+            }
+        }
+
+        if(videoQuality && !this.qualityAlreadyExists(qualities, videoQuality.description)) {
             return {
                 downloadUrl: downloadUrl,
-                extension: "",
-                type: "",
-                description: description,
-                uiSortOrder: ""
+                extension: videoQuality.extension,
+                type: videoQuality.type,
+                description: videoQuality.description,
+                uiSortOrder: videoQuality.uiSortOrder
             };
         }
 
