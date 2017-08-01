@@ -7,19 +7,13 @@ export default class SignatureDecryptor {
 
     getCryptoFunctions(player) {
         if(this.isDecrypted()) {
-            return {
-                cryptoClassFunctionCalls: this.cryptoClassFunctionCalls,
-                mappedCryptoFunctions: this.mappedCryptoFunctions
-            };
+            return true;
         }
 
         this.cryptoClassFunctionCalls = this.getCryptoClassFunctionCallsFromCryptoFunction(player);
         this.mappedCryptoFunctions = this.getCrytoClassFunctions(player, this.cryptoClassFunctionCalls[0]);
 
-        return {
-            cryptoClassFunctionCalls: this.cryptoClassFunctionCalls,
-            mappedCryptoFunctions: this.mappedCryptoFunctions
-        }; 
+        return this.isDecrypted();
     }
 
     isDecrypted() {
@@ -73,5 +67,64 @@ export default class SignatureDecryptor {
 		}
 
 		return functions;
+    }
+
+    decrypt(signature) {
+		if(!signature || signature.length == 0) {
+			return '';
+		}
+
+        let decryptedSignature = signature;
+        
+        this.cryptoClassFunctionCalls.forEach((cryptoClassFunctionCall) => {
+            for(let i = 0; i < this.mappedCryptoFunctions.length; i++) {
+				if(cryptoClassFunctionCall.includes(this.mappedCryptoFunctions[i].func)) {
+                    decryptedSignature = this.executeCryptoFunction(cryptoClassFunctionCall.substr(cryptoClassFunctionCall.indexOf(this.mappedCryptoFunctions[i].func)), 
+                        this.mappedCryptoFunctions[i].action, decryptedSignature);
+					break;
+				}
+			}
+        });
+
+		return decryptedSignature;
+	}
+
+	executeCryptoFunction(args, action, signature) {
+        let items = new RegExp(",(.*?)\\)").exec(args);
+
+        let arg = 0;
+
+        if(items && items.length >= 2) {
+            arg = items[1];
+        }
+
+		switch(action) {
+			case 'splice':
+				return this.splice(signature, arg);
+			case 'reverse':
+				return this.reverse(signature);
+			case 'swap':
+				return this.swap(signature, arg);
+		}
+
+		return signature;
+	}
+
+    splice(a, b) {
+        return a.substr(b);
+    }
+
+    reverse(a) {
+        return a.split('').reverse().join('');
+    }
+
+    swap(a, b) {
+        let charArray = a.split('');
+
+        let c = charArray[0];
+        charArray[0] = charArray[b % charArray.length];
+        charArray[b] = c;
+
+        return charArray.join('');
     }
 }

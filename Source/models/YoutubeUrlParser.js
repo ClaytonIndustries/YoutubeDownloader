@@ -1,10 +1,14 @@
 import SignatureDecryptor from './SignatureDecryptor';
 import { URL_PARSE, AUTH_CODE } from './Constants';
 
+import Moment from 'moment';
+
 export default class YoutubeUrlParser {
     constructor() {
         this.signatureDecryptor = new SignatureDecryptor();
     }
+
+    // clean filename
 
     parse(youtubeUrl, callback) {
         this.downloadWebpage(youtubeUrl, callback);
@@ -27,7 +31,7 @@ export default class YoutubeUrlParser {
                         this.downloadPlayer(webpageData, callback);
                     }
                     else {
-                        this.downloadQualities(webpageData, null, callback);
+                        this.extractQualities(webpageData, callback);
                     }
                 }
                 catch(e) {
@@ -45,7 +49,7 @@ export default class YoutubeUrlParser {
 
     downloadPlayer(webpageData, callback) {
         if(this.signatureDecryptor.isDecrypted()) {
-            this.downloadQualities(webpageData, this.signatureDecryptor.getCryptoFunctions(null), callback);
+            this.extractQualities(webpageData, callback);
         }
         else {
             let httpRequest = new XMLHttpRequest();
@@ -53,8 +57,8 @@ export default class YoutubeUrlParser {
                 if(httpRequest.status == 200) {
                     try {
                         let player = httpRequest.responseText;
-                        let crypto = this.signatureDecryptor.getCryptoFunctions(player);
-                        this.downloadQualities(webpageData, crypto, callback);
+                        this.signatureDecryptor.getCryptoFunctions(player);
+                        this.extractQualities(webpageData, callback);
                     }
                     catch(e) {
                         callback();
@@ -70,33 +74,160 @@ export default class YoutubeUrlParser {
         }
     }
 
-    downloadQualities(webpageData, crypto, callback) {
-        let httpRequest = new XMLHttpRequest();
-        httpRequest.onload = () => {
-            if(httpRequest.status == 200) {
-                try {
-                    let response = JSON.parse(httpRequest.responseText);
-                    callback(true, response);
-                }
-                catch(e) {
-                    callback(false, null);
-                }
+    extractQualities(webpageData, callback) {
+        let videoQualities = this.processSections(webpageData.fmtStreamMapSection, webpageData.adaptiveFmtSection);
+        let videoLength = 0;
+        let videoId = webpageData.videoId + Moment().format("x");
+
+        for(let i = 0; i < videoQualities.length; i++) {
+            if(videoLength <= 0) {
+                videoLength = this.extractVideoDuration(videoQualities[i].downloadUrl);
             }
             else {
-                callback(false, null);
+                break;
+            }  
+        }
+
+        videoQualities.sort((a, b) => {
+            if(a.type == 'Audio' && b.type == 'Video') {
+                return -1;
             }
-        };
-        httpRequest.onerror = () => callback();
-        httpRequest.open("POST", URL_PARSE, true);
-        httpRequest.setRequestHeader("Authorization", AUTH_CODE);
-        httpRequest.setRequestHeader("Content-type", "application/json");
-        httpRequest.send(JSON.stringify({
+            else if(a.type == 'Video' && b.type == 'Audio') {
+                return 1;
+            }
+            else if(a.type == b.type) {
+                return (a.uiSortOrder > b.uiSortOrder) ? -1 : 1;
+            }
+            else {
+                return 0;
+            }
+        });
+
+        callback(true, { 
             title: webpageData.title,
-            fmtStreamMapSection: webpageData.fmtStreamMapSection,
-            adaptiveFmtSection: webpageData.adaptiveFmtSection,
-            videoId: webpageData.videoId,
-            crypto: crypto
-        }));
+            videoQualities: videoQualities,
+            videoLength: videoLength,
+            id: videoId
+        });
+    }
+
+    extractVideoDuration(videoLink) {
+        let matches = new RegExp("dur=([0-9]+)").exec(videoLink);
+
+        let duration = 0;
+
+        if(matches && matches.length >= 2) {
+            duration = matches[1];
+        }
+
+        return duration;
+    }
+
+    processSections(fmtStreamMapSection, adaptiveFmtSection) {
+        let qualities = [];
+
+        try {
+            if(this.isSignatureEncrypted(fmtStreamMapSection)) {
+                qualities = this.processSectionWithEncryption(fmtStreamMapSection, qualities);
+                qualities = this.processSectionWithEncryption(adaptiveFmtSection, qualities);
+            }
+            else {
+                qualities = this.processSectionWithNoEncryption(fmtStreamMapSection, qualities);
+                qualities = this.processSectionWithNoEncryption(adaptiveFmtSection, qualities);
+            }
+        }
+        catch(e) {
+        }
+
+        return qualities;
+    }
+
+    processSectionWithEncryption(section, qualities) {
+        section = section.replace(/codecs=\"[\s\S]*?\"/g, "");
+
+        let regex = /(?=^|,[^+])[\s\S]*?(?:itag=)[\s\S]*?(?=,[^+]|$)/g;
+        let matches = [];
+        let currentMatch;
+
+        while(currentMatch = regex.exec(section)) {
+            matches.push(currentMatch[0]);
+        }
+
+        matches.forEach((match) => {
+            try {
+                let url = match;
+
+                let signatureItems = new RegExp("(?:^|,|\\\\u0026|\\{u0026})s=([\\s\\S]+?(?=\\\\|\\|\"|,|\\z))").exec(url);
+
+                let signature = this.signatureDecryptor.decrypt(signatureItems[1]);
+
+                if(signature && signature.length > 0) {
+                    let quality = this.createVideoQuality(url, qualities);
+
+                    if(quality) {
+                        url = url.substr(url.indexOf("url") + 4);
+
+                        if(url.includes("\\")) {
+                            url = url.substr(0, url.indexOf("\\"));
+                        }
+
+                        quality.downloadUrl = url + "&signature=" + signature;
+
+                        qualities.push(quality);
+                    }
+                }
+            }
+            catch(e) {
+            }
+        });
+
+        return qualities;
+    }
+
+    processSectionWithNoEncryption(section, qualities) {
+        let matches = new RegExp("url=([\\s\\S]*?)\\\\", "g").exec(section);
+
+        if(matches) {
+            matches.forEach((match) => {
+                try {
+                    let videoLink = new RegExp("^[^,]*").exec(match[1])[0];
+
+                    let quality = this.createVideoQuality(videoLink, qualities);
+
+                    if(quality) {
+                        qualities.push(quality);
+                    }
+                }
+                catch(e) {
+                }
+            });
+        }
+
+        return qualities;
+    }
+
+    createVideoQuality(downloadUrl, qualities) {
+        let itag = new RegExp("itag=(\\d+)").exec(downloadUrl)[1];
+
+        let description = "";
+
+        if(itag && !this.qualityAlreadyExists(qualities, description)) {
+            return {
+                downloadUrl: downloadUrl,
+                extension: "",
+                type: "",
+                description: description,
+                uiSortOrder: ""
+            };
+        }
+
+        return undefined;
+    }
+
+    qualityAlreadyExists(qualities, description) {
+        return qualities.some((quality) => {
+            return quality.description === description;
+        });
     }
 
     isSignatureEncrypted(fmtStreamMapSection) {
