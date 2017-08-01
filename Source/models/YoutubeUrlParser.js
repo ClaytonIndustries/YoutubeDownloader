@@ -44,14 +44,30 @@ export default class YoutubeUrlParser {
     }
 
     downloadPlayer(webpageData, callback) {
-        this.signatureDecryptor.getCryptoFunctions(webpageData.playerUrl, (crypto) => {
-            if(crypto) {
-                this.downloadQualities(webpageData, crypto, callback);
-            }   
-            else {
-                callback(false, null);
-            } 
-        })
+        if(this.signatureDecryptor.isDecrypted()) {
+            this.downloadQualities(webpageData, this.signatureDecryptor.getCryptoFunctions(null), callback);
+        }
+        else {
+            let httpRequest = new XMLHttpRequest();
+            httpRequest.onload = () => {
+                if(httpRequest.status == 200) {
+                    try {
+                        let player = httpRequest.responseText;
+                        let crypto = this.signatureDecryptor.getCryptoFunctions(player);
+                        this.downloadQualities(webpageData, crypto, callback);
+                    }
+                    catch(e) {
+                        callback();
+                    }
+                }
+                else {
+                    callback();
+                }
+            };
+            httpRequest.onerror = () => callback();
+            httpRequest.open("GET", webpageData.playerUrl, true);
+            httpRequest.send();
+        }
     }
 
     downloadQualities(webpageData, crypto, callback) {

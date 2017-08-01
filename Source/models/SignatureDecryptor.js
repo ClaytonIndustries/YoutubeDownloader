@@ -5,48 +5,25 @@ export default class SignatureDecryptor {
         this.mappedCryptoFunctions;
     }
 
-    getCryptoFunctions(playerUrl, callback) {
+    getCryptoFunctions(player) {
         if(this.isDecrypted()) {
-            callback({
-                cryptoClassFunctionCalls: this.downloadPlayercryptoClassFunctionCalls,
+            return {
+                cryptoClassFunctionCalls: this.cryptoClassFunctionCalls,
                 mappedCryptoFunctions: this.mappedCryptoFunctions
-            });
-            return;
+            };
         }
 
-        this.downloadPlayer(playerUrl, callback, this);
+        this.cryptoClassFunctionCalls = this.getCryptoClassFunctionCallsFromCryptoFunction(player);
+        this.mappedCryptoFunctions = this.getCrytoClassFunctions(player, this.cryptoClassFunctionCalls[0]);
+
+        return {
+            cryptoClassFunctionCalls: this.cryptoClassFunctionCalls,
+            mappedCryptoFunctions: this.mappedCryptoFunctions
+        }; 
     }
 
     isDecrypted() {
         return this.mappedCryptoFunctions && this.mappedCryptoFunctions.length > 0;
-    }
-
-    downloadPlayer(playerUrl, callback, signatureDecryptor) {
-        let httpRequest = new XMLHttpRequest();
-        httpRequest.onload = () => {
-            if(httpRequest.status == 200) {
-                try {
-                    let player = httpRequest.responseText;
-
-                    signatureDecryptor.cryptoClassFunctionCalls = this.getCryptoClassFunctionCallsFromCryptoFunction(player);
-                    signatureDecryptor.mappedCryptoFunctions = this.getCrytoClassFunctions(player, this.cryptoClassFunctionCalls[0]);
-
-                    callback({
-                        cryptoClassFunctionCalls: signatureDecryptor.cryptoClassFunctionCalls,
-                        mappedCryptoFunctions: signatureDecryptor.mappedCryptoFunctions
-                    });
-                }
-                catch(e) {
-                    callback();
-                }
-            }
-            else {
-                callback();
-            }
-        };
-        httpRequest.onerror = () => callback();
-        httpRequest.open("GET", playerUrl, true);
-        httpRequest.send();
     }
 
     getCryptoClassFunctionCallsFromCryptoFunction(webpage) {       

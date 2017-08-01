@@ -22,7 +22,6 @@ import blue from 'material-ui/colors/blue';
 import ActionMenu from './ActionMenu';
 import WarningDialog from './WarningDialog';
 
-import YoutubeUrlParser from '../models/YoutubeUrlParser';
 import AudioFormats from '../models/AudioFormats';
 import VideoValidator from '../models/VideoValidator';
 import YoutubeVideo from '../models/YoutubeVideo';
@@ -39,7 +38,6 @@ export default class UrlEntry extends React.Component {
     constructor(props) {
         super(props);
 
-        this.youtubeUrlParser = new YoutubeUrlParser();
         this.videoValidator = new VideoValidator();
         this.clipboardManager = new ClipboardManager();
         this.fileAccess = new FileAccess();
@@ -114,7 +112,7 @@ export default class UrlEntry extends React.Component {
             this.setState({
                 gettingVideo: true
             }, () => {
-                this.youtubeUrlParser.parse(this.state.youtubeUrl, (success, result) => {
+                this.props.youtubeUrlParser.parse(this.state.youtubeUrl, (success, result) => {
                     if(success && result.videoQualities && result.videoQualities.length > 0) {
                         this.setState({
                             videoQualities: result.videoQualities,
@@ -374,6 +372,7 @@ export default class UrlEntry extends React.Component {
 
 UrlEntry.propTypes = {
     settings: PropTypes.object.isRequired,
+    youtubeUrlParser: PropTypes.object.isRequired,
     lastState: PropTypes.object,
     onDownload: PropTypes.func.isRequired,
     onSaveState: PropTypes.func.isRequired

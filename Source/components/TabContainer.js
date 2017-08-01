@@ -8,6 +8,8 @@ import Tabs, { Tab } from 'material-ui/Tabs';
 import UrlEntry from './UrlEntry';
 import ActivityList from './ActivityList';
 
+import YoutubeUrlParser from '../models/YoutubeUrlParser';
+
 export default class TabContainer extends React.Component {
     constructor(props) {
         super(props);
@@ -16,6 +18,7 @@ export default class TabContainer extends React.Component {
             videos: [],
             lastUrlEntryState: null
         };
+        this.youtubeUrlParser = new YoutubeUrlParser();
     }
 
     handleTabChange(event, index) {
@@ -56,7 +59,7 @@ export default class TabContainer extends React.Component {
                 </AppBar>
                 <div style={styleSheet.childContainer}>
                     {this.state.selectedTabIndex == 0 &&
-                        <UrlEntry settings={this.props.settings} lastState={this.state.lastUrlEntryState} 
+                        <UrlEntry settings={this.props.settings} youtubeUrlParser={this.youtubeUrlParser} lastState={this.state.lastUrlEntryState} 
                             onDownload={(video) => {this.startDownload(video)}} onSaveState={(savedState) => {this.setState({lastUrlEntryState: savedState})}} />
                     }
                     {this.state.selectedTabIndex == 1 &&
