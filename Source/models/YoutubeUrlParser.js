@@ -1,6 +1,11 @@
+import SignatureDecryptor from './SignatureDecryptor';
 import { URL_PARSE, AUTH_CODE } from './Constants';
 
 export default class YoutubeUrlParser {
+    constructor() {
+        this.signatureDecryptor = new SignatureDecryptor();
+    }
+
     parse(youtubeUrl, callback) {
         this.downloadWebpage(youtubeUrl, callback);
     }
@@ -39,33 +44,14 @@ export default class YoutubeUrlParser {
     }
 
     downloadPlayer(webpageData, callback) {
-        let httpRequest = new XMLHttpRequest();
-        httpRequest.onload = () => {
-            if(httpRequest.status == 200) {
-                try {
-                    let player = httpRequest.responseText;
-
-                    let cryptoClassFunctionCalls = this.getCryptoClassFunctionCallsFromCryptoFunction(player);
-                    let mappedCryptoFunctions = this.getCrytoClassFunctions(player, cryptoClassFunctionCalls[0]);
-
-                    let crypto = {
-                        cryptoClassFunctionCalls: cryptoClassFunctionCalls,
-                        mappedCryptoFunctions: mappedCryptoFunctions
-                    };
-
-                    this.downloadQualities(webpageData, crypto, callback);
-                }
-                catch(e) {
-                    callback(false, null);
-                }
-            }
+        this.signatureDecryptor.getCryptoFunctions(webpageData.playerUrl, (crypto) => {
+            if(crypto) {
+                this.downloadQualities(webpageData, crypto, callback);
+            }   
             else {
                 callback(false, null);
-            }
-        };
-        httpRequest.onerror = () => callback();
-        httpRequest.open("GET", webpageData.playerUrl, true);
-        httpRequest.send();
+            } 
+        })
     }
 
     downloadQualities(webpageData, crypto, callback) {
@@ -101,62 +87,13 @@ export default class YoutubeUrlParser {
         return !new RegExp("signature=").test(fmtStreamMapSection);
     }
 
-    getCryptoClassFunctionCallsFromCryptoFunction(webpage) {       
-        let functionBody = new RegExp("{([a-z]=[a-z]\\.split\\(\"\"\\).*?;return [a-z]\\.join\\(\"\"\\))}").exec(webpage)[1];
-
-		let cryptoFunctionNames = functionBody.split(";");
-
-		for(let i = 0; i < cryptoFunctionNames.length; i++) {
-			cryptoFunctionNames[i] = cryptoFunctionNames[i].replace("\n", "");
-		}
-
-		cryptoFunctionNames.shift();
-		cryptoFunctionNames.pop();
-
-		return cryptoFunctionNames;
-	}
-
-	getCrytoClassFunctions(webpage, anyCryptoClassFunctionCall) {
-        let cryptoClassName = new RegExp(".+\\.").exec(anyCryptoClassFunctionCall)[0];
-
-		cryptoClassName = cryptoClassName.replace('.', '');
-
-		let cryptoClass = new RegExp("var " + cryptoClassName + "={([\\s\\S]*?)};").exec(webpage)[1];
-
-		let cryptoClassFunctions = cryptoClass.split("},");
-
-		for(let i = 0; i < cryptoClassFunctions.length; i++) {
-			cryptoClassFunctions[i] = cryptoClassFunctions[i].replace("\n", "");
-		}
-
-		return this.mapCryptoClassFunctionsToOperations(cryptoClassFunctions);
-	}
-
-	mapCryptoClassFunctionsToOperations(cryptoClassFunctions) {
-        let functions = [];
-        
-        for(let i = 0; i < cryptoClassFunctions.length; i++) {
-            if(cryptoClassFunctions[i].includes('splice')) {
-				functions.push({func: cryptoClassFunctions[i].substr(0, 2), action: 'splice'});
-			}
-			else if(cryptoClassFunctions[i].includes('reverse')) {
-				functions.push({func: cryptoClassFunctions[i].substr(0, 2), action: 'reverse'});
-			}
-			else {
-				functions.push({func: cryptoClassFunctions[i].substr(0, 2), action: 'swap'});
-			}
-		}
-
-		return functions;
-    }
-    
     extractWebpageData(webpage, youtubeUrl) {
         try {
             return {
                 title: this.extractTitle(webpage),
                 fmtStreamMapSection: this.extractAdaptiveFmtSection(webpage),
                 adaptiveFmtSection: this.extractFmtStreamMapSection(webpage),
-                playerUrl: this.extractplayerUrl(webpage),
+                playerUrl: this.extractPlayerUrl(webpage),
                 videoId: new RegExp("v=(.*)").exec(youtubeUrl)[1]
             };
         }
@@ -177,7 +114,7 @@ export default class YoutubeUrlParser {
         return decodeURIComponent(new RegExp("\"adaptive_fmts\":\"([\\s\\S]*?)\",").exec(webpage)[1]);
     }
 
-    extractplayerUrl(webpage) {
+    extractPlayerUrl(webpage) {
         let playerUrl = new RegExp("\"js\":(.*?).js\"").exec(webpage)[0];
         playerUrl = playerUrl.replace(/"/g, "");
         playerUrl = playerUrl.replace(/\\/g, "");
