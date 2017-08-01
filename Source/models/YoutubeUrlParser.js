@@ -2,39 +2,35 @@ import { URL_PARSE, AUTH_CODE } from './Constants';
 
 export default class YoutubeUrlParser {
     parse(youtubeUrl, callback) {
-        this.downloadWebpage(youtubeUrl, (webpage) => {
-            if(webpage) {
-                let webpageData = this.extractWebpageData(webpage, youtubeUrl);
-                this.downloadPlayer(webpageData.playerUrl, (crypto) => {
-                    if(crypto) {
-                        this.downloadQualities(webpageData, crypto, (urls) => {
-                            if(urls) {
-                                callback(true, urls);
-                            }
-                            else {
-                                callback(false, null);
-                            }
-                        });
-                    }
-                    else {
-                        callback(false, null);
-                    }
-                });
-            }
-            else {
-                callback(false, null);
-            }
-        });
+        this.downloadWebpage(youtubeUrl, callback);
     }
 
     downloadWebpage(youtubeUrl, callback) {
         let httpRequest = new XMLHttpRequest();
         httpRequest.onload = () => {
             if(httpRequest.status == 200) {
-                callback(httpRequest.responseText);
+                try {
+                    let webpage = httpRequest.responseText;
+                    let webpageData = this.extractWebpageData(webpage, youtubeUrl);
+
+                    if(!webpageData) {
+                        callback(false, null);
+                        return;
+                    }
+
+                    if(this.isSignatureEncrypted(webpageData.adaptiveFmtSection)) {
+                        this.downloadPlayer(webpageData, callback);
+                    }
+                    else {
+                        this.downloadQualities(webpageData, null, callback);
+                    }
+                }
+                catch(e) {
+                    callback(false, null);       
+                }
             }
             else {
-                callback();
+                callback(false, null);
             }
         };
         httpRequest.onerror = () => callback();
@@ -42,33 +38,33 @@ export default class YoutubeUrlParser {
         httpRequest.send();
     }
 
-    downloadPlayer(playerUrl, callback) {
+    downloadPlayer(webpageData, callback) {
         let httpRequest = new XMLHttpRequest();
         httpRequest.onload = () => {
             if(httpRequest.status == 200) {
                 try {
-                    let webpage = httpRequest.responseText;
+                    let player = httpRequest.responseText;
 
-                    let cryptoClassFunctionCalls = this.getCryptoClassFunctionCallsFromCryptoFunction(webpage);
-                    let mappedCryptoFunctions = this.getCrytoClassFunctions(webpage, cryptoClassFunctionCalls[0]);
+                    let cryptoClassFunctionCalls = this.getCryptoClassFunctionCallsFromCryptoFunction(player);
+                    let mappedCryptoFunctions = this.getCrytoClassFunctions(player, cryptoClassFunctionCalls[0]);
 
                     let crypto = {
                         cryptoClassFunctionCalls: cryptoClassFunctionCalls,
                         mappedCryptoFunctions: mappedCryptoFunctions
                     };
 
-                    callback(crypto);
+                    this.downloadQualities(webpageData, crypto, callback);
                 }
                 catch(e) {
-                    callback();
+                    callback(false, null);
                 }
             }
             else {
-                callback();
+                callback(false, null);
             }
         };
         httpRequest.onerror = () => callback();
-        httpRequest.open("GET", playerUrl, true);
+        httpRequest.open("GET", webpageData.playerUrl, true);
         httpRequest.send();
     }
 
@@ -78,15 +74,14 @@ export default class YoutubeUrlParser {
             if(httpRequest.status == 200) {
                 try {
                     let response = JSON.parse(httpRequest.responseText);
-                    callback(response);
+                    callback(true, response);
                 }
                 catch(e) {
-                    callback();
+                    callback(false, null);
                 }
-
             }
             else {
-                callback();
+                callback(false, null);
             }
         };
         httpRequest.onerror = () => callback();
@@ -100,6 +95,10 @@ export default class YoutubeUrlParser {
             videoId: webpageData.videoId,
             crypto: crypto
         }));
+    }
+
+    isSignatureEncrypted(fmtStreamMapSection) {
+        return !new RegExp("signature=").test(fmtStreamMapSection);
     }
 
     getCryptoClassFunctionCallsFromCryptoFunction(webpage) {       
