@@ -12,13 +12,13 @@ export default class YoutubeUrlParser {
     }
 
     parse(youtubeUrl, callback) {
-        if(!this.videoQualities || this.videoQualities.length == 0){
+        if(this.noVideoQualities()){
             this.downloadQualities((success) => {
                 if(success) {
                     this.downloadWebpage(youtubeUrl, callback);
                 }
                 else {
-                    callback(false, null);
+                    callback();
                 }
             });
         }
@@ -28,80 +28,95 @@ export default class YoutubeUrlParser {
     }
 
     downloadWebpage(youtubeUrl, callback) {
-        let httpRequest = new XMLHttpRequest();
-        httpRequest.onload = () => {
-            if(httpRequest.status == 200) {
-                try {
-                    let webpage = httpRequest.responseText;
-                    let webpageData = this.extractWebpageData(webpage, youtubeUrl);
+        try {
+            let httpRequest = new XMLHttpRequest();
+            httpRequest.onload = () => {
+                if(httpRequest.status == 200) {
+                    try {
+                        let webpage = httpRequest.responseText;
+                        let webpageData = this.extractWebpageData(webpage, youtubeUrl);
 
-                    if(!webpageData) {
-                        callback(false, null);
-                        return;
-                    }
+                        if(!webpageData) {
+                            callback();
+                            return;
+                        }
 
-                    if(this.isSignatureEncrypted(webpageData.adaptiveFmtSection) && !this.signatureDecryptor.isDecrypted()) {
-                        this.downloadPlayer(webpageData, callback);
+                        if(this.isSignatureEncrypted(webpageData.adaptiveFmtSection) && !this.signatureDecryptor.isDecrypted()) {
+                            this.downloadPlayer(webpageData, callback);
+                        }
+                        else {
+                            this.extractQualities(webpageData, callback);
+                        }
                     }
-                    else {
-                        this.extractQualities(webpageData, callback);
+                    catch(e) {
+                        callback();       
                     }
                 }
-                catch(e) {
-                    callback(false, null);       
+                else {
+                    callback();
                 }
-            }
-            else {
-                callback(false, null);
-            }
-        };
-        httpRequest.onerror = () => callback();
-        httpRequest.open("GET", youtubeUrl, true);
-        httpRequest.send();
+            };
+            httpRequest.onerror = () => callback();
+            httpRequest.open("GET", youtubeUrl, true);
+            httpRequest.send();
+        }
+        catch(e) {
+            callback();
+        }
     }
 
     downloadPlayer(webpageData, callback) {
-        let httpRequest = new XMLHttpRequest();
-        httpRequest.onload = () => {
-            if(httpRequest.status == 200) {
-                try {
-                    let player = httpRequest.responseText;
-                    this.signatureDecryptor.getCryptoFunctions(player);
-                    this.extractQualities(webpageData, callback);
+        try {
+            let httpRequest = new XMLHttpRequest();
+            httpRequest.onload = () => {
+                if(httpRequest.status == 200) {
+                    try {
+                        let player = httpRequest.responseText;
+                        this.signatureDecryptor.getCryptoFunctions(player);
+                        this.extractQualities(webpageData, callback);
+                    }
+                    catch(e) {
+                        callback();
+                    }
                 }
-                catch(e) {
+                else {
                     callback();
                 }
-            }
-            else {
-                callback();
-            }
-        };
-        httpRequest.onerror = () => callback();
-        httpRequest.open("GET", webpageData.playerUrl, true);
-        httpRequest.send();
+            };
+            httpRequest.onerror = () => callback();
+            httpRequest.open("GET", webpageData.playerUrl, true);
+            httpRequest.send();
+        }
+        catch(e) {
+            callback();
+        }
     }
 
     downloadQualities(callback) {
-        let httpRequest = new XMLHttpRequest();
-        httpRequest.onload = () => {
-            if(httpRequest.status == 200) {
-                try {
-                    this.videoQualities = JSON.parse(httpRequest.responseText);
-                    callback(true);
+        try {
+            let httpRequest = new XMLHttpRequest();
+            httpRequest.onload = () => {
+                if(httpRequest.status == 200) {
+                    try {
+                        this.videoQualities = JSON.parse(httpRequest.responseText);
+                        callback(true);
+                    }
+                    catch(e) {
+                        callback(false);
+                    }
                 }
-                catch(e) {
+                else {
                     callback(false);
                 }
-            }
-            else {
-                callback(false);
-            }
-        };
-        httpRequest.onerror = () => callback(false);
-        httpRequest.open("GET", URL_QUALITY, true);
-        httpRequest.setRequestHeader("Authorization", AUTH_CODE);
-        httpRequest.send();
+            };
+            httpRequest.onerror = () => callback(false);
+            httpRequest.open("GET", URL_QUALITY, true);
+            httpRequest.setRequestHeader("Authorization", AUTH_CODE);
+            httpRequest.send();
+        }
+        catch(e) {
+            callback();
+        }
     }
 
     extractQualities(webpageData, callback) {
@@ -133,7 +148,7 @@ export default class YoutubeUrlParser {
             }
         });
 
-        callback(true, { 
+        callback({ 
             title: webpageData.title,
             videoQualities: videoQualities,
             videoLength: videoLength,
@@ -305,5 +320,9 @@ export default class YoutubeUrlParser {
         playerUrl = playerUrl.replace(" ", "");
         playerUrl = playerUrl.replace("js:", "https://www.youtube.com");
         return playerUrl;
+    }
+
+    noVideoQualities() {
+        return !this.videoQualities || this.videoQualities.length === 0;
     }
 }

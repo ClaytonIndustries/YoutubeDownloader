@@ -112,8 +112,8 @@ export default class UrlEntry extends React.Component {
             this.setState({
                 gettingVideo: true
             }, () => {
-                this.props.youtubeUrlParser.parse(this.state.youtubeUrl, (success, result) => {
-                    if(success && result.videoQualities && result.videoQualities.length > 0) {
+                this.props.youtubeUrlParser.parse(this.state.youtubeUrl, (result) => {
+                    if(result && result.videoQualities && result.videoQualities.length > 0) {
                         this.setState({
                             videoQualities: result.videoQualities,
                             selectedVideoQuality: result.videoQualities[0],
@@ -130,7 +130,7 @@ export default class UrlEntry extends React.Component {
 
                     this.setState({
                        gettingVideo: false,
-                       searchStatus: success && result.videoQualities.length > 0 ? "success" : "failed"
+                       searchStatus: result && result.videoQualities && result.videoQualities.length > 0 ? "success" : "failed"
                     });
                 });
             });       
