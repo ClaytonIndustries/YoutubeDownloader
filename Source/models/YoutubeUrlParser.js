@@ -1,3 +1,4 @@
+import FilenameCleaner from './FilenameCleaner';
 import SignatureDecryptor from './SignatureDecryptor';
 import { URL_QUALITY, AUTH_CODE } from './Constants';
 
@@ -5,11 +6,10 @@ import Moment from 'moment';
 
 export default class YoutubeUrlParser {
     constructor() {
+        this.filenameCleaner = new FilenameCleaner();
         this.signatureDecryptor = new SignatureDecryptor();
         this.videoQualities = [];
     }
-
-    // clean filename
 
     parse(youtubeUrl, callback) {
         if(!this.videoQualities || this.videoQualities.length == 0){
@@ -274,7 +274,7 @@ export default class YoutubeUrlParser {
     extractWebpageData(webpage, youtubeUrl) {
         try {
             return {
-                title: this.extractTitle(webpage),
+                title: this.filenameCleaner.clean(this.extractTitle(webpage)),
                 fmtStreamMapSection: this.extractAdaptiveFmtSection(webpage),
                 adaptiveFmtSection: this.extractFmtStreamMapSection(webpage),
                 playerUrl: this.extractPlayerUrl(webpage),
