@@ -51,7 +51,7 @@ export default class YoutubeUrlParser {
                     let webpageData = this.extractWebpageData(webpage, youtubeUrl);
 
                     if(webpageData) {                
-                        if(this.isSignatureEncrypted(webpageData.adaptiveFmtSection) && !this.signatureDecryptor.isDecrypted()) {
+                        if(!this.signatureDecryptor.isDecrypted()) {
                             this.downloadPlayer(webpageData, callback);
                         }
                         else {
@@ -73,9 +73,10 @@ export default class YoutubeUrlParser {
             if(success) {
                 try {
                     let player = response;
-                    this.signatureDecryptor.getCryptoFunctions(player);
-                    this.extractQualities(webpageData, callback);
-                    return;
+                    if(this.signatureDecryptor.getCryptoFunctions(player)) {
+                        this.extractQualities(webpageData, callback);
+                        return;
+                    }
                 }
                 catch(e) {
                 }
@@ -128,10 +129,10 @@ export default class YoutubeUrlParser {
         let duration = 0;
 
         if(matches && matches.length >= 2) {
-            duration = matches[1];
+            duration = Number(matches[1]);
         }
 
-        return duration;
+        return duration == NaN ? 0 : duration;
     }
 
     processSections(fmtStreamMapSection, adaptiveFmtSection) {

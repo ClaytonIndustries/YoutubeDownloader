@@ -6,10 +6,6 @@ export default class SignatureDecryptor {
     }
 
     getCryptoFunctions(player) {
-        if(this.isDecrypted()) {
-            return true;
-        }
-
         this.cryptoClassFunctionCalls = this.getCryptoClassFunctionCallsFromCryptoFunction(player);
         this.mappedCryptoFunctions = this.getCrytoClassFunctions(player, this.cryptoClassFunctionCalls[0]);
 
