@@ -1,3 +1,5 @@
+*.suo
+
 Dist/Binary/*
 Dist/Setup/Windows/YoutubeDownloaderSetup/Debug/*
 Dist/Setup/Windows/YoutubeDownloaderSetup/Release/*

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.15
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "YoutubeDownloaderSetup", "YoutubeDownloaderSetup\YoutubeDownloaderSetup.vdproj", "{980BE9F0-B9C6-4C9A-B991-FA088E2E3C3A}"
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "YoutubeDownloaderSetup", "YoutubeDownloaderSetup\YoutubeDownloaderSetup.vdproj", "{17FACE4A-8000-4DE0-BB87-3EE747B00485}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Default = Release|Default
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{980BE9F0-B9C6-4C9A-B991-FA088E2E3C3A}.Debug|Default.ActiveCfg = Debug
-		{980BE9F0-B9C6-4C9A-B991-FA088E2E3C3A}.Debug|Default.Build.0 = Debug
-		{980BE9F0-B9C6-4C9A-B991-FA088E2E3C3A}.Release|Default.ActiveCfg = Release
-		{980BE9F0-B9C6-4C9A-B991-FA088E2E3C3A}.Release|Default.Build.0 = Release
+		{17FACE4A-8000-4DE0-BB87-3EE747B00485}.Debug|Default.ActiveCfg = Debug
+		{17FACE4A-8000-4DE0-BB87-3EE747B00485}.Debug|Default.Build.0 = Debug
+		{17FACE4A-8000-4DE0-BB87-3EE747B00485}.Release|Default.ActiveCfg = Release
+		{17FACE4A-8000-4DE0-BB87-3EE747B00485}.Release|Default.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
