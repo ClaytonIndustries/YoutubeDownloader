@@ -211,7 +211,7 @@ export default class UrlEntry extends React.Component {
     }
 
     componentDidMount() {
-        this.clipboardManager.callback= () => {
+        this.clipboardManager.callback = () => {
             if(this.props.settings.automaticallyPaste) {
                 this.paste();
             }

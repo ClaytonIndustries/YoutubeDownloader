@@ -3,18 +3,16 @@ const { clipboard } = window.require('electron').remote;
 export default class ClipboardManager {
     constructor() {
         this.callback;
-        this.lastText = clipboard.readText();
+        this.lastText = "";
         this.checkClipboard();
     }
 
     checkClipboard() {
-        if(this.callback) {
-            let newText = clipboard.readText();
-            if(newText !== this.lastText) {
+        let newText = clipboard.readText();
+        if(newText !== this.lastText) {
+            if(new RegExp("https://www.youtube.com/watch?").test(newText)) {
                 this.lastText = newText;
-                if(new RegExp("https://www.youtube.com/watch?").test(newText)) {
-                    this.callback();
-                }
+                if(this.callback) this.callback();
             }
         }
         setTimeout(() => this.checkClipboard(), 500);
