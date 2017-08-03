@@ -1,6 +1,9 @@
 import Update from './Update';
 import FileAccess from './FileAccess';
-import { VERSION_NUMBER, URL_VERSION, AUTH_CODE } from './Constants';
+import { VERSION_NUMBER, URL_VERSION, AUTH_CODE, OS_WINDOWS, OS_MACOS } from './Constants';
+
+const os = window.require('os');
+const path = window.require('path');
 
 export default class UpdateManager {
     constructor() {
@@ -11,10 +14,11 @@ export default class UpdateManager {
         let httpRequest = new XMLHttpRequest();
         httpRequest.onload = () => {
             try {
-                let content = JSON.parse(httpRequest.responseText);
-                if(this.getFormattedVersionNumberFromString(content[0]) > this.getFormattedVersionNumberFromString(VERSION_NUMBER)) {
+                let response = JSON.parse(httpRequest.responseText);
+                if(this.getFormattedVersionNumberFromString(response.versionNumber) > this.getFormattedVersionNumberFromString(VERSION_NUMBER)) {
                     let update = new Update();
-                    update.url = content[1];
+                    update.url = response.packageUrl;
+                    update.binary = response.binary;
                     callback(update);
                 }
                 else {
@@ -27,9 +31,13 @@ export default class UpdateManager {
         }
         httpRequest.onerror = () => callback();
         httpRequest.onabort = () => callback();
-        httpRequest.open("GET", URL_VERSION, true);
+        httpRequest.open("GET", path.join(URL_VERSION, this.getPlatform()), true);
         httpRequest.setRequestHeader("Authorization", AUTH_CODE);
         httpRequest.send();
+    }
+
+    getPlatform() {
+        return os.platform() === "darwin" ? OS_MACOS : OS_WINDOWS;
     }
 
     getFormattedVersionNumberFromString(versionNumber) {
@@ -57,7 +65,7 @@ export default class UpdateManager {
         }
         httpRequest.onerror = () => callback(false);
         httpRequest.onabort = () => callback(false);
-        httpRequest.open("GET", update.platfromSpecificUrl(), true);
+        httpRequest.open("GET", path.join(update.url, this.getPlatform()), true);
         httpRequest.setRequestHeader("Authorization", AUTH_CODE);
         httpRequest.responseType = "arraybuffer";
         httpRequest.send();
