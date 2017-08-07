@@ -74,8 +74,8 @@ export default class SignatureDecryptor {
         
         this.cryptoClassFunctionCalls.forEach((cryptoClassFunctionCall) => {
             for(let i = 0; i < this.mappedCryptoFunctions.length; i++) {
-				if(cryptoClassFunctionCall.includes(this.mappedCryptoFunctions[i].func)) {
-                    decryptedSignature = this.executeCryptoFunction(cryptoClassFunctionCall.substr(cryptoClassFunctionCall.indexOf(this.mappedCryptoFunctions[i].func)), 
+				if(cryptoClassFunctionCall.includes("." + this.mappedCryptoFunctions[i].func)) {
+                    decryptedSignature = this.executeCryptoFunction(cryptoClassFunctionCall.substr(cryptoClassFunctionCall.lastIndexOf(this.mappedCryptoFunctions[i].func)), 
                         this.mappedCryptoFunctions[i].action, decryptedSignature);
 					break;
 				}
@@ -107,7 +107,7 @@ export default class SignatureDecryptor {
 	}
 
     splice(a, b) {
-        return a.substr(b);
+		return a.substr(b);
     }
 
     reverse(a) {
