@@ -1,6 +1,6 @@
 import FilenameCleaner from './FilenameCleaner';
 import SignatureDecryptor from './SignatureDecryptor';
-import { URL_QUALITY, AUTH_CODE } from './Constants';
+import { URL_QUALITY, URL_STATISTIC, AUTH_CODE } from './Constants';
 
 import Moment from 'moment';
 
@@ -12,6 +12,7 @@ export default class YoutubeUrlParser {
     }
 
     parse(youtubeUrl, callback) {
+        this.logGetVideoCall();
         if(this.noVideoQualities()){
             this.downloadQualities((success) => {
                 if(success) {
@@ -84,6 +85,10 @@ export default class YoutubeUrlParser {
 
             callback();
         });
+    }
+
+    logGetVideoCall() {
+        this.makePostRequest(URL_STATISTIC, true);
     }
 
     extractQualities(webpageData, callback) {
@@ -308,6 +313,19 @@ export default class YoutubeUrlParser {
         }
         catch(e) {
             callback(false);
+        }
+    }
+
+    makePostRequest(url, includeAuth) {
+        try {
+            let httpRequest = new XMLHttpRequest();
+            httpRequest.open("POST", url, true);
+            if(includeAuth) {
+                httpRequest.setRequestHeader("Authorization", AUTH_CODE);
+            }
+            httpRequest.send();
+        }
+        catch(e) {
         }
     }
 }
