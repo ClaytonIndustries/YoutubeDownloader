@@ -877,6 +877,14 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+            }
         }
         "Release"
         {
@@ -893,6 +901,22 @@
         "PrivateKeyFile" = "8:"
         "TimeStampServer" = "8:"
         "InstallerBootstrapper" = "3:2"
+            "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
+            {
+            "Enabled" = "11:TRUE"
+            "PromptEnabled" = "11:TRUE"
+            "PrerequisitesLocation" = "2:1"
+            "Url" = "8:"
+            "ComponentsUrl" = "8:"
+                "Items"
+                {
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    {
+                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
+                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    }
+                }
+            }
         }
     }
     "Deployable"
@@ -3955,15 +3979,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:Youtube Downloader"
-        "ProductCode" = "8:{A2C5D3C8-3DBE-4BF8-B41D-64CE48F38D66}"
-        "PackageCode" = "8:{22442EBB-6F64-42D1-A2EA-47245F4F07C0}"
+        "ProductCode" = "8:{C286F504-9286-469F-BEF7-FD6B8AC2A519}"
+        "PackageCode" = "8:{40AB36B3-9146-414B-8366-5A8FBB3215FC}"
         "UpgradeCode" = "8:{034C4E1C-E453-4F2E-981C-A649604D467A}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:FALSE"
-        "ProductVersion" = "8:1.0"
+        "ProductVersion" = "8:1.1"
         "Manufacturer" = "8:Clayton Industries"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
