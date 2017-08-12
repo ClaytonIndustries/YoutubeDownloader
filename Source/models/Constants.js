@@ -21,8 +21,8 @@ export const PR_FFMPEG = "ffmpeg";
 export const OS_WINDOWS = "windows";
 export const OS_MACOS = "macOS";
 
-export const URL_QUALITY = "http://claytoninds.com/services/youtubedownloader/quality";
-export const URL_STATISTIC = "http://claytoninds.com/services/youtubedownloader/statistic/getvideo";
-export const URL_VERSION = "http://www.claytoninds.com/services/youtubedownloader/version/number";
+export const URL_QUALITY = "https://claytoninds.com/services/youtubedownloader/quality";
+export const URL_STATISTIC = "https://claytoninds.com/services/youtubedownloader/statistic/getvideo";
+export const URL_VERSION = "https://www.claytoninds.com/services/youtubedownloader/version/number";
 
 export const AUTH_CODE = "AEE3024137A829E1";
