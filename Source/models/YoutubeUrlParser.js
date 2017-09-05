@@ -288,7 +288,7 @@ export default class YoutubeUrlParser {
     }
 
     extractTitle(webpage) {
-        return new RegExp("<title>\s*(.+?)\s*(- YouTube|<\/title>)").exec(webpage)[1];
+        return new RegExp("document.title = \"\s*(.+?)\s*(?:- YouTube|\";)").exec(webpage)[1];
     }
 
     extractFmtStreamMapSection(webpage) {
