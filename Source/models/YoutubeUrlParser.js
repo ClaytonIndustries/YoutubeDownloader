@@ -202,23 +202,37 @@ export default class YoutubeUrlParser {
     }
 
     processSectionWithNoEncryption(section, qualities) {
-        let matches = new RegExp("url=([\\s\\S]*?)\\\\", "g").exec(section);
+        section = section.replace(/codecs=\"[\s\S]*?\"/g, "");
 
-        if(matches) {
-            matches.forEach((match) => {
-                try {
-                    let videoLink = new RegExp("^[^,]*").exec(match[1])[0];
+        let regex = /(?=^|,[^+])[\s\S]*?(?:itag=)[\s\S]*?(?=,[^+]|$)/g;
+        let matches = [];
+        let currentMatch;
 
-                    let quality = this.createVideoQuality(videoLink, qualities);
-
-                    if(quality) {
-                        qualities.push(quality);
-                    }
-                }
-                catch(e) {
-                }
-            });
+        while(currentMatch = regex.exec(section)) {
+            matches.push(currentMatch[0]);
         }
+
+        matches.forEach((match) => {
+            try {
+                let url = match;
+
+                let quality = this.createVideoQuality(url, qualities);
+
+                if(quality) {
+                    url = url.substr(url.indexOf("url") + 4);
+
+                    if(url.includes("\\")) {
+                        url = url.substr(0, url.indexOf("\\"));
+                    }
+
+                    quality.downloadUrl = url;
+
+                    qualities.push(quality);
+                }
+            }
+            catch(e) {
+            }
+        });
 
         return qualities;
     }
