@@ -9,20 +9,22 @@ require('electron-reload')(__dirname);
 let win
 
 function createWindow() {
-    // Create the browser window.
     const winWidth = 800;
     const winHeight = 700;
 
-    win = new BrowserWindow({ width: winWidth, height: winHeight, useContentSize: false, icon: './images/YoutubeIcon.png' })
+    win = new BrowserWindow({ 
+        width: winWidth, 
+        height: winHeight, 
+        useContentSize: false, 
+        icon: path.join(__dirname, 'images/YoutubeIcon.png')
+    })
 
-    // and load the index.html of the app.
     win.loadURL(url.format({
         pathname: path.join(__dirname, 'index.html'),
         protocol: 'file:',
         slashes: true
     }))
 
-    // Open the DevTools.
     win.webContents.openDevTools()
     win.setMenu(null)
 
@@ -56,6 +58,3 @@ app.on('activate', () => {
         createWindow()
     }
 })
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
