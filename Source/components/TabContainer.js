@@ -52,7 +52,7 @@ export default class TabContainer extends React.Component {
         return (
             <div style={styleSheet.tabContainer}>
                 <AppBar position="static">
-                    <Tabs fullWidth centered index={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(event, index)}}>
+                    <Tabs fullWidth centered value={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(event, index)}}>
                         <Tab label="DOWNLOAD" />
                         <Tab label="ACTIVITY" />
                     </Tabs>

@@ -2,7 +2,6 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { blue, orange } from 'material-ui/colors';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
-import createPalette from 'material-ui/styles/palette';
 
 import Header from './Header';
 import TabContainer from './TabContainer';
@@ -39,10 +38,10 @@ export default class App extends React.Component {
 
     render() {
         const theme = createMuiTheme({
-            palette: createPalette({
+            palette: {
                 primary: blue,
                 accent: orange
-            }),
+            }
         });
 
         const styleSheet = this.getStyles();

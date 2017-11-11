@@ -274,7 +274,7 @@ export default class UrlEntry extends React.Component {
                     </Button>
                 </div>
                 <div style={styleSheet.topSpacing}>
-                    <LinearProgress mode={this.state.gettingVideo ? "query" : "determinate"} />
+                    <LinearProgress mode={this.state.gettingVideo ? "query" : "determinate"} value={0} />
                 </div>
                 <div style={styleSheet.topSpacing}>
                     <div style={styleSheet.row}>

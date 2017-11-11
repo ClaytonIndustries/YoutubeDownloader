@@ -141,11 +141,11 @@ export default class ActivityList extends React.Component {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell compact disablePadding></TableCell>
-                            <TableCell compact disablePadding>Title</TableCell>
-                            <TableCell compact disablePadding>Size (MB/s)</TableCell>
-                            <TableCell compact disablePadding>Progress</TableCell>
-                            <TableCell compact disablePadding>Status</TableCell>
+                            <TableCell padding="dense"></TableCell>
+                            <TableCell padding="dense">Title</TableCell>
+                            <TableCell padding="dense">Size (MB/s)</TableCell>
+                            <TableCell padding="dense">Progress</TableCell>
+                            <TableCell padding="dense">Status</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

@@ -34,19 +34,19 @@ export default class VideoRow extends React.Component {
     render() {
         return (
             <TableRow hover selected={this.props.isSelected} onClick={() => this.props.onSelected(this.props.id)}>
-                <TableCell checkbox compact disablePadding>
+                <TableCell padding="checkbox">
                     <Checkbox checked={this.props.isSelected} />
                 </TableCell>
-                <TableCell compact disablePadding>
+                <TableCell padding="dense">
                     {this.state.title}
                 </TableCell>
-                <TableCell compact disablePadding>
+                <TableCell padding="dense">
                     {this.state.size === 0 ? "" : this.state.size}
                 </TableCell>
-                <TableCell compact disablePadding>
+                <TableCell padding="dense">
                     <LinearProgress mode="determinate" value={this.state.progress} />
                 </TableCell>
-                <TableCell compact disablePadding>
+                <TableCell padding="dense">
                     {this.state.status}
                 </TableCell>
             </TableRow>
