@@ -4,7 +4,6 @@ const path = window.require('path');
 
 export default class FFmpeg {
     constructor() {
-        this.pathToFFmpeg = path.join(path.dirname(window.require.main.filename), 'dist/FFmpeg/bin/ffmpeg.exe');
         this.processStarter = new ProcessStarter();
     }
 
@@ -13,7 +12,7 @@ export default class FFmpeg {
             "-i", videoPath, "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", audioPath, "-y"
         ];
 
-        return this.processStarter.start(this.pathToFFmpeg, args, (success) => {
+        return this.processStarter.start(this.ffmpegLocation(), args, (success) => {
             callback(success);
         });
     }
@@ -23,8 +22,12 @@ export default class FFmpeg {
             "-i", mediaPath, "-ss", startTime, "-t", endTime, destinationMediaPath
         ];
 
-        return this.processStarter.start(this.pathToFFmpeg, args, (success) => {
+        return this.processStarter.start(this.ffmpegLocation(), args, (success) => {
             callback(success);
         });
+    }
+
+    ffmpegLocation() {
+        return path.join(path.dirname(window.require.main.filename), 'dist/FFmpeg/bin/ffmpeg.exe');
     }
 }

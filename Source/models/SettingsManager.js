@@ -18,13 +18,11 @@ export default class SettingsManager {
         this.settings.automaticallyGetVideo = settings.automaticallyGetVideo;
         this.settings.automaticallyDownload = settings.automaticallyDownload;
 
-        let pathToFile = path.join(this.fileAccess.getPath('userData'), "UserSettings.json");
-        this.fileAccess.write(pathToFile, JSON.stringify(this.settings));
+        this.fileAccess.write(this.fileLocation(), JSON.stringify(this.settings));
     }
 
     load(callback) {
-        let pathToFile = path.join(this.fileAccess.getPath('userData'), "UserSettings.json");
-        this.fileAccess.read(pathToFile, (error, data) => {
+        this.fileAccess.read(this.fileLocation(), (error, data) => {
             if(!error) {
                 try {
                     let settingsData = JSON.parse(data);
@@ -39,5 +37,9 @@ export default class SettingsManager {
                 callback(this.settings);
             }
         });
+    }
+
+    fileLocation() {
+        return path.join(this.fileAccess.getPath('userData'), "UserSettings.json");
     }
 }

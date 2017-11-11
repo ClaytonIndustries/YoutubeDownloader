@@ -15,12 +15,12 @@ export default class SettingsDialog extends React.Component {
         };
     }
 
-    onToggleClicked(toggle) {
+    onToggleClicked(switchName) {
         this.setState({
             settings: {
-                automaticallyPaste: toggle === "paste" ? !this.state.settings.automaticallyPaste : this.state.settings.automaticallyPaste,
-                automaticallyGetVideo: toggle === "get" ? !this.state.settings.automaticallyGetVideo : this.state.settings.automaticallyGetVideo,
-                automaticallyDownload: toggle === "download" ? !this.state.settings.automaticallyDownload : this.state.settings.automaticallyDownload
+                automaticallyPaste: switchName === "paste" ? !this.state.settings.automaticallyPaste : this.state.settings.automaticallyPaste,
+                automaticallyGetVideo: switchName === "get" ? !this.state.settings.automaticallyGetVideo : this.state.settings.automaticallyGetVideo,
+                automaticallyDownload: switchName === "download" ? !this.state.settings.automaticallyDownload : this.state.settings.automaticallyDownload
             }
         });
     }

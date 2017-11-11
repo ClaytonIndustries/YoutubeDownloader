@@ -32,7 +32,6 @@ export default class FileAccess {
     }
 
     unpackZipFile(zipPath, targetPath) {
-        let zip = new admZip(zipPath);
-        zip.extractAllTo(targetPath, true);
+        new admZip(zipPath).extractAllTo(targetPath, true);
     }
 }
