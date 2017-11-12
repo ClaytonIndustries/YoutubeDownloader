@@ -174,7 +174,7 @@ class ActivityList extends React.Component {
 
 ActivityList.mapStateToProps = (state) => {
     return {
-        videos: state
+        videos: state.Videos
     }
 }
 

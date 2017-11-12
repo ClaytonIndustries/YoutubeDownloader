@@ -240,7 +240,7 @@ class UrlEntry extends React.Component {
     componentWillUnmount() {
         this.clipboardManager.callback = null;
 
-        this.props.onSaveState({         
+        this.props.dispatch({type: "URL_ENTRY_SAVE_STATE", screenState: {         
             youtubeUrl: this.state.youtubeUrl,
             videoQualities: this.state.videoQualities,
             selectedVideoQuality: this.state.selectedVideoQuality,
@@ -252,7 +252,7 @@ class UrlEntry extends React.Component {
             maxVideoLength: this.state.maxVideoLength,
             videoId: this.state.videoId,
             searchStatus: this.state.searchStatus
-        });
+        }});
     }
 
     render() {
@@ -376,9 +376,13 @@ class UrlEntry extends React.Component {
 UrlEntry.propTypes = {
     settings: PropTypes.object.isRequired,
     youtubeUrlParser: PropTypes.object.isRequired,
-    lastState: PropTypes.object,
-    onSwitchTab: PropTypes.func.isRequired,
-    onSaveState: PropTypes.func.isRequired
+    onSwitchTab: PropTypes.func.isRequired
 };
 
-export default connect()(UrlEntry);
+UrlEntry.mapStateToProps = (state) => {
+    return {
+        lastState: state.UrlEntryState
+    }
+}
+
+export default connect(UrlEntry.mapStateToProps)(UrlEntry);

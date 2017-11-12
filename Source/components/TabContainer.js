@@ -14,8 +14,7 @@ export default class TabContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            selectedTabIndex: 0,
-            lastUrlEntryState: null
+            selectedTabIndex: 0
         };
         this.youtubeUrlParser = new YoutubeUrlParser();
     }
@@ -45,8 +44,7 @@ export default class TabContainer extends React.Component {
                 </AppBar>
                 <div style={styleSheet.childContainer}>
                     {this.state.selectedTabIndex == 0 &&
-                        <UrlEntry settings={this.props.settings} youtubeUrlParser={this.youtubeUrlParser} lastState={this.state.lastUrlEntryState} 
-                            onSwitchTab={() => {this.switchToActivityTab()}} onSaveState={(savedState) => {this.setState({lastUrlEntryState: savedState})}} />
+                        <UrlEntry settings={this.props.settings} youtubeUrlParser={this.youtubeUrlParser} onSwitchTab={() => {this.switchToActivityTab()}} />
                     }
                     {this.state.selectedTabIndex == 1 &&
                         <ActivityList />
