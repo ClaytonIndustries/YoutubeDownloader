@@ -40,7 +40,7 @@ export default class App extends React.Component {
         const theme = createMuiTheme({
             palette: {
                 primary: blue,
-                accent: orange
+                secondary: orange
             }
         });
 
