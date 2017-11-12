@@ -1,5 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 import { blue, orange } from 'material-ui/colors';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 
@@ -8,6 +10,7 @@ import TabContainer from './TabContainer';
 import Updater from './Updater';
 
 import SettingsManager from '../models/SettingsManager';
+import Videos from '../reducers/Reducer';
 
 export default class App extends React.Component {
     constructor(props) {
@@ -37,6 +40,8 @@ export default class App extends React.Component {
     }
 
     render() {
+        let store = createStore(Videos);
+
         const theme = createMuiTheme({
             palette: {
                 primary: blue,
@@ -47,13 +52,15 @@ export default class App extends React.Component {
         const styleSheet = this.getStyles();
 
         return (
-            <MuiThemeProvider theme={theme}>
-                <div style={styleSheet.container}>
-                    <Header settings={this.state.settings} onSettingsChanged={(settings) => this.settingsChanged(settings)} />
-                    <TabContainer settings={this.state.settings} />
-                    <Updater />
-                </div>
-            </MuiThemeProvider>
+            <Provider store={store}>
+                <MuiThemeProvider theme={theme}>
+                    <div style={styleSheet.container}>
+                        <Header settings={this.state.settings} onSettingsChanged={(settings) => this.settingsChanged(settings)} />
+                        <TabContainer settings={this.state.settings} />
+                        <Updater />
+                    </div>
+                </MuiThemeProvider>
+            </Provider>
         );
     }
 

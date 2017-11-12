@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import Button from 'material-ui/Button';
 import Input from 'material-ui/Input/Input';
@@ -34,7 +35,7 @@ const { dialog, getCurrentWindow } = window.require('electron').remote;
 const createSliderWithTooltip = Slider.createSliderWithTooltip;
 const Range = createSliderWithTooltip(Slider.Range);
 
-export default class UrlEntry extends React.Component {
+class UrlEntry extends React.Component {
     constructor(props) {
         super(props);
 
@@ -179,8 +180,10 @@ export default class UrlEntry extends React.Component {
             youtubeVideo.newEndTime = this.state.endTime;
             youtubeVideo.status = VS_PENDING;
 
+            this.props.dispatch({type: "ADD_VIDEO", video: youtubeVideo});
+
             this.clearCurrentVideo(() => {
-                this.props.onDownload(youtubeVideo);
+                this.props.onSwitchTab();
             });
         }
         else {
@@ -374,6 +377,8 @@ UrlEntry.propTypes = {
     settings: PropTypes.object.isRequired,
     youtubeUrlParser: PropTypes.object.isRequired,
     lastState: PropTypes.object,
-    onDownload: PropTypes.func.isRequired,
+    onSwitchTab: PropTypes.func.isRequired,
     onSaveState: PropTypes.func.isRequired
 };
+
+export default connect()(UrlEntry);

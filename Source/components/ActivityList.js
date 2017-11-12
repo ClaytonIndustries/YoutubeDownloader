@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import Button from 'material-ui/Button';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
@@ -14,7 +15,7 @@ import VideoRow from './VideoRow';
 
 import ProcessStarter from '../models/ProcessStarter';
 
-export default class ActivityList extends React.Component {
+class ActivityList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -61,7 +62,7 @@ export default class ActivityList extends React.Component {
             if(video.isActive()) {
                 video.cancel();
             }
-            this.props.onRemoveVideo(this.state.selectedIndex);
+            this.props.dispatch({type: "REMOVE_VIDEO", index: this.state.selectedIndex});
             this.setState({
                 selectedIndex: -1
             });
@@ -171,7 +172,10 @@ export default class ActivityList extends React.Component {
     }
 }
 
-ActivityList.propTypes = {
-    videos: PropTypes.array.isRequired,
-    onRemoveVideo: PropTypes.func.isRequired
-};
+ActivityList.mapStateToProps = (state) => {
+    return {
+        videos: state
+    }
+}
+
+export default connect(ActivityList.mapStateToProps)(ActivityList);

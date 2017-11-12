@@ -15,7 +15,6 @@ export default class TabContainer extends React.Component {
         super(props);
         this.state = {
             selectedTabIndex: 0,
-            videos: [],
             lastUrlEntryState: null
         };
         this.youtubeUrlParser = new YoutubeUrlParser();
@@ -27,22 +26,9 @@ export default class TabContainer extends React.Component {
         });
     };
 
-    startDownload(video) {
-        let videos= this.state.videos.slice();
-        videos.push(video);
-
+    switchToActivityTab() {
         this.setState({
-            videos: videos,
             selectedTabIndex: 1
-        });
-    }
-
-    removeVideo(index) {
-        let videos = this.state.videos.slice();
-        videos.splice(index, 1);
-
-        this.setState({
-            videos: videos
         });
     }
 
@@ -60,10 +46,10 @@ export default class TabContainer extends React.Component {
                 <div style={styleSheet.childContainer}>
                     {this.state.selectedTabIndex == 0 &&
                         <UrlEntry settings={this.props.settings} youtubeUrlParser={this.youtubeUrlParser} lastState={this.state.lastUrlEntryState} 
-                            onDownload={(video) => {this.startDownload(video)}} onSaveState={(savedState) => {this.setState({lastUrlEntryState: savedState})}} />
+                            onSwitchTab={() => {this.switchToActivityTab()}} onSaveState={(savedState) => {this.setState({lastUrlEntryState: savedState})}} />
                     }
                     {this.state.selectedTabIndex == 1 &&
-                        <ActivityList videos={this.state.videos} onRemoveVideo={(index) => {this.removeVideo(index)}} />
+                        <ActivityList />
                     }
                 </div>
           </div>
