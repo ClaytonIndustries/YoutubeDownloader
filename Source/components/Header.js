@@ -28,14 +28,10 @@ export default class Header extends React.Component {
         this.processStarter.openItem("https://www.youtube.com");
     }
 
-    settingsDialogClose(save, settings) {
+    settingsDialogClose() {
         this.setState({
             settingsDialogOpen: false
         });
-        
-        if(save) {
-            this.props.onSettingsChanged(settings);
-        }
     }
 
     render() {
@@ -54,8 +50,7 @@ export default class Header extends React.Component {
                 <IconButton onClick={() => {this.setState({settingsDialogOpen: true})}}>
                     <DeleteIcon style={styleSheet.settingIcon} />
                 </IconButton>
-                <SettingsDialog open={this.state.settingsDialogOpen} settings={this.props.settings} 
-                        onClose={(save, settings) => {this.settingsDialogClose(save, settings)}} />
+                <SettingsDialog open={this.state.settingsDialogOpen} onClose={() => {this.settingsDialogClose()}} />
             </div>
         );
     }
@@ -86,8 +81,3 @@ export default class Header extends React.Component {
         };
     }
 }
-
-Header.propTypes = {
-    settings: PropTypes.object.isRequired,
-    onSettingsChanged: PropTypes.func.isRequired
-};

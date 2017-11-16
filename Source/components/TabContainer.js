@@ -44,7 +44,7 @@ export default class TabContainer extends React.Component {
                 </AppBar>
                 <div style={styleSheet.childContainer}>
                     {this.state.selectedTabIndex == 0 &&
-                        <UrlEntry settings={this.props.settings} youtubeUrlParser={this.youtubeUrlParser} onSwitchTab={() => {this.switchToActivityTab()}} />
+                        <UrlEntry youtubeUrlParser={this.youtubeUrlParser} onSwitchTab={() => {this.switchToActivityTab()}} />
                     }
                     {this.state.selectedTabIndex == 1 &&
                         <ActivityList />
@@ -68,7 +68,3 @@ export default class TabContainer extends React.Component {
         };
     }
 }
-
-TabContainer.propTypes = {
-    settings: PropTypes.object.isRequired
-};

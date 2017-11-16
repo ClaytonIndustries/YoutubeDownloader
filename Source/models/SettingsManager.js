@@ -4,21 +4,11 @@ const path = window.require('path');
 
 export default class SettingsManager {
     constructor() {
-        this.settings = {
-            automaticallyPaste: true,
-            automaticallyGetVideo: false,
-            automaticallyDownload: false
-        }
-
         this.fileAccess = new FileAccess();
     }
 
     save(settings) {
-        this.settings.automaticallyPaste = settings.automaticallyPaste;
-        this.settings.automaticallyGetVideo = settings.automaticallyGetVideo;
-        this.settings.automaticallyDownload = settings.automaticallyDownload;
-
-        this.fileAccess.write(this.fileLocation(), JSON.stringify(this.settings));
+        this.fileAccess.write(this.fileLocation(), JSON.stringify(settings));
     }
 
     load(callback) {
@@ -27,15 +17,23 @@ export default class SettingsManager {
                 try {
                     let settingsData = JSON.parse(data);
 
-                    this.settings.automaticallyPaste = settingsData.automaticallyPaste;
-                    this.settings.automaticallyGetVideo = settingsData.automaticallyGetVideo;
-                    this.settings.automaticallyDownload = settingsData.automaticallyDownload;
+                    this.raiseResponseCallback(callback, settingsData.automaticallyPaste, settingsData.automaticallyGetVideo, settingsData.automaticallyDownload);
                 }
-                catch(e) {                    
+                catch(e) {  
+                    this.raiseResponseCallback(callback, true, false, false);                  
                 }
-
-                callback(this.settings);
             }
+            else {
+                this.raiseResponseCallback(callback, true, false, false);
+            }
+        });
+    }
+
+    raiseResponseCallback(callback, automaticallyPaste, automaticallyGetVideo, automaticallyDownload) {
+        callback({
+            automaticallyPaste: automaticallyPaste,
+            automaticallyGetVideo: automaticallyGetVideo,
+            automaticallyDownload: automaticallyDownload
         });
     }
 

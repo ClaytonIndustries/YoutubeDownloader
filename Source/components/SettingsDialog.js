@@ -1,18 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
 import Button from 'material-ui/Button';
 import Dialog, { DialogActions, DialogContent, DialogContentText, DialogTitle } from 'material-ui/Dialog';
 import List, { ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, ListSubheader } from 'material-ui/List';
 import Switch from 'material-ui/Switch';
 
-export default class SettingsDialog extends React.Component {
+import SettingsManager from '../models/SettingsManager';
+
+class SettingsDialog extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {
-            settings: this.props.settings
-        };
+
+        this.settingsManager = new SettingsManager();
     }
 
     onToggleClicked(switchName) {
@@ -25,17 +27,28 @@ export default class SettingsDialog extends React.Component {
         });
     }
 
-    componentWillReceiveProps() {
+    onSave() {
+        let settings = this.state.settings;
+        this.props.dispatch({type: "APP_SETTINGS_UPDATE", appSettings: settings});
+        this.settingsManager.save(settings);
+        this.props.onClose();
+    }
+
+    componentWillReceiveProps(newProps) {
         this.setState({
-            settings: this.props.settings
+            settings: newProps.settings
         });
     }
 
     render() {
         const styleSheet = this.getStyles();
 
+        if(!this.state) {
+            return (null);
+        }
+
         return (
-            <Dialog open={this.props.open} onRequestClose={() => this.props.onClose(false, this.state.settings)}>
+            <Dialog open={this.props.open} onRequestClose={() => this.props.onClose()}>
                 <DialogTitle>
                     Settings
                 </DialogTitle>
@@ -62,10 +75,10 @@ export default class SettingsDialog extends React.Component {
                     </List>
                 </DialogContent>
                 <DialogActions>
-                    <Button color="primary" onClick={() => this.props.onClose(true, this.state.settings)}>
+                    <Button color="primary" onClick={() => this.onSave()}>
                         Ok
                     </Button>
-                    <Button color="primary" onClick={() => this.props.onClose(false, this.state.settings)}>
+                    <Button color="primary" onClick={() => this.props.onClose()}>
                         Cancel
                     </Button>
                 </DialogActions>
@@ -84,6 +97,13 @@ export default class SettingsDialog extends React.Component {
 
 SettingsDialog.propTypes = {
     open: PropTypes.bool.isRequired,
-    settings: PropTypes.object.isRequired,
     onClose: PropTypes.func.isRequired
 };
+
+SettingsDialog.mapStateToProps = (state) => {
+    return {
+        settings: state.AppSettings
+    }
+}
+
+export default connect(SettingsDialog.mapStateToProps)(SettingsDialog);

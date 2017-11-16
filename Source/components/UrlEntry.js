@@ -374,14 +374,14 @@ class UrlEntry extends React.Component {
 }
 
 UrlEntry.propTypes = {
-    settings: PropTypes.object.isRequired,
     youtubeUrlParser: PropTypes.object.isRequired,
     onSwitchTab: PropTypes.func.isRequired
 };
 
 UrlEntry.mapStateToProps = (state) => {
     return {
-        lastState: state.UrlEntryState
+        lastState: state.UrlEntryState,
+        settings: state.AppSettings
     }
 }
 

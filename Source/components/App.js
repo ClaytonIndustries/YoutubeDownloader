@@ -1,47 +1,24 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
+import { connect } from 'react-redux';
 import { blue, orange } from 'material-ui/colors';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 
 import Header from './Header';
 import TabContainer from './TabContainer';
 import Updater from './Updater';
-
 import SettingsManager from '../models/SettingsManager';
-import Videos from '../reducers/Reducer';
 
-export default class App extends React.Component {
+class App extends React.Component {
     constructor(props) {
         super(props);
 
-        this.settingsManager = new SettingsManager();
-        
-        this.state = {
-            settings: this.settingsManager.settings
-        };
-    }
-
-    settingsChanged(settings) {
-        this.settingsManager.save(settings);
-
-        this.setState({
-            settings: Object.assign({}, settings)
-        });
-    }
-
-    componentDidMount() {
-        this.settingsManager.load((settings) => {
-            this.setState({
-                settings: settings
-            });
+        new SettingsManager().load((settings) => {
+            this.props.dispatch({type: "APP_SETTINGS_UPDATE", appSettings: settings});
         });
     }
 
     render() {
-        let store = createStore(Videos);
-
         const theme = createMuiTheme({
             palette: {
                 primary: blue,
@@ -52,15 +29,13 @@ export default class App extends React.Component {
         const styleSheet = this.getStyles();
 
         return (
-            <Provider store={store}>
-                <MuiThemeProvider theme={theme}>
-                    <div style={styleSheet.container}>
-                        <Header settings={this.state.settings} onSettingsChanged={(settings) => this.settingsChanged(settings)} />
-                        <TabContainer settings={this.state.settings} />
-                        <Updater />
-                    </div>
-                </MuiThemeProvider>
-            </Provider>
+            <MuiThemeProvider theme={theme}>
+                <div style={styleSheet.container}>
+                    <Header />
+                    <TabContainer />
+                    <Updater />
+                </div>
+            </MuiThemeProvider>
         );
     }
 
@@ -75,3 +50,5 @@ export default class App extends React.Component {
         };
     }
 }
+
+export default connect()(App);
