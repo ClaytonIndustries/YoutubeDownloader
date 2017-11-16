@@ -1,21 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { connect } from 'react-redux';
 import { blue, orange } from 'material-ui/colors';
 import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
 
 import Header from './Header';
 import TabContainer from './TabContainer';
 import Updater from './Updater';
-import SettingsManager from '../models/SettingsManager';
 
-class App extends React.Component {
+export default class App extends React.Component {
     constructor(props) {
         super(props);
-
-        new SettingsManager().load((settings) => {
-            this.props.dispatch({type: "APP_SETTINGS_UPDATE", appSettings: settings});
-        });
     }
 
     render() {
@@ -50,5 +44,3 @@ class App extends React.Component {
         };
     }
 }
-
-export default connect()(App);

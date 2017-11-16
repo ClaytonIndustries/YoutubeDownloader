@@ -15,6 +15,10 @@ class SettingsDialog extends React.Component {
         super(props);
 
         this.settingsManager = new SettingsManager();
+
+        this.settingsManager.load((settings) => {
+            this.props.dispatch({type: "APP_SETTINGS_UPDATE", appSettings: settings});
+        });
     }
 
     onToggleClicked(switchName) {
