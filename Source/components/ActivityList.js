@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 
 import Button from 'material-ui/Button';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
+import Tooltip from 'material-ui/Tooltip';
 
 import RemoveIcon from 'material-ui-icons/Delete';
 import FolderIcon from 'material-ui-icons/Folder';
@@ -124,21 +125,31 @@ class ActivityList extends React.Component {
     render() {
         const styleSheet = this.getStyles();
 
+        const tooltipEnterDelayInMilliseconds = 400;
+
         return (
             <div>
                 <div style={styleSheet.row}>
-                    <Button dense color="primary" onClick={() => this.removeVideo()}>
-                        <RemoveIcon />
-                    </Button>
-                    <Button dense color="primary" onClick={() => this.openMediaFileLocation()}>
-                        <FolderIcon />
-                    </Button>
-                    <Button dense color="primary" onClick={() => this.playMedia()}>
-                        <PlayIcon />
-                    </Button>
-                    <Button dense color="primary" onClick={() => this.retryDownload()}>
-                        <RetryIcon />
-                    </Button>
+                    <Tooltip title="Cancel / Remove" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
+                        <Button dense color="primary" onClick={() => this.removeVideo()}>
+                            <RemoveIcon />
+                        </Button>
+                    </Tooltip>
+                    <Tooltip title="Open File Location" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
+                        <Button dense color="primary" onClick={() => this.openMediaFileLocation()}>
+                            <FolderIcon />
+                        </Button>
+                    </Tooltip>
+                    <Tooltip title="Play" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
+                        <Button dense color="primary" onClick={() => this.playMedia()}>
+                            <PlayIcon />
+                        </Button>
+                    </Tooltip>
+                    <Tooltip title="Retry Download" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
+                        <Button dense color="primary" onClick={() => this.retryDownload()}>
+                            <RetryIcon />
+                        </Button>
+                    </Tooltip>
                 </div>
                 <Table>
                     <TableHead>
