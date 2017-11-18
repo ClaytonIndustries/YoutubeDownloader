@@ -9,6 +9,7 @@ import List, { ListItem, ListItemIcon, ListItemSecondaryAction, ListItemText, Li
 import Switch from 'material-ui/Switch';
 
 import SettingsManager from '../models/SettingsManager';
+import { RS_APP_SETTINGS } from '../models/Constants';
 
 class SettingsDialog extends React.Component {
     constructor(props) {
@@ -17,7 +18,7 @@ class SettingsDialog extends React.Component {
         this.settingsManager = new SettingsManager();
 
         this.settingsManager.load((settings) => {
-            this.props.dispatch({type: "APP_SETTINGS_UPDATE", appSettings: settings});
+            this.props.dispatch({type: RS_APP_SETTINGS, appSettings: settings});
         });
     }
 
@@ -33,7 +34,7 @@ class SettingsDialog extends React.Component {
 
     onSave() {
         let settings = this.state.settings;
-        this.props.dispatch({type: "APP_SETTINGS_UPDATE", appSettings: settings});
+        this.props.dispatch({type: RS_APP_SETTINGS, appSettings: settings});
         this.settingsManager.save(settings);
         this.props.onClose();
     }

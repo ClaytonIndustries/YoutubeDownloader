@@ -28,7 +28,7 @@ import VideoValidator from '../models/VideoValidator';
 import YoutubeVideo from '../models/YoutubeVideo';
 import ClipboardManager from '../models/ClipboardManager';
 import FileAccess from '../models/FileAccess';
-import { VS_PENDING } from '../models/Constants';
+import { VS_PENDING, RS_ADD_VIDEO, RS_URL_ENTRY_SAVE_STATE } from '../models/Constants';
 
 const { dialog, getCurrentWindow } = window.require('electron').remote;
 
@@ -180,7 +180,7 @@ class UrlEntry extends React.Component {
             youtubeVideo.newEndTime = this.state.endTime;
             youtubeVideo.status = VS_PENDING;
 
-            this.props.dispatch({type: "ADD_VIDEO", video: youtubeVideo});
+            this.props.dispatch({type: RS_ADD_VIDEO, video: youtubeVideo});
 
             this.clearCurrentVideo(() => {
                 this.props.onSwitchTab();
@@ -240,7 +240,7 @@ class UrlEntry extends React.Component {
     componentWillUnmount() {
         this.clipboardManager.callback = null;
 
-        this.props.dispatch({type: "URL_ENTRY_SAVE_STATE", screenState: {         
+        this.props.dispatch({type: RS_URL_ENTRY_SAVE_STATE, screenState: {         
             youtubeUrl: this.state.youtubeUrl,
             videoQualities: this.state.videoQualities,
             selectedVideoQuality: this.state.selectedVideoQuality,
