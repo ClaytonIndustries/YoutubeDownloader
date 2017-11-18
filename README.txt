@@ -15,4 +15,4 @@ npm install
 Packaging
 -------------------------------
 
-electron-packager ./ --platform=win32 --arch=ia32 --icon="./images/YoutubeIcon.ico" --electron-version="1.6.11"
+electron-packager ./ --platform=win32 --arch=ia32 --icon="./images/YoutubeIcon.ico" --electron-version="1.7.9"
