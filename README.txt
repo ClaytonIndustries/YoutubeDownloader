@@ -1,5 +1,6 @@
 Youtube Downloader Electron Readme File
 
+-------------------------------
 Setup
 -------------------------------
 
@@ -9,3 +10,9 @@ npm install browserify -g
 npm install watchify -g
 
 npm install
+
+-------------------------------
+Packaging
+-------------------------------
+
+electron-packager ./ --platform=win32 --arch=ia32 --icon="./images/YoutubeIcon.ico" --electron-version="1.6.11"
