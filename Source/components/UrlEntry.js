@@ -366,7 +366,7 @@ class UrlEntry extends React.Component {
                 background: '#5f50e1'
             },
             rail: {
-                background: '#8f8af0'
+                background: '#C5B6FF'
             }
         };
     }
