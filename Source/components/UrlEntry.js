@@ -52,7 +52,7 @@ class UrlEntry extends React.Component {
             menuAnchor: null,
             selectedVideoQuality: null,
             selectedAudioFormat: AudioFormats.getAllowedFormats()[0],
-            saveTo: this.fileAccess.getPath("documents"),
+            saveTo: this.fileAccess.getPath("downloads"),
             renameTo: "",
             startTime: 0,
             endTime: 0,
