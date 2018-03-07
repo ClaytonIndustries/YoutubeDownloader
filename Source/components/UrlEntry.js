@@ -270,8 +270,8 @@ class UrlEntry extends React.Component {
                     </div>
                 </div>
                 <div style={styleSheet.topSpacing}>
-                    <Button raised dense color="primary" style={styleSheet.leftItem} onClick={() => {this.paste()}}>PASTE</Button>
-                    <Button raised dense disabled={this.state.gettingVideo} color="primary" style={styleSheet.rightItem} 
+                    <Button variant="raised" size="small" color="primary" style={styleSheet.leftItem} onClick={() => {this.paste()}}>PASTE</Button>
+                    <Button variant="raised" size="small" disabled={this.state.gettingVideo} color="primary" style={styleSheet.rightItem} 
                         onClick={() => {this.getVideo()}}>
                         GET VIDEO
                     </Button>
@@ -316,7 +316,7 @@ class UrlEntry extends React.Component {
                         railStyle={styleSheet.rail} onChange={(values) => {this.timeChanged(values)}} />
                 </div>
                 <div style={styleSheet.topSpacing}>
-                    <Button raised dense disabled={this.noVideo()} color="primary" style={styleSheet.downloadButton} 
+                    <Button variant="raised" size="small" disabled={this.noVideo()} color="primary" style={styleSheet.downloadButton} 
                         onClick={() => this.download()}>DOWNLOAD</Button>
                 </div>
                 <WarningDialog content={this.state.validationMessage} open={this.state.warningDialogOpen} 

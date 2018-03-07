@@ -131,17 +131,17 @@ class ActivityList extends React.Component {
             <div>
                 <div style={styleSheet.row}>
                     <Tooltip title="Cancel / Remove" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
-                        <Button dense color="primary" onClick={() => this.removeVideo()}>
+                        <Button size="small" color="primary" onClick={() => this.removeVideo()}>
                             <RemoveIcon />
                         </Button>
                     </Tooltip>
                     <Tooltip title="Open File Location" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
-                        <Button dense color="primary" onClick={() => this.openMediaFileLocation()}>
+                        <Button size="small" color="primary" onClick={() => this.openMediaFileLocation()}>
                             <FolderIcon />
                         </Button>
                     </Tooltip>
                     <Tooltip title="Play" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
-                        <Button dense color="primary" onClick={() => this.playMedia()}>
+                        <Button size="small" color="primary" onClick={() => this.playMedia()}>
                             <PlayIcon />
                         </Button>
                     </Tooltip>

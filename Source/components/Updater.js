@@ -87,7 +87,7 @@ export default class Updater extends React.Component {
 
         const content = this.state.status === UD_UPDATE_AVAILABLE || this.state.status === UD_RETRY_DOWNLOAD ? 
             [
-                <Button key="download" color="accent" dense onClick={() => {this.downloadUpdate()}}>
+                <Button key="download" color="accent" size="small" onClick={() => {this.downloadUpdate()}}>
                     {this.state.status === "updateAvailable" ? "DOWNLOAD" : "RETRY"}
                 </Button>,
                 <IconButton key="close" color="inherit" onClick={() => {this.handleRequestClose()}}>
@@ -117,8 +117,7 @@ export default class Updater extends React.Component {
                     vertical: 'top',
                     horizontal: 'center',
                 }}
-                open={this.state.open}
-                transition={<Slide direction={'down'} />}>               
+                open={this.state.open}>               
                 <SnackbarContent
                     style={styleSheet.snackbarContent}
                     message={this.state.message}
