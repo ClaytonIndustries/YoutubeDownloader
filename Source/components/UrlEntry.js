@@ -282,7 +282,7 @@ class UrlEntry extends React.Component {
                 <div style={styleSheet.topSpacing}>
                     <div style={styleSheet.row}>
                         <Typography type="subheading" style={styleSheet.fullWidth}>Choose a video quality</Typography>
-                        <Button disabled={this.noVideo()} style={styleSheet.menuButton} onClick={(event) => {this.showVideoQualityMenu(event)}}>
+                        <Button size="small" color="primary" disabled={this.noVideo()} style={styleSheet.menuButton} onClick={(event) => {this.showVideoQualityMenu(event)}}>
                             {this.state.selectedVideoQuality != null ? this.state.selectedVideoQuality.description : "None Available"}
                         </Button>
                         <ActionMenu items={this.state.videoQualities} open={this.state.videoQualityMenuOpen} anchor={this.state.menuAnchor} selectedItem={this.state.selectedVideoQuality}
@@ -292,7 +292,7 @@ class UrlEntry extends React.Component {
                 <div style={styleSheet.topSpacing}>
                     <div style={styleSheet.row}>
                         <Typography type="subheading" style={styleSheet.fullWidth}>Automatically convert to</Typography>
-                        <Button disabled={this.noVideo()} style={styleSheet.menuButton} onClick={(event) => {this.showAudioTypeMenu(event)}}>
+                        <Button size="small" color="primary" disabled={this.noVideo()} style={styleSheet.menuButton} onClick={(event) => {this.showAudioTypeMenu(event)}}>
                             {this.state.selectedAudioFormat != null ? this.state.selectedAudioFormat.description : "None Available"}
                         </Button>
                         <ActionMenu items={this.state.audioFormats} open={this.state.audioTypeMenuOpen} anchor={this.state.menuAnchor} selectedItem={this.state.selectedAudioFormat}
