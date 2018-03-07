@@ -18,7 +18,6 @@ import CrossIcon from 'material-ui-icons/Close';
 import green from 'material-ui/colors/green';
 import red from 'material-ui/colors/red';
 import grey from 'material-ui/colors/grey';
-import blue from 'material-ui/colors/blue';
 
 import ActionMenu from './ActionMenu';
 import WarningDialog from './WarningDialog';
@@ -364,10 +363,10 @@ class UrlEntry extends React.Component {
                 width: '99%'
             },
             track: {
-                background: blue[400]
+                background: '#5f50e1'
             },
             rail: {
-                background: blue[200]
+                background: '#8f8af0'
             }
         };
     }
