@@ -43,9 +43,9 @@ export default class Header extends React.Component {
                     <img style={styleSheet.image} src={'images\\YoutubeIcon.png'} />
                 </Button>
                 <div style={styleSheet.details}>
-                    <Typography type="headline" color="secondary">Clayton Industries</Typography>
-                    <Typography type="headline" color="secondary">Youtube Downloader</Typography>
-                    <Typography type="headline" color="secondary">{"Version " + VERSION_NUMBER}</Typography>
+                    <Typography variant="headline" color="textSecondary">Clayton Industries</Typography>
+                    <Typography variant="headline" color="textSecondary">Youtube Downloader</Typography>
+                    <Typography variant="headline" color="textSecondary">{"Version " + VERSION_NUMBER}</Typography>
                 </div>
                 <IconButton onClick={() => {this.setState({settingsDialogOpen: true})}}>
                     <DeleteIcon style={styleSheet.settingIcon} />
