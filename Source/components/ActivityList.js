@@ -146,7 +146,7 @@ class ActivityList extends React.Component {
                         </Button>
                     </Tooltip>
                     <Tooltip title="Retry Download" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
-                        <Button dense color="primary" onClick={() => this.retryDownload()}>
+                        <Button size="small" color="primary" onClick={() => this.retryDownload()}>
                             <RetryIcon />
                         </Button>
                     </Tooltip>
