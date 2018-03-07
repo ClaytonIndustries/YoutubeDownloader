@@ -5,6 +5,9 @@ import PropTypes from 'prop-types';
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
 
+import SearchIcon from 'material-ui-icons/Search';
+import DownloadIcon from 'material-ui-icons/FileDownload';
+
 import UrlEntry from './UrlEntry';
 import ActivityList from './ActivityList';
 
@@ -38,8 +41,8 @@ export default class TabContainer extends React.Component {
             <div style={styleSheet.tabContainer}>
                 <AppBar position="static">
                     <Tabs fullWidth centered value={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(event, index)}}>
-                        <Tab label="DOWNLOAD" />
-                        <Tab label="ACTIVITY" />
+                        <Tab icon={<SearchIcon />} />
+                        <Tab icon={<DownloadIcon />} />
                     </Tabs>
                 </AppBar>
                 <div style={styleSheet.childContainer}>
