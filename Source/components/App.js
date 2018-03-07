@@ -15,7 +15,9 @@ export default class App extends React.Component {
     render() {
         const theme = createMuiTheme({
             palette: {
-                primary: blue,
+                primary: {
+                    main: '#5f50e1'
+                },
                 secondary: orange
             }
         });
