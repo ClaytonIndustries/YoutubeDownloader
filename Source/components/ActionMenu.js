@@ -15,7 +15,7 @@ export default class ActionMenu extends React.Component {
 
     render() {
         return (
-            <Menu anchorEl={this.props.anchor} open={this.props.open} onRequestClose={() => {this.onMenuAction()}}>
+            <Menu anchorEl={this.props.anchor} open={this.props.open} onClose={() => {this.onMenuAction()}}>
                 {this.props.items.map((item, index) => {
                     return (
                         <MenuItem key={index} selected={item === this.props.selectedItem} onClick={() => {this.onMenuAction(index)}}>{item.description}</MenuItem>
