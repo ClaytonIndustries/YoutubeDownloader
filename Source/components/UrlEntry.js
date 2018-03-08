@@ -132,7 +132,8 @@ class UrlEntry extends React.Component {
 
                     this.setState({
                        gettingVideo: false,
-                       searchStatus: result && result.videoQualities && result.videoQualities.length > 0 ? "success" : "failed"
+                       searchStatus: result && result.videoQualities && result.videoQualities.length > 0 ? "success" : "failed",
+                       volumePercentage: 100
                     });
                 });
             });       
@@ -192,7 +193,11 @@ class UrlEntry extends React.Component {
             youtubeVideo.status = VS_PENDING;
             youtubeVideo.volumePercentage = this.state.volumePercentage;
 
-            this.props.dispatch({type: RS_ADD_VIDEO, video: youtubeVideo});
+            this.props.dispatch({ type: RS_ADD_VIDEO, video: youtubeVideo });
+
+            this.setState({
+                volumePercentage: 50
+            });
 
             this.clearCurrentVideo(() => {
                 this.props.onSwitchTab();
