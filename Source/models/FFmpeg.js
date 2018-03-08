@@ -7,9 +7,9 @@ export default class FFmpeg {
         this.processStarter = new ProcessStarter();
     }
 
-    extractVideoAudio(videoPath, audioPath, callback) {
+    extractVideoAudio(videoPath, audioPath, volumePercentage, callback) {
         let args = [
-            "-i", videoPath, "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", audioPath, "-y"
+            "-i", videoPath, "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", "-filter:a", "volume=" + volumePercentage, audioPath, "-y"
         ];
 
         return this.processStarter.start(this.ffmpegLocation(), args, (success) => {

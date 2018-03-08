@@ -10,7 +10,7 @@ import Typography from 'material-ui/Typography';
 import TextField from 'material-ui/TextField';
 import Avatar from 'material-ui/Avatar';
 
-import Slider from 'rc-slider';
+import SliderBase from 'rc-slider';
 
 import CheckIcon from 'material-ui-icons/Check';
 import CrossIcon from 'material-ui-icons/Close';
@@ -31,8 +31,9 @@ import { VS_PENDING, RS_ADD_VIDEO, RS_URL_ENTRY_SAVE_STATE } from '../models/Con
 
 const { dialog, getCurrentWindow } = window.require('electron').remote;
 
-const createSliderWithTooltip = Slider.createSliderWithTooltip;
-const Range = createSliderWithTooltip(Slider.Range);
+const createSliderWithTooltip = SliderBase.createSliderWithTooltip;
+const Slider = createSliderWithTooltip(SliderBase);
+const Range = createSliderWithTooltip(SliderBase.Range);
 
 class UrlEntry extends React.Component {
     constructor(props) {
@@ -56,6 +57,7 @@ class UrlEntry extends React.Component {
             startTime: 0,
             endTime: 0,
             maxVideoLength: 0,
+            volumePercentage: 50,
             videoId: "",
             gettingVideo: false,
             warningDialogOpen: false,
@@ -156,10 +158,20 @@ class UrlEntry extends React.Component {
         });
     }
 
+    volumeChanged(value) {
+        this.setState({
+            volumePercentage: value
+        });
+    }
+
     formatTime(value) {
         let minutes = Math.floor(value / 60);
         let seconds = value % 60;
         return minutes + ":" + (seconds >= 10 ? seconds : "0" + seconds);
+    }
+
+    formatVolume(value) {
+        return value + "%";
     }
 
     download() {
@@ -178,6 +190,7 @@ class UrlEntry extends React.Component {
             youtubeVideo.originalEndTime = this.state.maxVideoLength;
             youtubeVideo.newEndTime = this.state.endTime;
             youtubeVideo.status = VS_PENDING;
+            youtubeVideo.volumePercentage = this.state.volumePercentage;
 
             this.props.dispatch({type: RS_ADD_VIDEO, video: youtubeVideo});
 
@@ -230,6 +243,7 @@ class UrlEntry extends React.Component {
                 startTime: this.props.lastState.startTime,
                 endTime: this.props.lastState.endTime,
                 maxVideoLength: this.props.lastState.maxVideoLength,
+                volumePercentage: this.props.lastState.volumePercentage,
                 videoId: this.props.lastState.videoId,
                 searchStatus: this.props.lastState.searchStatus
             });
@@ -249,6 +263,7 @@ class UrlEntry extends React.Component {
             startTime: this.state.startTime,
             endTime: this.state.endTime,
             maxVideoLength: this.state.maxVideoLength,
+            volumePercentage: this.state.volumePercentage,
             videoId: this.state.videoId,
             searchStatus: this.state.searchStatus
         }});
@@ -313,6 +328,12 @@ class UrlEntry extends React.Component {
                     <Range min={0} max={this.state.maxVideoLength} value={[this.state.startTime, this.state.endTime]} style={styleSheet.slider} 
                         tipFormatter={value => this.formatTime(value)} allowCross={false} disabled={this.noVideo()} trackStyle={[styleSheet.track]}
                         railStyle={styleSheet.rail} onChange={(values) => {this.timeChanged(values)}} />
+                </div>
+                <div style={styleSheet.topSpacing}>
+                    <Typography type="subheading">Modify volume</Typography>
+                    <Slider min={50} max={200} value={this.state.volumePercentage} style={styleSheet.slider}
+                        tipFormatter={value => this.formatVolume(value)} disabled={this.noVideo()} trackStyle={[styleSheet.track]}
+                        railStyle={styleSheet.rail} onChange={(value) => { this.volumeChanged(value) }} />
                 </div>
                 <div style={styleSheet.topSpacing}>
                     <Button variant="raised" size="small" disabled={this.noVideo()} color="primary" style={styleSheet.downloadButton} 

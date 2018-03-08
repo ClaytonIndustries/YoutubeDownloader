@@ -150,7 +150,9 @@ export default class YoutubeVideo {
 
         this.setVideoStatus(VS_CONVERTING);
 
-        let process = this.ffmpeg.extractVideoAudio(this.destinationVideoPath(), this.destinationAudioPath(), (success) => {
+        let volume = this.volumePercentage / 100;
+
+        let process = this.ffmpeg.extractVideoAudio(this.destinationVideoPath(), this.destinationAudioPath(), volume, (success) => {
             if(!success) {
                 this.setVideoStatus(VS_CONVERSION_FAILED);
                 this.deleteFile(this.destinationAudioPath());
