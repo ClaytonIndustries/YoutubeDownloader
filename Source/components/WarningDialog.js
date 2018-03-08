@@ -12,7 +12,7 @@ export default class WarningDialog extends React.Component {
 
     render() {
         return (
-            <Dialog open={this.props.open} onRequestClose={() => {this.props.onClose()}}>
+            <Dialog open={this.props.open} onClose={() => {this.props.onClose()}}>
                 <DialogTitle>
                     Warning, please correct the following issue
                 </DialogTitle>

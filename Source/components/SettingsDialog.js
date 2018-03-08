@@ -53,7 +53,7 @@ class SettingsDialog extends React.Component {
         }
 
         return (
-            <Dialog open={this.props.open} onRequestClose={() => this.props.onClose()}>
+            <Dialog open={this.props.open} onClose={() => this.props.onClose()}>
                 <DialogTitle>
                     Settings
                 </DialogTitle>
