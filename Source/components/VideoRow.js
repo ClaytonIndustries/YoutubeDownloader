@@ -35,7 +35,7 @@ export default class VideoRow extends React.Component {
         return (
             <TableRow hover selected={this.props.isSelected} onClick={() => this.props.onSelected(this.props.id)}>
                 <TableCell padding="checkbox">
-                    <Checkbox checked={this.props.isSelected} />
+                    <Checkbox color="primary" checked={this.props.isSelected} />
                 </TableCell>
                 <TableCell padding="dense">
                     {this.state.title}

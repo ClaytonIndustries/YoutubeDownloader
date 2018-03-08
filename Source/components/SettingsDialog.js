@@ -62,19 +62,19 @@ class SettingsDialog extends React.Component {
                         <ListItem>
                             <ListItemText primary="Automatically paste" />
                             <ListItemSecondaryAction>
-                                <Switch onClick={event => this.onToggleClicked('paste')} checked={this.state.settings.automaticallyPaste} />
+                                <Switch color="primary" onClick={event => this.onToggleClicked('paste')} checked={this.state.settings.automaticallyPaste} />
                             </ListItemSecondaryAction>
                         </ListItem>
                         <ListItem>
                             <ListItemText primary="Automatically get video" />
                             <ListItemSecondaryAction>
-                                <Switch onClick={event => this.onToggleClicked('get')} checked={this.state.settings.automaticallyGetVideo} />
+                                <Switch color="primary" onClick={event => this.onToggleClicked('get')} checked={this.state.settings.automaticallyGetVideo} />
                             </ListItemSecondaryAction>
                         </ListItem>
                         <ListItem>
                             <ListItemText primary="Automatically download" />
                             <ListItemSecondaryAction>
-                                <Switch onClick={event => this.onToggleClicked('download')} checked={this.state.settings.automaticallyDownload} />
+                                <Switch color="primary" onClick={event => this.onToggleClicked('download')} checked={this.state.settings.automaticallyDownload} />
                             </ListItemSecondaryAction>
                         </ListItem>
                     </List>
