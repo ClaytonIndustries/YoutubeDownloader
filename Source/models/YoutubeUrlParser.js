@@ -300,7 +300,13 @@ export default class YoutubeUrlParser {
     }
 
     extractTitle(webpage) {
-        let result = new RegExp("document.title = \"\s*(.+?)\s*(?:- YouTube|\";)").exec(webpage);
+        let result = new RegExp("<title>\s*(.+?)\s*(?:- YouTube|</title>)").exec(webpage);
+
+        if (result && result[1] != "YouTube") {
+            return result[1];
+        }
+
+        result = new RegExp("document.title = \"\s*(.+?)\s*(?:- YouTube|\";)").exec(webpage);
 
         if (result) {
             return result[1];
