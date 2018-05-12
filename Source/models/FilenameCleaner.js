@@ -6,6 +6,7 @@ export default class FilenameCleaner {
         }
 
         return filename.replace("\\u0026", "&")
-                       .replace(/[\\/:"*?<>|]/g, "");
+                       .replace(/[\\/:"*?<>|]/g, "")
+                       .trim();
     }
 }
