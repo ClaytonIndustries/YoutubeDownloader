@@ -36,7 +36,8 @@ export default class YoutubeUrlParser {
                     callback(true);
                     return;
                 }
-                catch(e) {
+                catch (e) {
+                    console.error(e);
                 }
             }
             
@@ -61,7 +62,8 @@ export default class YoutubeUrlParser {
                         return;
                     }
                 }
-                catch(e) {                 
+                catch (e) {    
+                    console.error(e);
                 }
             }
 
@@ -79,7 +81,8 @@ export default class YoutubeUrlParser {
                         return;
                     }
                 }
-                catch(e) {
+                catch (e) {
+                    console.error(e);
                 }
             }
 
@@ -153,7 +156,8 @@ export default class YoutubeUrlParser {
                 qualities = this.processSectionWithNoEncryption(adaptiveFmtSection, qualities);
             }
         }
-        catch(e) {
+        catch (e) {
+            console.error(e);
         }
 
         return qualities;
@@ -194,7 +198,8 @@ export default class YoutubeUrlParser {
                     }
                 }
             }
-            catch(e) {
+            catch (e) {
+                console.error(e);
             }
         });
 
@@ -230,7 +235,8 @@ export default class YoutubeUrlParser {
                     qualities.push(quality);
                 }
             }
-            catch(e) {
+            catch (e) {
+                console.error(e);
             }
         });
 
@@ -282,7 +288,9 @@ export default class YoutubeUrlParser {
                 videoId: new RegExp("v=(.*)").exec(youtubeUrl)[1]
             };
         }
-        catch(e) {
+        catch (e) {
+            console.error(e);
+
             return undefined;
         }
     }
