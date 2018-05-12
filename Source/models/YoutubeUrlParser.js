@@ -164,6 +164,10 @@ export default class YoutubeUrlParser {
     }
 
     processSectionWithEncryption(section, qualities) {
+        if (!section) {
+            return qualities;
+        }
+
         section = section.replace(/codecs=\"[\s\S]*?\"/g, "");
 
         let regex = /(?=^|,[^+])[\s\S]*?(?:itag=)[\s\S]*?(?=,[^+]|$)/g;
@@ -296,15 +300,33 @@ export default class YoutubeUrlParser {
     }
 
     extractTitle(webpage) {
-        return new RegExp("document.title = \"\s*(.+?)\s*(?:- YouTube|\";)").exec(webpage)[1];
+        let result = new RegExp("document.title = \"\s*(.+?)\s*(?:- YouTube|\";)").exec(webpage);
+
+        if (result) {
+            return result[1];
+        }
+
+        return undefined;
     }
 
     extractFmtStreamMapSection(webpage) {
-        return decodeURIComponent(new RegExp("\"url_encoded_fmt_stream_map\":\"([\\s\\S]*?)\",").exec(webpage)[1]);
+        let result = new RegExp("\"url_encoded_fmt_stream_map\":\"([\\s\\S]*?)\",").exec(webpage);
+
+        if (result) {
+            return decodeURIComponent(result[1]);
+        }
+
+        return undefined;     
     }
 
     extractAdaptiveFmtSection(webpage) {
-        return decodeURIComponent(new RegExp("\"adaptive_fmts\":\"([\\s\\S]*?)\",").exec(webpage)[1]);
+        let result = new RegExp("\"adaptive_fmts\":\"([\\s\\S]*?)\",").exec(webpage);
+
+        if (result) {
+            return decodeURIComponent(result[1]);
+        }
+
+        return undefined;
     }
 
     extractPlayerUrl(webpage) {
