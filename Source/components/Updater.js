@@ -9,7 +9,7 @@ import { LinearProgress } from 'material-ui/Progress';
 
 import Slide from 'material-ui/transitions/Slide';
 
-import CloseIcon from 'material-ui-icons/Close';
+import CloseIcon from '@material-ui/icons/Close';
 
 import UpdateManager from '../models/UpdateManager';
 import ProcessStarter from '../models/ProcessStarter';

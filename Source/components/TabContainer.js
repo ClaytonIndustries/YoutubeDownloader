@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import AppBar from 'material-ui/AppBar';
 import Tabs, { Tab } from 'material-ui/Tabs';
 
-import SearchIcon from 'material-ui-icons/Search';
-import DownloadIcon from 'material-ui-icons/FileDownload';
+import SearchIcon from '@material-ui/icons/Search';
+import DownloadIcon from '@material-ui/icons/FileDownload';
 
 import UrlEntry from './UrlEntry';
 import ActivityList from './ActivityList';

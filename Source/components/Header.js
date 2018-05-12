@@ -7,7 +7,7 @@ import IconButton from 'material-ui/IconButton';
 import Card, { CardContent } from 'material-ui/Card';
 import Typography from 'material-ui/Typography';
 
-import DeleteIcon from 'material-ui-icons/Settings';
+import DeleteIcon from '@material-ui/icons/Settings';
 
 import SettingsDialog from './SettingsDialog';
 

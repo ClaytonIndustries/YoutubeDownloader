@@ -7,10 +7,10 @@ import Button from 'material-ui/Button';
 import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table';
 import Tooltip from 'material-ui/Tooltip';
 
-import RemoveIcon from 'material-ui-icons/Delete';
-import FolderIcon from 'material-ui-icons/Folder';
-import PlayIcon from 'material-ui-icons/PlayArrow';
-import RetryIcon from 'material-ui-icons/Refresh';
+import RemoveIcon from '@material-ui/icons/Delete';
+import FolderIcon from '@material-ui/icons/Folder';
+import PlayIcon from '@material-ui/icons/PlayArrow';
+import RetryIcon from '@material-ui/icons/Refresh';
 
 import VideoRow from './VideoRow';
 

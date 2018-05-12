@@ -12,8 +12,8 @@ import Avatar from 'material-ui/Avatar';
 
 import SliderBase from 'rc-slider';
 
-import CheckIcon from 'material-ui-icons/Check';
-import CrossIcon from 'material-ui-icons/Close';
+import CheckIcon from '@material-ui/icons/Check';
+import CrossIcon from '@material-ui/icons/Close';
 
 import green from 'material-ui/colors/green';
 import red from 'material-ui/colors/red';
