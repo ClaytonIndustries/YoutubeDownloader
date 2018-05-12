@@ -11,6 +11,8 @@ import Switch from 'material-ui/Switch';
 import SettingsManager from '../models/SettingsManager';
 import { RS_APP_SETTINGS } from '../models/Constants';
 
+const remote = window.require('electron').remote;
+
 class SettingsDialog extends React.Component {
     constructor(props) {
         super(props);
@@ -32,11 +34,15 @@ class SettingsDialog extends React.Component {
         });
     }
 
+    openDevTools() {
+        remote.getCurrentWindow().webContents.openDevTools();
+    }
+
     onSave() {
         let settings = this.state.settings;
         this.props.dispatch({type: RS_APP_SETTINGS, appSettings: settings});
         this.settingsManager.save(settings);
-        this.props.onClose();
+        this.props.onClose();       
     }
 
     componentWillReceiveProps(newProps) {
@@ -78,6 +84,9 @@ class SettingsDialog extends React.Component {
                             </ListItemSecondaryAction>
                         </ListItem>
                     </List>
+                    <div style={styleSheet.devToolsButton}>
+                        <Button variant="raised" size="small" color="primary" onClick={() => this.openDevTools()}>OPEN DEV TOOLS</Button>
+                    </div>
                 </DialogContent>
                 <DialogActions>
                     <Button color="primary" onClick={() => this.onSave()}>
@@ -95,6 +104,11 @@ class SettingsDialog extends React.Component {
         return {
             list: {
                 width: 300
+            },
+            devToolsButton: {
+                display: 'flex',
+                justifyContent: 'center',
+                marginTop: '10px'
             }
         };
     }
