@@ -306,6 +306,8 @@ export default class YoutubeUrlParser {
             return result[1];
         }
 
+        console.warn("No title found");
+
         return undefined;
     }
 
@@ -316,6 +318,8 @@ export default class YoutubeUrlParser {
             return decodeURIComponent(result[1]);
         }
 
+        console.warn("No url_encoded_fmt_stream_map section found");
+
         return undefined;     
     }
 
@@ -325,6 +329,8 @@ export default class YoutubeUrlParser {
         if (result) {
             return decodeURIComponent(result[1]);
         }
+
+        console.warn("No adaptive_fmts section found");
 
         return undefined;
     }
