@@ -3,21 +3,21 @@ import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
-import Button from 'material-ui/Button';
-import Input from 'material-ui/Input/Input';
-import { LinearProgress } from 'material-ui/Progress';
-import Typography from 'material-ui/Typography';
-import TextField from 'material-ui/TextField';
-import Avatar from 'material-ui/Avatar';
+import Button from '@material-ui/core/Button';
+import Input from '@material-ui/core/Input/Input';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import Avatar from '@material-ui/core/Avatar';
 
 import SliderBase from 'rc-slider';
 
 import CheckIcon from '@material-ui/icons/Check';
 import CrossIcon from '@material-ui/icons/Close';
 
-import green from 'material-ui/colors/green';
-import red from 'material-ui/colors/red';
-import grey from 'material-ui/colors/grey';
+import green from '@material-ui/core/colors/green';
+import red from '@material-ui/core/colors/red';
+import grey from '@material-ui/core/colors/grey';
 
 import ActionMenu from './ActionMenu';
 import WarningDialog from './WarningDialog';

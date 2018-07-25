@@ -2,9 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-import { TableCell, TableRow } from 'material-ui/Table';
-import { LinearProgress } from 'material-ui/Progress';
-import Checkbox from 'material-ui/Checkbox';
+import TableCell from '@material-ui/core/TableCell';
+import TableRow from '@material-ui/core/TableRow';
+import LinearProgress from '@material-ui/core/LinearProgress';
+import Checkbox from '@material-ui/core/Checkbox';
 
 export default class VideoRow extends React.Component {
     constructor(props) {

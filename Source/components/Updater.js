@@ -2,12 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-import Button from 'material-ui/Button';
-import Snackbar, { SnackbarContent } from 'material-ui/Snackbar';
-import IconButton from 'material-ui/IconButton';
-import { LinearProgress } from 'material-ui/Progress';
+import Button from '@material-ui/core/Button';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+import IconButton from '@material-ui/core/IconButton';
+import LinearProgress from '@material-ui/core/LinearProgress';
 
-import Slide from 'material-ui/transitions/Slide';
+import Slide from '@material-ui/core/Slide';
 
 import CloseIcon from '@material-ui/icons/Close';
 

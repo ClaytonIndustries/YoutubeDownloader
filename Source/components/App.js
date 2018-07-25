@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { blue, orange } from 'material-ui/colors';
-import { MuiThemeProvider, createMuiTheme } from 'material-ui/styles';
+import { blue, orange } from '@material-ui/core/colors';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import Header from './Header';
 import TabContainer from './TabContainer';

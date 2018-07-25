@@ -2,11 +2,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-import AppBar from 'material-ui/AppBar';
-import Tabs, { Tab } from 'material-ui/Tabs';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
 
 import SearchIcon from '@material-ui/icons/Search';
-import DownloadIcon from '@material-ui/icons/FileDownload';
+import DownloadIcon from '@material-ui/icons/GetApp';
 
 import UrlEntry from './UrlEntry';
 import ActivityList from './ActivityList';

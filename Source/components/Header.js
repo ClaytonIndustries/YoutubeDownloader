@@ -2,12 +2,13 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
-import Button from 'material-ui/Button';
-import IconButton from 'material-ui/IconButton';
-import Card, { CardContent } from 'material-ui/Card';
-import Typography from 'material-ui/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
 
-import DeleteIcon from '@material-ui/icons/Settings';
+import DeleteIcon from '@material-ui/icons/SettingsOutlined';
 
 import SettingsDialog from './SettingsDialog';
 
