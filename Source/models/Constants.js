@@ -1,5 +1,5 @@
 
-export const VERSION_NUMBER = "1.6";
+export const VERSION_NUMBER = "1.7";
 
 export const VS_PENDING = "Pending";
 export const VS_DOWNLOADING = "Downloading";
