@@ -10,7 +10,7 @@ let win
 
 function createWindow() {
     const winWidth = 800;
-    const winHeight = 755;
+    const winHeight = 740;
 
     win = new BrowserWindow({ 
         width: winWidth, 

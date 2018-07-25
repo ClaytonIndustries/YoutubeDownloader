@@ -8,16 +8,8 @@ import Input from '@material-ui/core/Input/Input';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import Avatar from '@material-ui/core/Avatar';
 
 import SliderBase from 'rc-slider';
-
-import CheckIcon from '@material-ui/icons/Check';
-import CrossIcon from '@material-ui/icons/Close';
-
-import green from '@material-ui/core/colors/green';
-import red from '@material-ui/core/colors/red';
-import grey from '@material-ui/core/colors/grey';
 
 import ActionMenu from './ActionMenu';
 import WarningDialog from './WarningDialog';
@@ -281,11 +273,10 @@ class UrlEntry extends React.Component {
             <div>
                 <div style={styleSheet.topSpacing}>
                     <div style={styleSheet.row}>
-                        <Input fullWidth placeholder="Enter the video url here and press get video" value={this.state.youtubeUrl} 
-                            onChange={(event) => {this.setState({youtubeUrl: event.target.value})}} />
-                        <Avatar style={styleSheet.statusIndicator}>
-                            {this.state.searchStatus == "success" ? <CheckIcon /> : this.state.searchStatus == "failed" ? <CrossIcon /> : <CheckIcon /> }
-                        </Avatar>           
+                        {this.state.searchStatus == "failed" ? <TextField fullWidth error placeholder="Enter the video url here and press get video"
+                            value={this.state.youtubeUrl} onChange={(event) => { this.setState({ youtubeUrl: event.target.value }) }} /> :
+                        <TextField fullWidth placeholder="Enter the video url here and press get video" value={this.state.youtubeUrl}
+                            onChange={(event) => { this.setState({ youtubeUrl: event.target.value }) }} />}   
                     </div>
                 </div>
                 <div style={styleSheet.topSpacing}>
@@ -370,9 +361,6 @@ class UrlEntry extends React.Component {
                 display: 'flex',
                 flexDirection: 'column',
                 flex: '1 0 auto',
-            },
-            statusIndicator: {
-                background: this.state.searchStatus == "success" ? green[500] : this.state.searchStatus == "failed" ? red[500] : grey[500] 
             },
             menuButton: {
                 width: '50%',
