@@ -28,8 +28,8 @@ class SettingsDialog extends React.Component {
 
         this.settingsManager = new SettingsManager();
 
-        this.settingsManager.load((settings) => {
-            this.props.dispatch({type: RS_APP_SETTINGS, appSettings: settings});
+        this.settingsManager.load().then((settings) => {
+            this.props.dispatch({ type: RS_APP_SETTINGS, appSettings: settings });
         });
     }
 

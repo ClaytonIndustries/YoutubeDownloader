@@ -11,21 +11,25 @@ export default class SettingsManager {
         this.fileAccess.write(this.fileLocation(), JSON.stringify(settings));
     }
 
-    load(callback) {
-        this.fileAccess.read(this.fileLocation(), (error, data) => {
-            if(!error) {
-                try {
-                    let settingsData = JSON.parse(data);
+    load() {
+        let self = this;
 
-                    this.raiseResponseCallback(callback, settingsData.automaticallyPaste, settingsData.automaticallyGetVideo, settingsData.automaticallyDownload);
+        return new Promise(function (resolve, reject) {
+            self.fileAccess.read(self.fileLocation(), (error, data) => {
+                if (!error) {
+                    try {
+                        let settingsData = JSON.parse(data);
+
+                        self.raiseResponseCallback(resolve, settingsData.automaticallyPaste, settingsData.automaticallyGetVideo, settingsData.automaticallyDownload);
+                    }
+                    catch (e) {
+                        self.raiseResponseCallback(resolve, true, false, false);
+                    }
                 }
-                catch(e) {  
-                    this.raiseResponseCallback(callback, true, false, false);                  
+                else {
+                    self.raiseResponseCallback(resolve, true, false, false);
                 }
-            }
-            else {
-                this.raiseResponseCallback(callback, true, false, false);
-            }
+            });
         });
     }
 
