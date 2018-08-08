@@ -38,7 +38,8 @@ class SettingsDialog extends React.Component {
             settings: {
                 automaticallyPaste: switchName === "paste" ? !this.state.settings.automaticallyPaste : this.state.settings.automaticallyPaste,
                 automaticallyGetVideo: switchName === "get" ? !this.state.settings.automaticallyGetVideo : this.state.settings.automaticallyGetVideo,
-                automaticallyDownload: switchName === "download" ? !this.state.settings.automaticallyDownload : this.state.settings.automaticallyDownload
+                automaticallyDownload: switchName === "download" ? !this.state.settings.automaticallyDownload : this.state.settings.automaticallyDownload,
+                saveToPath: this.state.settings.saveToPath
             }
         });
     }
@@ -48,13 +49,12 @@ class SettingsDialog extends React.Component {
     }
 
     onSave() {
-        let settings = this.state.settings;
-        this.props.dispatch({type: RS_APP_SETTINGS, appSettings: settings});
-        this.settingsManager.save(settings);
+        this.props.dispatch({ type: RS_APP_SETTINGS, appSettings: this.state.settings});
         this.props.onClose();       
     }
 
     componentWillReceiveProps(newProps) {
+        this.settingsManager.save(newProps.settings);
         this.setState({
             settings: newProps.settings
         });

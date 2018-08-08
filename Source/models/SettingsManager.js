@@ -20,25 +20,35 @@ export default class SettingsManager {
                     try {
                         let settingsData = JSON.parse(data);
 
-                        self.raiseResponseCallback(resolve, settingsData.automaticallyPaste, settingsData.automaticallyGetVideo, settingsData.automaticallyDownload);
+                        if (!settingsData.saveToPath) {
+                            settings.saveToPath = this.fileAccess.getPath("downloads");
+                        }
+
+                        self.raiseResponseCallback(resolve, settingsData.automaticallyPaste, settingsData.automaticallyGetVideo,
+                            settingsData.automaticallyDownload, settingsData.saveToPath);
                     }
                     catch (e) {
-                        self.raiseResponseCallback(resolve, true, false, false);
+                        self.returnDefaultSettings(resolve);
                     }
                 }
                 else {
-                    self.raiseResponseCallback(resolve, true, false, false);
+                    self.returnDefaultSettings(resolve);
                 }
             });
         });
     }
 
-    raiseResponseCallback(callback, automaticallyPaste, automaticallyGetVideo, automaticallyDownload) {
+    raiseResponseCallback(callback, automaticallyPaste, automaticallyGetVideo, automaticallyDownload, saveToPath) {
         callback({
             automaticallyPaste: automaticallyPaste,
             automaticallyGetVideo: automaticallyGetVideo,
-            automaticallyDownload: automaticallyDownload
+            automaticallyDownload: automaticallyDownload,
+            saveToPath: saveToPath
         });
+    }
+
+    returnDefaultSettings(resolve) {
+        this.raiseResponseCallback(resolve, true, false, false, this.fileAccess.getPath("downloads"));
     }
 
     fileLocation() {

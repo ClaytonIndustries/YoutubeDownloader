@@ -19,7 +19,7 @@ import VideoValidator from '../models/VideoValidator';
 import YoutubeVideo from '../models/YoutubeVideo';
 import ClipboardManager from '../models/ClipboardManager';
 import FileAccess from '../models/FileAccess';
-import { VS_PENDING, RS_ADD_VIDEO, RS_URL_ENTRY_SAVE_STATE } from '../models/Constants';
+import { VS_PENDING, RS_ADD_VIDEO, RS_URL_ENTRY_SAVE_STATE, RS_APP_SETTINGS } from '../models/Constants';
 
 const { dialog, getCurrentWindow } = window.require('electron').remote;
 
@@ -44,7 +44,7 @@ class UrlEntry extends React.Component {
             menuAnchor: null,
             selectedVideoQuality: null,
             selectedAudioFormat: AudioFormats.getAllowedFormats()[0],
-            saveTo: this.fileAccess.getPath("downloads"),
+            saveTo: "",
             renameTo: "",
             startTime: 0,
             endTime: 0,
@@ -185,7 +185,11 @@ class UrlEntry extends React.Component {
             youtubeVideo.status = VS_PENDING;
             youtubeVideo.volumePercentage = this.state.volumePercentage;
 
+            let settings = this.props.settings;
+            settings.saveToPath = this.state.saveTo;
+
             this.props.dispatch({ type: RS_ADD_VIDEO, video: youtubeVideo });
+            this.props.dispatch({ type: RS_APP_SETTINGS, appSettings: settings });
 
             this.setState({
                 volumePercentage: 50
@@ -264,6 +268,12 @@ class UrlEntry extends React.Component {
             videoId: this.state.videoId,
             searchStatus: this.state.searchStatus
         }});
+    }
+
+    componentWillReceiveProps(newProps) {
+        this.setState({
+            saveTo: newProps.settings.saveToPath
+        });
     }
 
     render() {
