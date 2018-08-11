@@ -99,6 +99,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_0E8ADC08AB0F41D9A92B1CF55F7EF9CD"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_10544B9C1562425392114A9A93CF9716"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -220,6 +226,12 @@
         "Entry"
         {
         "MsmKey" = "8:_30A19A45205C4828AC46819BF87C8836"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_31E538164742496F8E738E7AED33E3F1"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -393,12 +405,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_5360A36285764DAABD83038C71ED8E34"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_53E5CC631B64444DA0FE71994C79D505"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -489,12 +495,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_7406C337A7EA4CF8BB553827697C020C"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_7538DEFA1E164BE8AC039187F592D7DA"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -526,12 +526,6 @@
         "Entry"
         {
         "MsmKey" = "8:_7E614AA4AF504D6981E3D0AF2FCFAA7E"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_80954A85EADD4AB7B91032AEED17D77B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -603,6 +597,12 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_8AC6D920AE114A35B375CEFAEFC61AB7"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_8F7DABCCAF5145E9BC27070F810C8FC4"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -616,6 +616,12 @@
         "Entry"
         {
         "MsmKey" = "8:_9020396D35B54995B36C16334A1B2114"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_9054CDCCDDE14C998E9CF6D64D413F34"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -951,6 +957,18 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_D2D6C9CDC8744115987F0003114C0B53"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_D664A68AD7C0479A8B58639D5C0FECCA"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_D95CDB9A9C82455BA90D22B9E303332B"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -1108,12 +1126,6 @@
         "Entry"
         {
         "MsmKey" = "8:_FB9CF946903A48ACB851962A99D8957F"
-        "OwnerKey" = "8:_UNDEFINED"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_FC38C9B5902B44EA92E83600FB6E2375"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -1476,6 +1488,26 @@
             "TargetName" = "8:License.rtf"
             "Tag" = "8:"
             "Folder" = "8:_66C9E09CD3254C53B2A2BF1885D3E763"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_0E8ADC08AB0F41D9A92B1CF55F7EF9CD"
+            {
+            "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\resources\\app\\index.css"
+            "TargetName" = "8:index.css"
+            "Tag" = "8:"
+            "Folder" = "8:_7E285025773F4AA3895BBA5D487A066C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -1896,6 +1928,26 @@
             "TargetName" = "8:api-ms-win-crt-runtime-l1-1-0.dll"
             "Tag" = "8:"
             "Folder" = "8:_66C9E09CD3254C53B2A2BF1885D3E763"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_31E538164742496F8E738E7AED33E3F1"
+            {
+            "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\resources\\app\\index.js"
+            "TargetName" = "8:index.js"
+            "Tag" = "8:"
+            "Folder" = "8:_7E285025773F4AA3895BBA5D487A066C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -2470,26 +2522,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5360A36285764DAABD83038C71ED8E34"
-            {
-            "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\resources\\app\\index.js"
-            "TargetName" = "8:index.js"
-            "Tag" = "8:"
-            "Folder" = "8:_7E285025773F4AA3895BBA5D487A066C"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_53E5CC631B64444DA0FE71994C79D505"
             {
             "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\api-ms-win-crt-time-l1-1-0.dll"
@@ -2790,26 +2822,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7406C337A7EA4CF8BB553827697C020C"
-            {
-            "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\resources\\app\\dist\\js\\bundle.js"
-            "TargetName" = "8:bundle.js"
-            "Tag" = "8:"
-            "Folder" = "8:_A271FE6CA5414E119F7C59B8A902221B"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_7538DEFA1E164BE8AC039187F592D7DA"
             {
             "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\locales\\fake-bidi.pak"
@@ -2916,26 +2928,6 @@
             "TargetName" = "8:node.dll"
             "Tag" = "8:"
             "Folder" = "8:_66C9E09CD3254C53B2A2BF1885D3E763"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_80954A85EADD4AB7B91032AEED17D77B"
-            {
-            "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\resources\\app\\main.js"
-            "TargetName" = "8:main.js"
-            "Tag" = "8:"
-            "Folder" = "8:_7E285025773F4AA3895BBA5D487A066C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -3170,6 +3162,26 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8AC6D920AE114A35B375CEFAEFC61AB7"
+            {
+            "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\resources\\app\\index.html"
+            "TargetName" = "8:index.html"
+            "Tag" = "8:"
+            "Folder" = "8:_7E285025773F4AA3895BBA5D487A066C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_8F7DABCCAF5145E9BC27070F810C8FC4"
             {
             "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\api-ms-win-crt-math-l1-1-0.dll"
@@ -3216,6 +3228,26 @@
             "TargetName" = "8:api-ms-win-core-rtlsupport-l1-1-0.dll"
             "Tag" = "8:"
             "Folder" = "8:_66C9E09CD3254C53B2A2BF1885D3E763"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_9054CDCCDDE14C998E9CF6D64D413F34"
+            {
+            "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\resources\\app\\dist\\js\\bundle.js"
+            "TargetName" = "8:bundle.js"
+            "Tag" = "8:"
+            "Folder" = "8:_A271FE6CA5414E119F7C59B8A902221B"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
@@ -4310,6 +4342,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D2D6C9CDC8744115987F0003114C0B53"
+            {
+            "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\resources\\app\\package.json"
+            "TargetName" = "8:package.json"
+            "Tag" = "8:"
+            "Folder" = "8:_7E285025773F4AA3895BBA5D487A066C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D664A68AD7C0479A8B58639D5C0FECCA"
+            {
+            "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\resources\\app\\main.js"
+            "TargetName" = "8:main.js"
+            "Tag" = "8:"
+            "Folder" = "8:_7E285025773F4AA3895BBA5D487A066C"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_D95CDB9A9C82455BA90D22B9E303332B"
             {
             "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\resources\\app\\dist\\FFmpeg\\presets\\licenses\\rtmpdump.txt"
@@ -4836,26 +4908,6 @@
             "TargetName" = "8:bzip2.txt"
             "Tag" = "8:"
             "Folder" = "8:_6595872CF4AE45D78E6C4497C88E325D"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            }
-            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_FC38C9B5902B44EA92E83600FB6E2375"
-            {
-            "SourcePath" = "8:..\\..\\..\\Binary\\Youtube Downloader-win32-ia32\\resources\\app\\package.json"
-            "TargetName" = "8:package.json"
-            "Tag" = "8:"
-            "Folder" = "8:_7E285025773F4AA3895BBA5D487A066C"
             "Condition" = "8:"
             "Transitive" = "11:FALSE"
             "Vital" = "11:TRUE"
