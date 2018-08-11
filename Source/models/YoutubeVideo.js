@@ -77,20 +77,18 @@ export default class YoutubeVideo {
         this.activeProcess = {process: process, type: type};
     }
 
-    start() {
-        this.download((success) => {
-            if(success) {
-                this.convertAudio((success) => {
-                    if(success) {
-                        this.cutVideo((success) => {
-                            if(success) {
-                                this.setVideoStatus(VS_COMPLETE);
-                            }
-                        });
-                    }
-                });
-            }
-        });
+    async start() {
+        try {
+            await this.download();
+
+            await this.convertAudio();
+
+            await this.cutVideo();
+
+            this.setVideoStatus(VS_COMPLETE);
+        }
+        catch (e) {
+        }
     }
 
     cancel() {
@@ -112,86 +110,100 @@ export default class YoutubeVideo {
         }
     }
 
-    download(callback) {
-        this.setVideoStatus(VS_DOWNLOADING);
+    download() {
+        let self = this;
 
-        let videoDownloader = new VideoDownloader();
-        let process = videoDownloader.get(this.videoQuality.downloadUrl, (action, value) => {
-            switch(action) {
-                case "size":
-                    this.setSize(value);
-                    break;
-                case "progress":
-                    this.setProgress(value);
-                    break;
-                case "complete":
-                    this.fileAccess.write(this.destinationVideoPath(), value, (error) => {
-                        if(error) {
-                            this.setVideoStatus(VS_DOWNLOAD_FAILED);
-                            this.deleteFile(this.destinationVideoPath());
-                        }
-                        callback(error ? false : true);
-                    });              
-                    break;
-                case "error":
-                    this.setVideoStatus(VS_DOWNLOAD_FAILED);
-                    callback(false);
-                    break;
-            }
+        return new Promise((resolve, reject) => {
+            self.setVideoStatus(VS_DOWNLOADING);
+
+            let videoDownloader = new VideoDownloader();
+            let process = videoDownloader.get(self.videoQuality.downloadUrl, (action, value) => {
+                switch (action) {
+                    case "size":
+                        self.setSize(value);
+                        break;
+                    case "progress":
+                        self.setProgress(value);
+                        break;
+                    case "complete":
+                        self.fileAccess.write(self.destinationVideoPath(), value, (error) => {
+                            if (error) {
+                                self.setVideoStatus(VS_DOWNLOAD_FAILED);
+                                self.deleteFile(self.destinationVideoPath());
+                                reject();
+                            } else {
+                                resolve();
+                            }
+                        });
+                        break;
+                    case "error":
+                        self.setVideoStatus(VS_DOWNLOAD_FAILED);
+                        reject();
+                        break;
+                }
+            });
+            self.setActiveProcess(process, PR_XHR);
         });
-        this.setActiveProcess(process, PR_XHR);
     }
 
-    convertAudio(callback) {
-        if(!this.shouldConvertAudio()) {
-            callback(true);
-            return;
-        }
+    convertAudio() {
+        let self = this;
 
-        this.setVideoStatus(VS_CONVERTING);
-
-        let volume = this.volumePercentage / 100;
-
-        let process = this.ffmpeg.extractVideoAudio(this.destinationVideoPath(), this.destinationAudioPath(), volume, (success) => {
-            if(!success) {
-                this.setVideoStatus(VS_CONVERSION_FAILED);
-                this.deleteFile(this.destinationAudioPath());
+        return new Promise((resolve, reject) => {
+            if (!self.shouldConvertAudio()) {
+                resolve();
+                return;
             }
 
-            this.deleteFile(this.destinationVideoPath());
+            self.setVideoStatus(VS_CONVERTING);
 
-            callback(success);
+            let volume = self.volumePercentage / 100;
+
+            let process = self.ffmpeg.extractVideoAudio(self.destinationVideoPath(), self.destinationAudioPath(), volume, (success) => {
+                if (!success) {
+                    self.setVideoStatus(VS_CONVERSION_FAILED);
+                    self.deleteFile(self.destinationAudioPath());
+                }
+
+                self.deleteFile(self.destinationVideoPath());
+
+                (success ? resolve : reject)();
+            });
+
+            self.setActiveProcess(process, PR_FFMPEG);
         });
-        
-        this.setActiveProcess(process, PR_FFMPEG);
     }
 
-    cutVideo(callback) {
-        if(this.startTime == 0 && this.newEndTime == this.originalEndTime) {
-            callback(true);
-            return;
-        }
+    cutVideo() {
+        let self = this;
 
-        this.setVideoStatus(VS_CUTTING);
-
-        let cuttingVideo = !this.shouldConvertAudio();
-        let mediaPath = cuttingVideo ? this.destinationVideoPath() : this.destinationAudioPath();
-        let renamedMediaPath = mediaPath.slice(0, mediaPath.lastIndexOf('\\') + 1) + "~" + mediaPath.slice(mediaPath.lastIndexOf('\\') + 1);
-
-        this.fileAccess.rename(mediaPath, renamedMediaPath);
-
-        let process = this.ffmpeg.cutVideo(renamedMediaPath, mediaPath, this.startTime, this.newEndTime, (success) => {
-            if(!success) {
-                this.setVideoStatus(VS_CUTTING_FAILED);
-                this.deleteFile(mediaPath);
+        return new Promise((resolve, reject) => {
+            if (self.startTime == 0 && self.newEndTime == self.originalEndTime) {
+                resolve();
+                return;
             }
 
-            this.deleteFile(renamedMediaPath);
+            self.setVideoStatus(VS_CUTTING);
 
-            callback(success);
+            let cuttingVideo = !self.shouldConvertAudio();
+            let mediaPath = cuttingVideo ? self.destinationVideoPath() : self.destinationAudioPath();
+            let renamedMediaPath = mediaPath.slice(0, mediaPath.lastIndexOf('\\') + 1) + "~" + mediaPath.slice(mediaPath.lastIndexOf('\\') + 1);
+
+            self.fileAccess.rename(mediaPath, renamedMediaPath);
+
+            let process = self.ffmpeg.cutVideo(renamedMediaPath, mediaPath, self.startTime, self.newEndTime, (success) => {
+                if (!success) {
+                    self.setVideoStatus(VS_CUTTING_FAILED);
+                    self.deleteFile(mediaPath);
+                }
+
+                self.deleteFile(renamedMediaPath);
+
+                (success ? resolve : reject)();
+            });
+
+            self.setActiveProcess(process, PR_FFMPEG);
         });
-
-        this.setActiveProcess(process, PR_FFMPEG);
     }
 
     deleteFile(filepath) {

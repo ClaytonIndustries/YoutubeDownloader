@@ -14,7 +14,7 @@ export default class SettingsManager {
     load() {
         let self = this;
 
-        return new Promise(function (resolve, reject) {
+        return new Promise((resolve, reject) => {
             self.fileAccess.read(self.fileLocation(), (error, data) => {
                 if (!error) {
                     try {
