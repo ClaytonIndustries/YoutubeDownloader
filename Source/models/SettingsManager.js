@@ -20,10 +20,6 @@ export default class SettingsManager {
                     try {
                         let settingsData = JSON.parse(data);
 
-                        if (!settingsData.saveToPath) {
-                            settings.saveToPath = this.fileAccess.getPath("downloads");
-                        }
-
                         self.raiseResponseCallback(resolve, settingsData.automaticallyPaste, settingsData.automaticallyGetVideo,
                             settingsData.automaticallyDownload, settingsData.saveToPath);
                     }
