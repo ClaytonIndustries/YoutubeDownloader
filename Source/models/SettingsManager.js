@@ -44,7 +44,7 @@ export default class SettingsManager {
     }
 
     returnDefaultSettings(resolve) {
-        this.raiseResponseCallback(resolve, true, false, false, this.fileAccess.getPath("downloads"));
+        this.raiseResponseCallback(resolve, true, true, false, this.fileAccess.getPath("downloads"));
     }
 
     fileLocation() {
