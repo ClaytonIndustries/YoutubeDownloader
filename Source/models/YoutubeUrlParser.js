@@ -19,14 +19,12 @@ export default class YoutubeUrlParser {
         };
 
         let webpageData = await this.downloadWebpage(youtubeUrl);
-
-        if (webpageData) {                
-            if(!this.signatureDecryptor.isDecrypted()) {
-                await this.downloadPlayer(webpageData);
-            }
-
-            return this.extractQualities(webpageData);
+                
+        if(!this.signatureDecryptor.isDecrypted()) {
+            await this.downloadPlayer(webpageData);
         }
+
+        return this.extractQualities(webpageData);
     }
 
     async downloadQualities() {
@@ -36,7 +34,7 @@ export default class YoutubeUrlParser {
             this.videoQualities = JSON.parse(response);
         }
         catch (e) {
-            console.warn(e);
+            console.error(e);
 
             return Promise.reject("Download video qualities failed");
         }
@@ -49,7 +47,7 @@ export default class YoutubeUrlParser {
             return this.extractWebpageData(response, youtubeUrl);
         }
         catch (e) {    
-            console.warn(e);
+            console.error(e);
 
             return Promise.reject("Download webpage failed");
         }
@@ -67,7 +65,7 @@ export default class YoutubeUrlParser {
             }
         }
         catch (e) {
-            console.warn(e);
+            console.error(e);
 
             return Promise.reject("Download player failed");
         }
@@ -266,20 +264,13 @@ export default class YoutubeUrlParser {
     }
 
     extractWebpageData(webpage, youtubeUrl) {
-        try {
-            return {
-                title: this.filenameCleaner.clean(this.extractTitle(webpage)),
-                fmtStreamMapSection: this.extractAdaptiveFmtSection(webpage),
-                adaptiveFmtSection: this.extractFmtStreamMapSection(webpage),
-                playerUrl: this.extractPlayerUrl(webpage),
-                videoId: new RegExp("v=(.*)").exec(youtubeUrl)[1]
-            };
-        }
-        catch (e) {
-            console.error(e);
-
-            return undefined;
-        }
+        return {
+            title: this.filenameCleaner.clean(this.extractTitle(webpage)),
+            fmtStreamMapSection: this.extractAdaptiveFmtSection(webpage),
+            adaptiveFmtSection: this.extractFmtStreamMapSection(webpage),
+            playerUrl: this.extractPlayerUrl(webpage),
+            videoId: new RegExp("v=(.*)").exec(youtubeUrl)[1]
+        };
     }
 
     extractTitle(webpage) {

@@ -1,10 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
 import Button from '@material-ui/core/Button';
-import Input from '@material-ui/core/Input/Input';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
@@ -127,7 +125,7 @@ class UrlEntry extends React.Component {
                     }
                 }
                 catch (e) { 
-                    console.warn(e);              
+                    console.error(e);              
                 }
 
                 this.setState({
