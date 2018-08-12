@@ -10,30 +10,32 @@ export default class UpdateManager {
         this.fileAccess = new FileAccess();
     }
 
-    checkForUpdates(callback) {
-        let httpRequest = new XMLHttpRequest();
-        httpRequest.onload = () => {
-            try {
-                let response = JSON.parse(httpRequest.responseText);
-                if(this.getFormattedVersionNumberFromString(response.versionNumber) > this.getFormattedVersionNumberFromString(VERSION_NUMBER)) {
-                    let update = new Update();
-                    update.url = response.packageUrl;
-                    update.binary = response.binary;
-                    callback(update);
+    checkForUpdates() {
+        return new Promise((resolve) => {
+            let httpRequest = new XMLHttpRequest();
+            httpRequest.onload = () => {
+                try {
+                    let response = JSON.parse(httpRequest.responseText);
+                    if(this.getFormattedVersionNumberFromString(response.versionNumber) > this.getFormattedVersionNumberFromString(VERSION_NUMBER)) {
+                        let update = new Update();
+                        update.url = response.packageUrl;
+                        update.binary = response.binary;
+                        resolve(update);
+                    }
+                    else {
+                        resolve();
+                    }
                 }
-                else {
-                    callback();
+                catch(e) {
+                    resolve();
                 }
             }
-            catch(e) {
-                callback();
-            }
-        }
-        httpRequest.onerror = () => callback();
-        httpRequest.onabort = () => callback();
-        httpRequest.open("GET", path.join(URL_VERSION, this.getPlatform()), true);
-        httpRequest.setRequestHeader("Authorization", AUTH_CODE);
-        httpRequest.send();
+            httpRequest.onerror = () => resolve();
+            httpRequest.onabort = () => resolve();
+            httpRequest.open("GET", path.join(URL_VERSION, this.getPlatform()), true);
+            httpRequest.setRequestHeader("Authorization", AUTH_CODE);
+            httpRequest.send();
+        });    
     }
 
     getPlatform() {
