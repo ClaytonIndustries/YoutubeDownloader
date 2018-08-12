@@ -4,8 +4,6 @@ import PropTypes from 'prop-types';
 
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
-import Card from '@material-ui/core/Card';
-import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
 
 import DeleteIcon from '@material-ui/icons/SettingsOutlined';
