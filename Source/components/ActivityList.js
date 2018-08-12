@@ -51,15 +51,17 @@ class ActivityList extends React.Component {
     }
 
     canNewDownloadBeStarted() {
+        const maxActiveDownloads = 2;
+
         let activeDownloads = this.props.videos.reduce((total, item) => {
             return item.isActive() ? total + 1 : total;
         }, 0);
 
-        let pendingDownloads = this.props.videos.some((item) => {
+        let anyPendingDownloads = this.props.videos.some((item) => {
             return item.isPending();
         });
 
-        return activeDownloads < 2 && pendingDownloads > 0;
+        return activeDownloads < maxActiveDownloads && anyPendingDownloads;
     }
 
     removeVideo() {

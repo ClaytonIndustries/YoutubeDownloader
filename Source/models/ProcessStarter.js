@@ -3,7 +3,7 @@ const { shell } = window.require('electron');
 
 export default class ProcessStarter {
     start(path, args, callback) {
-        return execFile(path, args, (error, stdout, stderr) => {
+        return execFile(path, args, (error) => {
             if(callback) callback(error ? false : true);
         });
     }
