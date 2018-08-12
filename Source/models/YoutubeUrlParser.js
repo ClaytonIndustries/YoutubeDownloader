@@ -11,90 +11,73 @@ export default class YoutubeUrlParser {
         this.videoQualities = [];
     }
 
-    parse(youtubeUrl, callback) {
+    async parse(youtubeUrl) {
         this.logGetVideoCall();
-        if(this.noVideoQualities()){
-            this.downloadQualities((success) => {
-                if(success) {
-                    this.downloadWebpage(youtubeUrl, callback);
-                }
-                else {
-                    callback();
-                }
-            });
+
+        if (this.noVideoQualities()) {
+            await this.downloadQualities();
+        };
+
+        let webpageData = await this.downloadWebpage(youtubeUrl);
+
+        if (webpageData) {                
+            if(!this.signatureDecryptor.isDecrypted()) {
+                await this.downloadPlayer(webpageData);
+            }
+
+            return this.extractQualities(webpageData);
         }
-        else {
-            this.downloadWebpage(youtubeUrl, callback);
+    }
+
+    async downloadQualities() {
+        try {
+            let response = await this.makeGetRequest(URL_QUALITY, true);
+
+            this.videoQualities = JSON.parse(response);
+        }
+        catch (e) {
+            console.warn(e);
+
+            return Promise.reject("Download video qualities failed");
         }
     }
 
-    downloadQualities(callback) {
-        this.makeGetRequest(URL_QUALITY, true, (success, response) => {
-            if(success) {
-                try {
-                    this.videoQualities = JSON.parse(response);
-                    callback(true);
-                    return;
-                }
-                catch (e) {
-                    console.error(e);
-                }
-            }
-            
-            callback(false);
-        });
+    async downloadWebpage(youtubeUrl) {
+        try {
+            let response = await this.makeGetRequest(youtubeUrl, false);
+
+            return this.extractWebpageData(response, youtubeUrl);
+        }
+        catch (e) {    
+            console.warn(e);
+
+            return Promise.reject("Download webpage failed");
+        }
     }
 
-    downloadWebpage(youtubeUrl, callback) {
-        this.makeGetRequest(youtubeUrl, false, (success, response) => {
-            if(success) {
-                try {
-                    let webpage = response;
-                    let webpageData = this.extractWebpageData(webpage, youtubeUrl);
+    async downloadPlayer(webpageData) {
+        try {
+            let response = await this.makeGetRequest(webpageData.playerUrl, false);
 
-                    if(webpageData) {                
-                        if(!this.signatureDecryptor.isDecrypted()) {
-                            this.downloadPlayer(webpageData, callback);
-                        }
-                        else {
-                            this.extractQualities(webpageData, callback);
-                        }
-                        return;
-                    }
-                }
-                catch (e) {    
-                    console.error(e);
-                }
+            if(this.signatureDecryptor.getCryptoFunctions(response)) {
+                return Promise.resolve();
             }
-
-            callback();
-        });
-    }
-
-    downloadPlayer(webpageData, callback) {
-        this.makeGetRequest(webpageData.playerUrl, false, (success, response) => {
-            if(success) {
-                try {
-                    let player = response;
-                    if(this.signatureDecryptor.getCryptoFunctions(player)) {
-                        this.extractQualities(webpageData, callback);
-                        return;
-                    }
-                }
-                catch (e) {
-                    console.error(e);
-                }
+            else {
+                return Promise.reject("Signature decryptor failed");
             }
+        }
+        catch (e) {
+            console.warn(e);
 
-            callback();
-        });
+            return Promise.reject("Download player failed");
+        }
     }
 
     logGetVideoCall() {
         this.makePostRequest(URL_STATISTIC, true);
     }
 
-    extractQualities(webpageData, callback) {
+    extractQualities(webpageData) {
         let videoQualities = this.processSections(webpageData.fmtStreamMapSection, webpageData.adaptiveFmtSection);
         let videoLength = 0;
         let videoId = webpageData.videoId + Moment().format("x");
@@ -123,12 +106,12 @@ export default class YoutubeUrlParser {
             }
         });
 
-        callback({ 
+        return { 
             title: webpageData.title,
             videoQualities: videoQualities,
             videoLength: videoLength,
             id: videoId
-        });
+        };
     }
 
     extractVideoDuration(videoLink) {
@@ -354,22 +337,29 @@ export default class YoutubeUrlParser {
         return !this.videoQualities || this.videoQualities.length === 0;
     }
 
-    makeGetRequest(url, includeAuth, callback) {
-        try {
-            let httpRequest = new XMLHttpRequest();
-            httpRequest.onload = () => {
-                callback(httpRequest.status == 200, httpRequest.responseText);
-            };
-            httpRequest.onerror = () => callback(false);
-            httpRequest.open("GET", url, true);
-            if(includeAuth) {
-                httpRequest.setRequestHeader("Authorization", AUTH_CODE);
+    makeGetRequest(url, includeAuth) {
+        return new Promise((resolve, reject) => {
+            try {
+                let httpRequest = new XMLHttpRequest();
+                httpRequest.onload = () => {
+                    if (httpRequest.status == 200) {
+                        resolve(httpRequest.responseText);
+                    }
+                    else {
+                        reject("Get request failed");
+                    }
+                };
+                httpRequest.onerror = () => reject("Get request failed");
+                httpRequest.open("GET", url, true);
+                if(includeAuth) {
+                    httpRequest.setRequestHeader("Authorization", AUTH_CODE);
+                }
+                httpRequest.send();
             }
-            httpRequest.send();
-        }
-        catch(e) {
-            callback(false);
-        }
+            catch (e) {
+                reject(e);
+            }
+        });
     }
 
     makePostRequest(url, includeAuth) {

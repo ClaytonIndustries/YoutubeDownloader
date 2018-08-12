@@ -105,8 +105,12 @@ class UrlEntry extends React.Component {
             this.clearCurrentVideo();
             this.setState({
                 gettingVideo: true
-            }, () => {
-                this.props.youtubeUrlParser.parse(this.state.youtubeUrl, (result) => {
+            }, async () => {
+                let result = null;
+
+                try {
+                    result = await this.props.youtubeUrlParser.parse(this.state.youtubeUrl);
+
                     if(result && result.videoQualities && result.videoQualities.length > 0) {
                         this.setState({
                             videoQualities: result.videoQualities,
@@ -121,12 +125,15 @@ class UrlEntry extends React.Component {
                             }
                         });
                     }
+                }
+                catch (e) { 
+                    console.warn(e);              
+                }
 
-                    this.setState({
-                       gettingVideo: false,
-                       searchStatus: result && result.videoQualities && result.videoQualities.length > 0 ? "success" : "failed",
-                       volumePercentage: 100
-                    });
+                this.setState({
+                    gettingVideo: false,
+                    searchStatus: result && result.videoQualities && result.videoQualities.length > 0 ? "success" : "failed",
+                    volumePercentage: 100
                 });
             });       
         }
