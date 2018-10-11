@@ -34,7 +34,7 @@ export default class SignatureDecryptor {
 	getCrytoClassFunctions(webpage, anyCryptoClassFunctionCall) {
         let cryptoClassName = new RegExp(".+\\.").exec(anyCryptoClassFunctionCall)[0];
 
-		cryptoClassName = cryptoClassName.replace('.', '');
+		cryptoClassName = this.escapeRegExp(cryptoClassName.replace('.', ''));
 
 		let cryptoClass = new RegExp("var " + cryptoClassName + "={([\\s\\S]*?)};").exec(webpage)[1];
 
@@ -45,6 +45,10 @@ export default class SignatureDecryptor {
 		}
 
 		return this.mapCryptoClassFunctionsToOperations(cryptoClassFunctions);
+	}
+
+	escapeRegExp(item) {
+		return item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 	}
 
 	mapCryptoClassFunctionsToOperations(cryptoClassFunctions) {
