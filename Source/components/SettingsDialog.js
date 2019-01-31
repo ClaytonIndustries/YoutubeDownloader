@@ -1,4 +1,5 @@
 import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -57,7 +58,7 @@ class SettingsDialog extends React.Component {
     }
 
     render() {
-        const styleSheet = this.getStyles();
+        const { classes } = this.props;
 
         if(!this.state) {
             return (null);
@@ -69,7 +70,7 @@ class SettingsDialog extends React.Component {
                     Settings
                 </DialogTitle>
                 <DialogContent>
-                     <List style={styleSheet.list}>
+                     <List className={classes.list}>
                         <ListItem>
                             <ListItemText primary="Automatically paste" />
                             <ListItemSecondaryAction>
@@ -89,7 +90,7 @@ class SettingsDialog extends React.Component {
                             </ListItemSecondaryAction>
                         </ListItem>
                     </List>
-                    <div style={styleSheet.devToolsButton}>
+                    <div className={classes.devToolsButton}>
                         <Button variant="raised" size="small" color="primary" onClick={() => this.openDevTools()}>OPEN DEV TOOLS</Button>
                     </div>
                 </DialogContent>
@@ -104,20 +105,18 @@ class SettingsDialog extends React.Component {
             </Dialog>
         );
     }
-
-    getStyles() {
-        return {
-            list: {
-                width: 300
-            },
-            devToolsButton: {
-                display: 'flex',
-                justifyContent: 'center',
-                marginTop: '10px'
-            }
-        };
-    }
 }
+
+const styles = theme => ({
+    list: {
+        width: 300
+    },
+    devToolsButton: {
+        display: 'flex',
+        justifyContent: 'center',
+        marginTop: '10px'
+    }
+});
 
 SettingsDialog.propTypes = {
     open: PropTypes.bool.isRequired,
@@ -130,4 +129,4 @@ SettingsDialog.mapStateToProps = (state) => {
     }
 }
 
-export default connect(SettingsDialog.mapStateToProps)(SettingsDialog);
+export default connect(SettingsDialog.mapStateToProps)(withStyles(styles)(SettingsDialog));

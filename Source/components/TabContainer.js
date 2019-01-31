@@ -1,4 +1,5 @@
 import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -12,7 +13,7 @@ import ActivityList from './ActivityList';
 
 import YoutubeUrlParser from '../models/YoutubeUrlParser';
 
-export default class TabContainer extends React.Component {
+class TabContainer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -34,17 +35,17 @@ export default class TabContainer extends React.Component {
     }
 
     render() {
-        const styleSheet = this.getStyles();
+        const { classes } = this.props;
 
         return (
-            <div style={styleSheet.tabContainer}>
+            <div className={classes.tabContainer}>
                 <AppBar position="static">
                     <Tabs fullWidth centered value={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(event, index)}}>
                         <Tab icon={<SearchIcon />} />
                         <Tab icon={<DownloadIcon />} />
                     </Tabs>
                 </AppBar>
-                <div style={styleSheet.childContainer}>
+                <div className={classes.childContainer}>
                     {this.state.selectedTabIndex == 0 &&
                         <UrlEntry youtubeUrlParser={this.youtubeUrlParser} onSwitchTab={() => {this.switchToActivityTab()}} />
                     }
@@ -55,18 +56,18 @@ export default class TabContainer extends React.Component {
           </div>
         );
     }
-
-    getStyles() {
-        return {
-            tabContainer: {
-                marginTop: 10
-            },
-            childContainer: {
-                marginLeft: 5,
-                marginRight: 5,
-                marginTop: 15,
-                marginBottom: 5
-            }
-        };
-    }
 }
+
+const styles = theme => ({
+    tabContainer: {
+        marginTop: 10
+    },
+    childContainer: {
+        marginLeft: 5,
+        marginRight: 5,
+        marginTop: 15,
+        marginBottom: 5
+    }
+});
+
+export default withStyles(styles)(TabContainer);

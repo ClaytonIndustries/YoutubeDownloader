@@ -1,4 +1,5 @@
 import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 
 import Button from '@material-ui/core/Button';
@@ -128,13 +129,13 @@ class ActivityList extends React.Component {
     }
 
     render() {
-        const styleSheet = this.getStyles();
+        const { classes } = this.props;
 
         const tooltipEnterDelayInMilliseconds = 400;
 
         return (
             <div>
-                <div style={styleSheet.row}>
+                <div className={classes.row}>
                     <Tooltip title="Cancel / Remove" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
                         <Button size="small" color="primary" onClick={() => this.removeVideo()}>
                             <RemoveIcon />
@@ -178,16 +179,14 @@ class ActivityList extends React.Component {
             </div>
         );
     }
-
-    getStyles() {
-        return {
-            row: {
-                display: 'flex',
-                justifyContent: 'center'
-            }
-        };
-    }
 }
+
+const styles = theme => ({
+    row: {
+        display: 'flex',
+        justifyContent: 'center'
+    }
+});
 
 ActivityList.mapStateToProps = (state) => {
     return {
@@ -195,4 +194,4 @@ ActivityList.mapStateToProps = (state) => {
     }
 }
 
-export default connect(ActivityList.mapStateToProps)(ActivityList);
+export default connect(ActivityList.mapStateToProps)(withStyles(styles)(ActivityList));

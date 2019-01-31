@@ -1,4 +1,5 @@
 import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
@@ -282,42 +283,51 @@ class UrlEntry extends React.Component {
     }
 
     render() {
-        const styleSheet = this.getStyles();
+        const { classes } = this.props;
+
+        const rcSliderStyles = {
+            track: {
+                background: '#5f50e1'
+            },
+            rail: {
+                background: '#C5B6FF'
+            }
+        }
 
         return (
             <div>
-                <div style={styleSheet.topSpacing}>
-                    <div style={styleSheet.row}>
+                <div className={classes.topSpacing}>
+                    <div className={classes.row}>
                         {this.state.searchStatus == "failed" ? <TextField fullWidth error placeholder="Enter the video url here and press get video"
                             value={this.state.youtubeUrl} onChange={(event) => { this.setState({ youtubeUrl: event.target.value }) }} /> :
                         <TextField fullWidth placeholder="Enter the video url here and press get video" value={this.state.youtubeUrl}
                             onChange={(event) => { this.setState({ youtubeUrl: event.target.value }) }} />}   
                     </div>
                 </div>
-                <div style={styleSheet.topSpacing}>
-                    <Button variant="raised" size="small" color="primary" style={styleSheet.leftItem} onClick={() => {this.paste()}}>PASTE</Button>
-                    <Button variant="raised" size="small" disabled={this.state.gettingVideo} color="primary" style={styleSheet.rightItem} 
+                <div className={classes.topSpacing}>
+                    <Button variant="raised" size="small" color="primary" className={classes.leftItem} onClick={() => {this.paste()}}>PASTE</Button>
+                    <Button variant="raised" size="small" disabled={this.state.gettingVideo} color="primary" className={classes.rightItem} 
                         onClick={() => {this.getVideo()}}>
                         GET VIDEO
                     </Button>
                 </div>
-                <div style={styleSheet.topSpacing}>
+                <div className={classes.topSpacing}>
                     <LinearProgress variant={this.state.gettingVideo ? "query" : "determinate"} value={0} />
                 </div>
-                <div style={styleSheet.topSpacing}>
-                    <div style={styleSheet.row}>
-                        <Typography type="subheading" style={styleSheet.fullWidth}>Choose a video quality</Typography>
-                        <Button size="small" color="primary" disabled={this.noVideo()} style={styleSheet.menuButton} onClick={(event) => {this.showVideoQualityMenu(event)}}>
+                <div className={classes.topSpacing}>
+                    <div className={classes.row}>
+                        <Typography type="subheading" className={classes.fullWidth}>Choose a video quality</Typography>
+                        <Button size="small" color="primary" disabled={this.noVideo()} className={classes.menuButton} onClick={(event) => {this.showVideoQualityMenu(event)}}>
                             {this.state.selectedVideoQuality != null ? this.state.selectedVideoQuality.description : "None Available"}
                         </Button>
                         <ActionMenu items={this.state.videoQualities} open={this.state.videoQualityMenuOpen} anchor={this.state.menuAnchor} selectedItem={this.state.selectedVideoQuality}
                             onClose={(index) => {this.videoQualityMenuClosed(index)}} />
                     </div>
                 </div>
-                <div style={styleSheet.topSpacing}>
-                    <div style={styleSheet.row}>
-                        <Typography type="subheading" style={styleSheet.fullWidth}>Automatically convert to</Typography>
-                        <Button size="small" color="primary" disabled={this.noVideo()} style={styleSheet.menuButton} onClick={(event) => {this.showAudioTypeMenu(event)}}>
+                <div className={classes.topSpacing}>
+                    <div className={classes.row}>
+                        <Typography type="subheading" className={classes.fullWidth}>Automatically convert to</Typography>
+                        <Button size="small" color="primary" disabled={this.noVideo()} className={classes.menuButton} onClick={(event) => {this.showAudioTypeMenu(event)}}>
                             {this.state.selectedAudioFormat != null ? this.state.selectedAudioFormat.description : "None Available"}
                         </Button>
                         <ActionMenu items={this.state.audioFormats} open={this.state.audioTypeMenuOpen} anchor={this.state.menuAnchor} selectedItem={this.state.selectedAudioFormat}
@@ -325,29 +335,29 @@ class UrlEntry extends React.Component {
                     </div>
                 </div>
                 <div>
-                    <div style={styleSheet.row}>
+                    <div className={classes.row}>
                         <TextField fullWidth disabled={this.noVideo()} label="Save to" margin="dense" value={this.state.saveTo} 
                             onClick={() => {this.selectSaveFolder()}} onChange={(event) => {this.setState({saveTo: event.target.value})}} />
                     </div>
-                    <div style={styleSheet.row}>
+                    <div className={classes.row}>
                         <TextField fullWidth disabled={this.noVideo()} label="Rename to" margin="dense" 
                             value={this.state.renameTo} onChange={(event) => {this.setState({renameTo: event.target.value})}} />
                     </div>
                 </div>
-                <div style={styleSheet.topSpacing}>
+                <div className={classes.topSpacing}>
                     <Typography type="subheading">Modify start / end time</Typography>
-                    <Range min={0} max={this.state.maxVideoLength} value={[this.state.startTime, this.state.endTime]} style={styleSheet.slider} 
-                        tipFormatter={value => this.formatTime(value)} allowCross={false} disabled={this.noVideo()} trackStyle={[styleSheet.track]}
-                        railStyle={styleSheet.rail} onChange={(values) => {this.timeChanged(values)}} />
+                    <Range min={0} max={this.state.maxVideoLength} value={[this.state.startTime, this.state.endTime]} className={classes.slider} 
+                        tipFormatter={value => this.formatTime(value)} allowCross={false} disabled={this.noVideo()} trackStyle={[rcSliderStyles.track]}
+                        railStyle={rcSliderStyles.rail} onChange={(values) => {this.timeChanged(values)}} />
                 </div>
-                <div style={styleSheet.topSpacing}>
+                <div className={classes.topSpacing}>
                     <Typography type="subheading">Modify volume</Typography>
-                    <Slider min={50} max={200} value={this.state.volumePercentage} style={styleSheet.slider}
-                        tipFormatter={value => this.formatVolume(value)} disabled={this.noVideo()} trackStyle={[styleSheet.track]}
-                        railStyle={styleSheet.rail} onChange={(value) => { this.volumeChanged(value) }} />
+                    <Slider min={50} max={200} value={this.state.volumePercentage} className={classes.slider}
+                        tipFormatter={value => this.formatVolume(value)} disabled={this.noVideo()} trackStyle={[rcSliderStyles.track]}
+                        railStyle={rcSliderStyles.rail} onChange={(value) => { this.volumeChanged(value) }} />
                 </div>
-                <div style={styleSheet.topSpacing}>
-                    <Button variant="raised" size="small" disabled={this.noVideo()} color="primary" style={styleSheet.downloadButton} 
+                <div className={classes.topSpacing}>
+                    <Button variant="raised" size="small" disabled={this.noVideo()} color="primary" className={classes.downloadButton} 
                         onClick={() => this.download()}>DOWNLOAD</Button>
                 </div>
                 <WarningDialog content={this.state.validationMessage} open={this.state.warningDialogOpen} 
@@ -355,51 +365,43 @@ class UrlEntry extends React.Component {
             </div>
         );
     }
-
-    getStyles() {
-        return {
-            topSpacing: {
-                marginTop: 15
-            },
-            leftItem: {
-                width: '49.5%',
-                marginRight: '0.5%'
-            },
-            rightItem: {
-                width: '49.5%',
-                marginLeft: '0.5%'
-            },
-            row: {
-                display: 'flex'
-            },
-            fullWidth: {
-                display: 'flex',
-                flexDirection: 'column',
-                flex: '1 0 auto',
-            },
-            menuButton: {
-                width: '50%',
-                background: '#EDEDED'
-            },
-            downloadButton: {
-                width: '100%',
-                marginTop: 30,
-                height: 40
-            },
-            slider: {
-                marginTop: 15,
-                marginLeft: 5,
-                width: '99%'
-            },
-            track: {
-                background: '#5f50e1'
-            },
-            rail: {
-                background: '#C5B6FF'
-            }
-        };
-    }
 }
+
+const styles = theme => ({
+    topSpacing: {
+        marginTop: 15
+    },
+    leftItem: {
+        width: '49.5%',
+        marginRight: '0.5%'
+    },
+    rightItem: {
+        width: '49.5%',
+        marginLeft: '0.5%'
+    },
+    row: {
+        display: 'flex'
+    },
+    fullWidth: {
+        display: 'flex',
+        flexDirection: 'column',
+        flex: '1 0 auto',
+    },
+    menuButton: {
+        width: '50%',
+        background: '#EDEDED'
+    },
+    downloadButton: {
+        width: '100%',
+        marginTop: 30,
+        height: 40
+    },
+    slider: {
+        marginTop: 15,
+        marginLeft: 5,
+        width: '99%'
+    }
+});
 
 UrlEntry.propTypes = {
     youtubeUrlParser: PropTypes.object.isRequired,
@@ -413,4 +415,4 @@ UrlEntry.mapStateToProps = (state) => {
     }
 }
 
-export default connect(UrlEntry.mapStateToProps)(UrlEntry);
+export default connect(UrlEntry.mapStateToProps)(withStyles(styles)(UrlEntry));

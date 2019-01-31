@@ -1,12 +1,12 @@
 import React from 'react';
 import { orange } from '@material-ui/core/colors';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme, withStyles } from '@material-ui/core/styles';
 
 import Header from './Header';
 import TabContainer from './TabContainer';
 import Updater from './Updater';
 
-export default class App extends React.Component {
+class App extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -21,11 +21,11 @@ export default class App extends React.Component {
             }
         });
 
-        const styleSheet = this.getStyles();
+        const { classes } = this.props;
 
         return (
             <MuiThemeProvider theme={theme}>
-                <div style={styleSheet.container}>
+                <div className={classes.container}>
                     <Header />
                     <TabContainer />
                     <Updater />
@@ -33,15 +33,15 @@ export default class App extends React.Component {
             </MuiThemeProvider>
         );
     }
-
-    getStyles() {
-        return {
-            container: {
-                marginLeft: 5,
-                marginRight: 5,
-                marginTop: 5,
-                marginBottom: 0
-            }
-        };
-    }
 }
+
+const styles = theme => ({
+    container: {
+        marginLeft: 5,
+        marginRight: 5,
+        marginTop: 5,
+        marginBottom: 0
+    }
+});
+
+export default withStyles(styles)(App);

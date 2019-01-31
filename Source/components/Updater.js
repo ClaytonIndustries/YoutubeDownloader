@@ -1,4 +1,5 @@
 import React from 'react';
+import { withStyles } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -15,7 +16,7 @@ import { UD_UPDATE_AVAILABLE, UD_DOWNLOADING_UPDATE, UD_RETRY_DOWNLOAD, UD_INSTA
 
 const remote = window.require('electron').remote;
 
-export default class Updater extends React.Component {
+class Updater extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -80,7 +81,7 @@ export default class Updater extends React.Component {
     }
 
     render() {
-        const styleSheet = this.getStyles();
+        const { classes } = this.props;
 
         const content = this.state.status === UD_UPDATE_AVAILABLE || this.state.status === UD_RETRY_DOWNLOAD ? 
             [
@@ -93,7 +94,7 @@ export default class Updater extends React.Component {
             ]
         : this.state.status === UD_DOWNLOADING_UPDATE ?
             [
-                <LinearProgress key="progress" style={styleSheet.progressBar} />,
+                <LinearProgress key="progress" className={classes.progressBar} />,
                 <IconButton key="close" color="inherit" onClick={() => {this.handleRequestClose()}}>
                     <CloseIcon />
                 </IconButton>
@@ -116,23 +117,23 @@ export default class Updater extends React.Component {
                 }}
                 open={this.state.open}>               
                 <SnackbarContent
-                    style={styleSheet.snackbarContent}
+                    className={classes.snackbarContent}
                     message={this.state.message}
                     action={content}>
                 </SnackbarContent>
             </Snackbar>
         );
     }
-
-    getStyles() {
-        return {
-            snackbarContent: {
-                marginLeft: 150,
-                marginRight: 150
-            },
-            progressBar: {
-                width: 100
-            }
-        };
-    }
 }
+
+const styles = theme => ({
+    snackbarContent: {
+        marginLeft: 150,
+        marginRight: 150
+    },
+    progressBar: {
+        width: 100
+    }
+});
+
+export default withStyles(styles)(Updater);
