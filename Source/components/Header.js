@@ -38,7 +38,7 @@ class Header extends React.Component {
         return (
             <div className={classes.card}>
                 <Button className={classes.button} onClick={() => {this.openYoutube()}}>
-                    <img className={classes.image} src={'images\\YoutubeIcon.png'} />
+                    <img className={classes.image} src={'..\\images\\YoutubeIcon.png'} />
                 </Button>
                 <div className={classes.details}>
                     <Typography variant="h5" color="textSecondary">Clayton Industries</Typography>

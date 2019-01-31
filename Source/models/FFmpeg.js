@@ -28,6 +28,6 @@ export default class FFmpeg {
     }
 
     ffmpegLocation() {
-        return path.join(path.dirname(window.require.main.filename), 'dist/FFmpeg/bin/ffmpeg.exe');
+        return path.join(path.dirname(window.require.main.filename), 'FFmpeg/bin/ffmpeg.exe');
     }
 }
