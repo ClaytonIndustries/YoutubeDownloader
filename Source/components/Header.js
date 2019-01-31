@@ -41,11 +41,11 @@ class Header extends React.Component {
                     <img className={classes.image} src={'images\\YoutubeIcon.png'} />
                 </Button>
                 <div className={classes.details}>
-                    <Typography variant="headline" color="textSecondary">Clayton Industries</Typography>
-                    <Typography variant="headline" color="textSecondary">Youtube Downloader</Typography>
-                    <Typography variant="headline" color="textSecondary">{"Version " + VERSION_NUMBER}</Typography>
+                    <Typography variant="h5" color="textSecondary">Clayton Industries</Typography>
+                    <Typography variant="h5" color="textSecondary">Youtube Downloader</Typography>
+                    <Typography variant="h5" color="textSecondary">{"Version " + VERSION_NUMBER}</Typography>
                 </div>
-                <IconButton onClick={() => {this.setState({settingsDialogOpen: true})}}>
+                <IconButton className={classes.settingsButton} onClick={() => {this.setState({settingsDialogOpen: true})}}>
                     <DeleteIcon className={classes.settingIcon} />
                 </IconButton>
                 <SettingsDialog open={this.state.settingsDialogOpen} onClose={() => {this.settingsDialogClose()}} />
@@ -71,6 +71,10 @@ const styles = theme => ({
     button: {
         padding: 0,
         marginRight: 20
+    },
+    settingsButton: {
+        width: 60,
+        height: 60
     },
     settingIcon: {
         width: 35,

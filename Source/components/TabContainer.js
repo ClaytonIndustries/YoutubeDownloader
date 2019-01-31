@@ -40,7 +40,7 @@ class TabContainer extends React.Component {
         return (
             <div className={classes.tabContainer}>
                 <AppBar position="static">
-                    <Tabs fullWidth centered value={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(event, index)}}>
+                    <Tabs variant="fullWidth" centered value={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(event, index)}}>
                         <Tab icon={<SearchIcon />} />
                         <Tab icon={<DownloadIcon />} />
                     </Tabs>

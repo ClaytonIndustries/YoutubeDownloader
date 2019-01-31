@@ -305,8 +305,8 @@ class UrlEntry extends React.Component {
                     </div>
                 </div>
                 <div className={classes.topSpacing}>
-                    <Button variant="raised" size="small" color="primary" className={classes.leftItem} onClick={() => {this.paste()}}>PASTE</Button>
-                    <Button variant="raised" size="small" disabled={this.state.gettingVideo} color="primary" className={classes.rightItem} 
+                    <Button variant="contained" size="medium" color="primary" className={classes.leftItem} onClick={() => {this.paste()}}>PASTE</Button>
+                    <Button variant="contained" size="medium" disabled={this.state.gettingVideo} color="primary" className={classes.rightItem} 
                         onClick={() => {this.getVideo()}}>
                         GET VIDEO
                     </Button>
@@ -357,7 +357,7 @@ class UrlEntry extends React.Component {
                         railStyle={rcSliderStyles.rail} onChange={(value) => { this.volumeChanged(value) }} />
                 </div>
                 <div className={classes.topSpacing}>
-                    <Button variant="raised" size="small" disabled={this.noVideo()} color="primary" className={classes.downloadButton} 
+                    <Button variant="contained" size="small" disabled={this.noVideo()} color="primary" className={classes.downloadButton} 
                         onClick={() => this.download()}>DOWNLOAD</Button>
                 </div>
                 <WarningDialog content={this.state.validationMessage} open={this.state.warningDialogOpen} 

@@ -91,7 +91,7 @@ class SettingsDialog extends React.Component {
                         </ListItem>
                     </List>
                     <div className={classes.devToolsButton}>
-                        <Button variant="raised" size="small" color="primary" onClick={() => this.openDevTools()}>OPEN DEV TOOLS</Button>
+                        <Button variant="contained" size="medium" color="primary" onClick={() => this.openDevTools()}>OPEN DEV TOOLS</Button>
                     </div>
                 </DialogContent>
                 <DialogActions>
