@@ -95,11 +95,11 @@ class SettingsDialog extends React.Component {
                     </div>
                 </DialogContent>
                 <DialogActions>
-                    <Button color="primary" onClick={() => this.onSave()}>
-                        Ok
-                    </Button>
                     <Button color="primary" onClick={() => this.props.onClose()}>
                         Cancel
+                    </Button>
+                    <Button color="primary" onClick={() => this.onSave()}>
+                        Ok
                     </Button>
                 </DialogActions>
             </Dialog>
