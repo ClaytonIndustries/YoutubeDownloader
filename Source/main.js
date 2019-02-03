@@ -15,7 +15,8 @@ function createWindow() {
     win = new BrowserWindow({ 
         width: winWidth, 
         height: winHeight, 
-        useContentSize: false, 
+        useContentSize: false,
+        nodeIntegration: true,
         icon: path.join(__dirname, 'images/YoutubeIcon.png')
     })
 
