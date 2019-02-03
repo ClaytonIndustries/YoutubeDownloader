@@ -55,13 +55,13 @@ export default class YoutubeVideo {
     setSize(size) {
         this.size = size;
         this.sizeInMBs = Number(size / 1000000).toFixed(2);
-        if(this.changed) this.changed();
+        this.raiseChanged();
     }
 
     setProgress(bytesReceived) {
         this.lastUpdateTime = Moment();
         this.progress = (bytesReceived / this.size) * 100;
-        if(this.changed) this.changed();
+        this.raiseChanged();
     }
 
     setVideoStatus(newStatus) {
@@ -69,7 +69,7 @@ export default class YoutubeVideo {
             this.lastUpdateTime = Moment();
         }
         this.status = newStatus;
-        if(this.changed) this.changed();
+        this.raiseChanged();
     }
 
     setActiveProcess(process, type) {
@@ -215,5 +215,9 @@ export default class YoutubeVideo {
         this.activeProcess = null;
         this.setProgress(0);
         this.setVideoStatus(VS_PENDING);
+    }
+
+    raiseChanged() {
+        if(this.changed) this.changed();
     }
 }
