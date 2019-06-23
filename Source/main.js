@@ -12,12 +12,14 @@ function createWindow() {
     const winWidth = 800;
     const winHeight = 745;
 
-    win = new BrowserWindow({ 
-        width: winWidth, 
-        height: winHeight, 
+    win = new BrowserWindow({
+        width: winWidth,
+        height: winHeight,
         useContentSize: false,
-        nodeIntegration: true,
-        icon: path.join(__dirname, 'images/YoutubeIcon.png')
+        icon: path.join(__dirname, 'images/YoutubeIcon.png'),
+        webPreferences: {
+            nodeIntegration: true
+        }
     })
 
     win.loadURL(url.format({
