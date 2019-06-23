@@ -163,7 +163,7 @@ export default class YoutubeUrlParser {
             try {
                 let url = match;
 
-                let signatureItems = new RegExp(/(?:^|,|\\u0026)s=([\s\S]+?)(?=\\|\\"|,|$)/).exec(url);
+                let signatureItems = new RegExp(/(?:^|,|\\u0026)s=|sig=([\s\S]+?)(?=\\|\\"|,|$)/).exec(url);
 
                 let signature = this.signatureDecryptor.decrypt(signatureItems[1]);
 
