@@ -111,7 +111,7 @@ export default class SignatureDecryptor {
 	}
 
     splice(a, b) {
-		return a.substr(b);
+		return a.splice(0, b);
     }
 
     reverse(a) {
@@ -121,9 +121,10 @@ export default class SignatureDecryptor {
     swap(a, b) {
         let charArray = a.split('');
 
-        let c = charArray[0];
-        charArray[0] = charArray[b % charArray.length];
-        charArray[b] = c;
+		let c = charArray[0];
+		
+		charArray[0] = charArray[b % charArray.length];
+		charArray[b % charArray.length] = c;
 
         return charArray.join('');
     }

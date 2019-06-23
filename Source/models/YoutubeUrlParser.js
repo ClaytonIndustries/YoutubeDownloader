@@ -177,7 +177,7 @@ export default class YoutubeUrlParser {
                             url = url.substr(0, url.indexOf("\\"));
                         }
 
-                        quality.downloadUrl = url + "&signature=" + signature;
+                        quality.downloadUrl = url + "&sig=" + signature;
 
                         qualities.push(quality);
                     }
