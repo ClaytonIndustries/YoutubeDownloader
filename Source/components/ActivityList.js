@@ -160,11 +160,11 @@ class ActivityList extends React.Component {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell padding="dense"></TableCell>
-                            <TableCell padding="dense">Title</TableCell>
-                            <TableCell padding="dense">Size (MB/s)</TableCell>
-                            <TableCell padding="dense">Progress</TableCell>
-                            <TableCell padding="dense">Status</TableCell>
+                            <TableCell padding="checkbox"></TableCell>
+                            <TableCell>Title</TableCell>
+                            <TableCell>Size (MB/s)</TableCell>
+                            <TableCell>Progress</TableCell>
+                            <TableCell>Status</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

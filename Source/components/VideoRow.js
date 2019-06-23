@@ -37,16 +37,16 @@ export default class VideoRow extends React.Component {
                 <TableCell padding="checkbox">
                     <Checkbox color="primary" checked={this.props.isSelected} />
                 </TableCell>
-                <TableCell padding="dense">
+                <TableCell>
                     {this.state.title}
                 </TableCell>
-                <TableCell padding="dense">
+                <TableCell>
                     {this.state.size === 0 ? "" : this.state.size}
                 </TableCell>
-                <TableCell padding="dense">
+                <TableCell>
                     <LinearProgress variant="determinate" value={this.state.progress} />
                 </TableCell>
-                <TableCell padding="dense">
+                <TableCell>
                     {this.state.status}
                 </TableCell>
             </TableRow>
