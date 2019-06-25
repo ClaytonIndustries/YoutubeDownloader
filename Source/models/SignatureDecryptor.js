@@ -111,7 +111,7 @@ export default class SignatureDecryptor {
 	}
 
     splice(a, b) {
-		return a.splice(0, b);
+		return a.substr(b);
     }
 
     reverse(a) {

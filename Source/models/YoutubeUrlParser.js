@@ -163,25 +163,28 @@ export default class YoutubeUrlParser {
             try {
                 let url = match;
 
-                let signatureItems = new RegExp(/(?:^|,|\\u0026)s=|sig=([\s\S]+?)(?=\\|\\"|,|$)/).exec(url);
+                let signatureItems = new RegExp(/(?:^|,|\\u0026|&)s=([\s\S]+?)(?=\\|\\"|,|$)/).exec(url);
 
-                let signature = this.signatureDecryptor.decrypt(signatureItems[1]);
+                if(signatureItems)
+                {
+                    let signature = this.signatureDecryptor.decrypt(signatureItems[1]);
 
-                if(signature && signature.length > 0) {
-                    let quality = this.createVideoQuality(url, qualities);
-
-                    if(quality) {
-                        url = url.substr(url.indexOf("url") + 4);
-
-                        if(url.includes("\\")) {
-                            url = url.substr(0, url.indexOf("\\"));
+                    if(signature && signature.length > 0) {
+                        let quality = this.createVideoQuality(url, qualities);
+    
+                        if(quality) {
+                            url = url.substr(url.indexOf("url") + 4);
+    
+                            if(url.includes("\\")) {
+                                url = url.substr(0, url.indexOf("\\"));
+                            }
+    
+                            quality.downloadUrl = url + "&sig=" + signature;
+    
+                            qualities.push(quality);
                         }
-
-                        quality.downloadUrl = url + "&sig=" + signature;
-
-                        qualities.push(quality);
                     }
-                }
+                }                
             }
             catch (e) {
                 console.error(e);
