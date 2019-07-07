@@ -7,6 +7,7 @@ import Button from '@material-ui/core/Button';
 import LinearProgress from '@material-ui/core/LinearProgress';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+import Snackbar from '@material-ui/core/Snackbar';
 
 import SliderBase from 'rc-slider';
 
@@ -53,7 +54,8 @@ class UrlEntry extends React.Component {
             gettingVideo: false,
             warningDialogOpen: false,
             validationMessage: "",
-            searchStatus: "pending"
+            searchStatus: "pending",
+            snackbarOpen: false
         };
     }
 
@@ -197,15 +199,9 @@ class UrlEntry extends React.Component {
             this.props.dispatch({ type: RS_ADD_VIDEO, video: youtubeVideo });
             this.props.dispatch({ type: RS_APP_SETTINGS, appSettings: settings });
 
-            // Move down
-            this.setState({
-                volumePercentage: 50
-            });
+            this.setState({snackbarOpen: true});
 
-            // Don't want to switch tabs but download will not start when not on activity tab
-            this.clearCurrentVideo(() => {
-                this.props.onSwitchTab();
-            });
+            this.clearCurrentVideo();
         }
         else {
             this.setState({
@@ -215,7 +211,7 @@ class UrlEntry extends React.Component {
         }
     }
 
-    clearCurrentVideo(callback) {
+    clearCurrentVideo() {
         this.setState({
             selectedVideoQuality: null,
             videoQualities: [],
@@ -224,9 +220,8 @@ class UrlEntry extends React.Component {
             endTime: 0,
             maxVideoLength: 0,
             videoId: "",
-            searchStatus: "pending"   
-        }, () => {
-            if(callback) callback();
+            searchStatus: "pending",
+            volumePercentage: 50
         });
     }
 
@@ -363,7 +358,16 @@ class UrlEntry extends React.Component {
                         onClick={() => this.download()}>DOWNLOAD</Button>
                 </div>
                 <WarningDialog content={this.state.validationMessage} open={this.state.warningDialogOpen} 
-                    onClose={() => this.setState({warningDialogOpen: false})} />
+                    onClose={() => this.setState({ warningDialogOpen: false })} />
+                <Snackbar
+                    anchorOrigin={{
+                        vertical: 'top',
+                        horizontal: 'center',
+                    }}
+                    autoHideDuration={3000}
+                    open={this.state.snackbarOpen}
+                    onClose={() => this.setState({snackbarOpen: false})}
+                    message={'Download queued'} />
             </div>
         );
     }

@@ -28,12 +28,6 @@ class TabContainer extends React.Component {
         });
     };
 
-    switchToActivityTab() {
-        this.setState({
-            selectedTabIndex: 1
-        });
-    }
-
     render() {
         const { classes } = this.props;
 
@@ -46,12 +40,8 @@ class TabContainer extends React.Component {
                     </Tabs>
                 </AppBar>
                 <div className={classes.childContainer}>
-                    {this.state.selectedTabIndex == 0 &&
-                        <UrlEntry youtubeUrlParser={this.youtubeUrlParser} onSwitchTab={() => {this.switchToActivityTab()}} />
-                    }
-                    {this.state.selectedTabIndex == 1 &&
-                        <ActivityList />
-                    }
+                    {this.state.selectedTabIndex == 0 && <UrlEntry youtubeUrlParser={this.youtubeUrlParser} />}
+                    {this.state.selectedTabIndex == 1 && <ActivityList />}
                 </div>
           </div>
         );
