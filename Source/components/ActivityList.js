@@ -31,38 +31,6 @@ class ActivityList extends React.Component {
         this.processStarter = new ProcessStarter();
     }
 
-    startNewDownload() {
-        if(this.canNewDownloadBeStarted()) {
-            let video = this.props.videos.find((item) => {
-                return item.isPending();
-            });
-
-            video.start();
-        }
-    }
-
-    cancelStalledDownloads() {
-        this.props.videos.forEach((item) => {
-            if(item.noContentDownloadedInLastTenSeconds()) {
-                item.cancel();
-            }
-        });
-    }
-
-    canNewDownloadBeStarted() {
-        const maxActiveDownloads = 2;
-
-        let activeDownloads = this.props.videos.reduce((total, item) => {
-            return item.isActive() ? total + 1 : total;
-        }, 0);
-
-        let anyPendingDownloads = this.props.videos.some((item) => {
-            return item.isPending();
-        });
-
-        return activeDownloads < maxActiveDownloads && anyPendingDownloads;
-    }
-
     removeVideo() {
         let video = this.getSelectedVideoFromIndex();
 
@@ -118,14 +86,6 @@ class ActivityList extends React.Component {
         this.setState({
            selectedIndex: id === this.state.selectedIndex ? -1 : id
         });
-    }
-
-    componentDidMount() {
-        this.timer = setInterval(() => {this.cancelStalledDownloads(); this.startNewDownload();}, 1000);
-    }
-
-    componentWillUnmount() {
-        clearInterval(this.timer);
     }
 
     render() {

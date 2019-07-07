@@ -5,6 +5,7 @@ import { MuiThemeProvider, createMuiTheme, withStyles } from '@material-ui/core/
 import Header from './Header';
 import TabContainer from './TabContainer';
 import Updater from './Updater';
+import DownloadManager from './DownloadManager';
 
 class App extends React.Component {
     constructor(props) {
@@ -29,6 +30,7 @@ class App extends React.Component {
                     <Header />
                     <TabContainer />
                     <Updater />
+                    <DownloadManager />
                 </div>
             </MuiThemeProvider>
         );

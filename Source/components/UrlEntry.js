@@ -197,10 +197,12 @@ class UrlEntry extends React.Component {
             this.props.dispatch({ type: RS_ADD_VIDEO, video: youtubeVideo });
             this.props.dispatch({ type: RS_APP_SETTINGS, appSettings: settings });
 
+            // Move down
             this.setState({
                 volumePercentage: 50
             });
 
+            // Don't want to switch tabs but download will not start when not on activity tab
             this.clearCurrentVideo(() => {
                 this.props.onSwitchTab();
             });
@@ -404,8 +406,7 @@ const styles = theme => ({
 });
 
 UrlEntry.propTypes = {
-    youtubeUrlParser: PropTypes.object.isRequired,
-    onSwitchTab: PropTypes.func.isRequired
+    youtubeUrlParser: PropTypes.object.isRequired
 };
 
 UrlEntry.mapStateToProps = (state) => {
