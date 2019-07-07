@@ -1,6 +1,6 @@
 import Update from './Update';
 import FileAccess from './FileAccess';
-import { VERSION_NUMBER, URL_VERSION, AUTH_CODE, OS_WINDOWS, OS_MACOS } from './Constants';
+import { VERSION_NUMBER, URL_VERSION, AUTH_CODE, OS_WINDOWS } from './Constants';
 
 const os = window.require('os');
 const path = window.require('path');
@@ -39,7 +39,7 @@ export default class UpdateManager {
     }
 
     getPlatform() {
-        return os.platform() === "darwin" ? OS_MACOS : OS_WINDOWS;
+        return OS_WINDOWS;
     }
 
     getFormattedVersionNumberFromString(versionNumber) {

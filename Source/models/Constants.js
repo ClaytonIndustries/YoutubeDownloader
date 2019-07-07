@@ -19,7 +19,6 @@ export const PR_XHR = "xhr";
 export const PR_FFMPEG = "ffmpeg";
 
 export const OS_WINDOWS = "windows";
-export const OS_MACOS = "macOS";
 
 export const URL_QUALITY = "https://claytoninds.com/services/youtubedownloader/quality";
 export const URL_STATISTIC = "https://claytoninds.com/services/youtubedownloader/statistic/getvideo";
