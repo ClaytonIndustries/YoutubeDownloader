@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
+import { RS_QUEUED_VIDEOS } from '../models/Constants';
+
 class DownloadManager extends React.Component {
     constructor(props) {
         super(props);
@@ -31,11 +33,15 @@ class DownloadManager extends React.Component {
             return item.isActive() ? total + 1 : total;
         }, 0);
 
-        let anyPendingDownloads = this.props.videos.some((item) => {
-            return item.isPending();
-        });
+        let pendingDownloads = this.props.videos.reduce((total, item) => {
+            return item.isPending() ? total + 1 : total;
+        }, 0);
 
-        return activeDownloads < maxActiveDownloads && anyPendingDownloads;
+        if (activeDownloads + pendingDownloads !== this.props.queuedVideos) {
+            this.props.dispatch({ type: RS_QUEUED_VIDEOS, queuedVideos: activeDownloads + pendingDownloads });
+        }
+
+        return activeDownloads < maxActiveDownloads && pendingDownloads > 0;
     }
 
     componentDidMount() {
@@ -53,7 +59,8 @@ class DownloadManager extends React.Component {
 
 DownloadManager.mapStateToProps = (state) => {
     return {
-        videos: state.Videos
+        videos: state.Videos,
+        queuedVideos: state.QueuedVideos
     }
 }
 

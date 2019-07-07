@@ -1,9 +1,11 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { connect } from 'react-redux';
 
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import Badge from '@material-ui/core/Badge';
 
 import SearchIcon from '@material-ui/icons/Search';
 import DownloadIcon from '@material-ui/icons/GetApp';
@@ -36,7 +38,10 @@ class TabContainer extends React.Component {
                 <AppBar position="static">
                     <Tabs variant="fullWidth" centered value={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(event, index)}}>
                         <Tab icon={<SearchIcon />} />
-                        <Tab icon={<DownloadIcon />} />
+                        <Tab label={
+                            <Badge className={classes.badge} color="secondary" badgeContent={this.props.queuedVideos}>
+                                <DownloadIcon />
+                            </Badge>} />
                     </Tabs>
                 </AppBar>
                 <div className={classes.childContainer}>
@@ -57,7 +62,16 @@ const styles = theme => ({
         marginRight: 5,
         marginTop: 15,
         marginBottom: 5
+    },
+    badge: {
+        paddingRight: 8
     }
 });
 
-export default withStyles(styles)(TabContainer);
+TabContainer.mapStateToProps = (state) => {
+    return {
+        queuedVideos: state.QueuedVideos
+    }
+}
+
+export default connect(TabContainer.mapStateToProps)(withStyles(styles)(TabContainer));

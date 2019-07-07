@@ -30,3 +30,4 @@ export const RS_ADD_VIDEO = "ADD_VIDEO";
 export const RS_REMOVE_VIDEO = "REMOVE_VIDEO";
 export const RS_URL_ENTRY_SAVE_STATE = "URL_ENTRY_SAVE_STATE";
 export const RS_APP_SETTINGS = "APP_SETTINGS";
+export const RS_QUEUED_VIDEOS = "QUEUED_VIDEOS";
