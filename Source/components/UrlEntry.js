@@ -142,10 +142,12 @@ class UrlEntry extends React.Component {
 
     selectSaveFolder() {
         if(!this.noVideo()) {
-            dialog.showOpenDialog(getCurrentWindow(), {properties: ['openDirectory']}, (folder) => {
-                if(folder != undefined) {
+            dialog.showOpenDialog(getCurrentWindow(), {
+                properties: ['openDirectory']
+            }).then(result => {
+                if (!result.canceled && result.filePaths && result.filePaths.length > 0) {
                     this.setState({
-                        saveTo: folder + "\\"
+                        saveTo: result.filePaths[0] + "\\"
                     });
                 }
             });
