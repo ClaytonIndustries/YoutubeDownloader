@@ -37,8 +37,8 @@ class DownloadManager extends React.Component {
             return item.isPending() ? total + 1 : total;
         }, 0);
 
-        if (activeDownloads + pendingDownloads !== this.props.queuedVideos) {
-            this.props.dispatch({ type: RS_QUEUED_VIDEOS, queuedVideos: activeDownloads + pendingDownloads });
+        if (activeDownloads + pendingDownloads !== this.props.queuedVideoCount) {
+            this.props.dispatch({ type: RS_QUEUED_VIDEOS, queuedVideoCount: activeDownloads + pendingDownloads });
         }
 
         return activeDownloads < maxActiveDownloads && pendingDownloads > 0;
@@ -59,8 +59,8 @@ class DownloadManager extends React.Component {
 
 DownloadManager.mapStateToProps = (state) => {
     return {
-        videos: state.Videos,
-        queuedVideos: state.QueuedVideos
+        videos: state.videos,
+        queuedVideoCount: state.queuedVideoCount
     }
 }
 

@@ -150,7 +150,7 @@ const styles = theme => ({
 
 ActivityList.mapStateToProps = (state) => {
     return {
-        videos: state.Videos
+        videos: state.videos
     }
 }
 

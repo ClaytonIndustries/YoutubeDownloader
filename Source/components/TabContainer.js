@@ -39,7 +39,7 @@ class TabContainer extends React.Component {
                     <Tabs variant="fullWidth" centered value={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(event, index)}}>
                         <Tab icon={<SearchIcon />} />
                         <Tab label={
-                            <Badge className={classes.badge} color="secondary" badgeContent={this.props.queuedVideos}>
+                            <Badge className={classes.badge} color="secondary" badgeContent={this.props.queuedVideoCount}>
                                 <DownloadIcon />
                             </Badge>} />
                     </Tabs>
@@ -70,7 +70,7 @@ const styles = theme => ({
 
 TabContainer.mapStateToProps = (state) => {
     return {
-        queuedVideos: state.QueuedVideos
+        queuedVideoCount: state.queuedVideoCount
     }
 }
 

@@ -125,7 +125,7 @@ SettingsDialog.propTypes = {
 
 SettingsDialog.mapStateToProps = (state) => {
     return {
-        settings: state.AppSettings
+        settings: state.appSettings
     }
 }
 

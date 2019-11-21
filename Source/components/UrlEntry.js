@@ -417,8 +417,8 @@ UrlEntry.propTypes = {
 
 UrlEntry.mapStateToProps = (state) => {
     return {
-        lastState: state.UrlEntryState,
-        settings: state.AppSettings
+        lastState: state.urlEntryState,
+        settings: state.appSettings
     }
 }
 
