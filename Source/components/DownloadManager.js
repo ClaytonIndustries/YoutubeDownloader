@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { RS_QUEUED_VIDEOS } from '../models/Constants';
+import { queuedVideoCount } from '../actions';
 
 class DownloadManager extends React.Component {
     constructor(props) {
@@ -38,7 +38,7 @@ class DownloadManager extends React.Component {
         }, 0);
 
         if (activeDownloads + pendingDownloads !== this.props.queuedVideoCount) {
-            this.props.dispatch({ type: RS_QUEUED_VIDEOS, queuedVideoCount: activeDownloads + pendingDownloads });
+            this.props.dispatch(queuedVideoCount(activeDownloads + pendingDownloads));
         }
 
         return activeDownloads < maxActiveDownloads && pendingDownloads > 0;

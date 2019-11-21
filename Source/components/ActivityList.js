@@ -19,7 +19,7 @@ import RetryIcon from '@material-ui/icons/Refresh';
 import VideoRow from './VideoRow';
 
 import ProcessStarter from '../models/ProcessStarter';
-import { RS_REMOVE_VIDEO } from '../models/Constants';
+import { removeVideo } from '../actions';
 
 class ActivityList extends React.Component {
     constructor(props) {
@@ -38,7 +38,7 @@ class ActivityList extends React.Component {
             if(video.isActive()) {
                 video.cancel();
             }
-            this.props.dispatch({type: RS_REMOVE_VIDEO, index: this.state.selectedIndex});
+            this.props.dispatch(removeVideo(this.state.selectedIndex));
             this.setState({
                 selectedIndex: -1
             });

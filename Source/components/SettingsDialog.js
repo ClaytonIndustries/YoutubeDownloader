@@ -15,7 +15,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Switch from '@material-ui/core/Switch';
 
 import SettingsManager from '../models/SettingsManager';
-import { RS_APP_SETTINGS } from '../models/Constants';
+import { appSettings } from '../actions';
 
 const remote = window.require('electron').remote;
 
@@ -26,7 +26,7 @@ class SettingsDialog extends React.Component {
         this.settingsManager = new SettingsManager();
 
         this.settingsManager.load().then((settings) => {
-            this.props.dispatch({ type: RS_APP_SETTINGS, appSettings: settings });
+            this.props.dispatch(appSettings(settings));
         });
     }
 
@@ -46,7 +46,7 @@ class SettingsDialog extends React.Component {
     }
 
     onSave() {
-        this.props.dispatch({ type: RS_APP_SETTINGS, appSettings: this.state.settings});
+        this.props.dispatch(appSettings(this.state.settings));
         this.props.onClose();       
     }
 
