@@ -45,7 +45,7 @@ class UrlEntry extends React.Component {
             menuAnchor: null,
             selectedVideoQuality: null,
             selectedAudioFormat: AudioFormats.getAllowedFormats()[0],
-            saveTo: "",
+            saveTo: this.props.settings.saveToPath,
             renameTo: "",
             startTime: 0,
             endTime: 0,
@@ -274,12 +274,6 @@ class UrlEntry extends React.Component {
             videoId: this.state.videoId,
             searchStatus: this.state.searchStatus
         }));
-    }
-
-    componentWillReceiveProps(newProps) {
-       this.setState({
-           saveTo: newProps.settings.saveToPath
-       });
     }
 
     render() {

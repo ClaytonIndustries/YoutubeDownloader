@@ -27,13 +27,14 @@ class App extends React.Component {
 
         return (
             <MuiThemeProvider theme={theme}>
-                <div className={classes.container}>
-                    <Header />
-                    <TabContainer />
-                    <Updater />
-                    <DownloadManager />
-                    <Settings />
-                </div>
+                <Settings>
+                    <div className={classes.container}>
+                        <Header />
+                        <TabContainer />
+                        <Updater />
+                        <DownloadManager />
+                    </div>
+                </Settings>
             </MuiThemeProvider>
         );
     }

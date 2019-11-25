@@ -14,7 +14,14 @@ class Settings extends React.Component {
 
         this.load().then((settings) => {
             this.props.dispatch(appSettings(settings));
+            this.setState({
+                loadCompleted: true
+            });
         });
+
+        this.state = { 
+            loadCompleted: false 
+        };
     }
 
     save(settings) {
@@ -68,7 +75,9 @@ class Settings extends React.Component {
     }
 
     render() {
-        return null;
+        return (
+            this.state.loadCompleted ? this.props.children : null
+        );
     }
 }
 
