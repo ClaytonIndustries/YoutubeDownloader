@@ -29,7 +29,7 @@ function createWindow() {
     }))
 
     win.webContents.openDevTools();
-    win.setAutoHideMenuBar(true);
+    win.autoHideMenuBar = true;
     win.setMenuBarVisibility(false);
 
     win.on('closed', () => {

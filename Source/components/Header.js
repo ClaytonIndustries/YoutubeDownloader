@@ -48,7 +48,7 @@ class Header extends React.Component {
                 <IconButton className={classes.settingsButton} onClick={() => {this.setState({settingsDialogOpen: true})}}>
                     <DeleteIcon className={classes.settingIcon} />
                 </IconButton>
-                <SettingsDialog open={this.state.settingsDialogOpen} onClose={() => {this.settingsDialogClose()}} />
+                { this.state.settingsDialogOpen && <SettingsDialog open={this.state.settingsDialogOpen} onClose={() => {this.settingsDialogClose()}} /> }
             </div>
         );
     }

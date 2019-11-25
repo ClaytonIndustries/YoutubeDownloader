@@ -277,9 +277,9 @@ class UrlEntry extends React.Component {
     }
 
     componentWillReceiveProps(newProps) {
-        this.setState({
-            saveTo: newProps.settings.saveToPath
-        });
+       this.setState({
+           saveTo: newProps.settings.saveToPath
+       });
     }
 
     render() {

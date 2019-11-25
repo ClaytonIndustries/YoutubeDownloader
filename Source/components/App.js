@@ -6,6 +6,7 @@ import Header from './Header';
 import TabContainer from './TabContainer';
 import Updater from './Updater';
 import DownloadManager from './DownloadManager';
+import Settings from './Settings';
 
 class App extends React.Component {
     constructor(props) {
@@ -31,6 +32,7 @@ class App extends React.Component {
                     <TabContainer />
                     <Updater />
                     <DownloadManager />
+                    <Settings />
                 </div>
             </MuiThemeProvider>
         );

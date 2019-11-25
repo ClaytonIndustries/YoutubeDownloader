@@ -14,7 +14,6 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import Switch from '@material-ui/core/Switch';
 
-import SettingsManager from '../models/SettingsManager';
 import { appSettings } from '../actions';
 
 const remote = window.require('electron').remote;
@@ -23,22 +22,19 @@ class SettingsDialog extends React.Component {
     constructor(props) {
         super(props);
 
-        this.settingsManager = new SettingsManager();
-
-        this.settingsManager.load().then((settings) => {
-            this.props.dispatch(appSettings(settings));
-        });
+        this.state = { ...this.props.settings }
     }
 
-    onToggleClicked(switchName) {
-        this.setState({
-            settings: {
-                automaticallyPaste: switchName === "paste" ? !this.state.settings.automaticallyPaste : this.state.settings.automaticallyPaste,
-                automaticallyGetVideo: switchName === "get" ? !this.state.settings.automaticallyGetVideo : this.state.settings.automaticallyGetVideo,
-                automaticallyDownload: switchName === "download" ? !this.state.settings.automaticallyDownload : this.state.settings.automaticallyDownload,
-                saveToPath: this.state.settings.saveToPath
-            }
-        });
+    onAutomaticallyPasteClicked() {
+        this.setState({ automaticallyPaste: !this.state.automaticallyPaste });
+    }
+
+    onAutomaticallyGetVideoClicked() {
+        this.setState({ automaticallyGetVideo: !this.state.automaticallyGetVideo });
+    }
+
+    onAutomaticallyDownloadClicked() {
+        this.setState({ automaticallyDownload: !this.state.automaticallyDownload });
     }
 
     openDevTools() {
@@ -46,23 +42,17 @@ class SettingsDialog extends React.Component {
     }
 
     onSave() {
-        this.props.dispatch(appSettings(this.state.settings));
+        this.props.dispatch(appSettings({
+            ...this.props.settings,
+            automaticallyPaste: this.state.automaticallyPaste,
+            automaticallyGetVideo: this.state.automaticallyGetVideo,
+            automaticallyDownload: this.state.automaticallyDownload,
+        }));
         this.props.onClose();       
-    }
-
-    componentWillReceiveProps(newProps) {
-        this.settingsManager.save(newProps.settings);
-        this.setState({
-            settings: newProps.settings
-        });
     }
 
     render() {
         const { classes } = this.props;
-
-        if(!this.state) {
-            return (null);
-        }
 
         return (
             <Dialog open={this.props.open} onClose={() => this.props.onClose()}>
@@ -74,19 +64,19 @@ class SettingsDialog extends React.Component {
                         <ListItem>
                             <ListItemText primary="Automatically paste" />
                             <ListItemSecondaryAction>
-                                <Switch color="primary" onClick={event => this.onToggleClicked('paste')} checked={this.state.settings.automaticallyPaste} />
+                                <Switch color="primary" onClick={() => this.onAutomaticallyPasteClicked()} checked={this.state.automaticallyPaste} />
                             </ListItemSecondaryAction>
                         </ListItem>
                         <ListItem>
                             <ListItemText primary="Automatically get video" />
                             <ListItemSecondaryAction>
-                                <Switch color="primary" onClick={event => this.onToggleClicked('get')} checked={this.state.settings.automaticallyGetVideo} />
+                                <Switch color="primary" onClick={() => this.onAutomaticallyGetVideoClicked()} checked={this.state.automaticallyGetVideo} />
                             </ListItemSecondaryAction>
                         </ListItem>
                         <ListItem>
                             <ListItemText primary="Automatically download" />
                             <ListItemSecondaryAction>
-                                <Switch color="primary" onClick={event => this.onToggleClicked('download')} checked={this.state.settings.automaticallyDownload} />
+                                <Switch color="primary" onClick={() => this.onAutomaticallyDownloadClicked()} checked={this.state.automaticallyDownload} />
                             </ListItemSecondaryAction>
                         </ListItem>
                     </List>
