@@ -1,6 +1,6 @@
 import FilenameCleaner from './FilenameCleaner';
 import SignatureDecryptor from './SignatureDecryptor';
-import { URL_QUALITY, URL_STATISTIC, AUTH_CODE } from './Constants';
+import { URL_QUALITY, AUTH_CODE } from './Constants';
 
 import Moment from 'moment';
 
@@ -12,26 +12,28 @@ export default class YoutubeUrlParser {
     }
 
     async parse(youtubeUrl) {
-        this.logGetVideoCall();
-
         if (this.noVideoQualities()) {
             await this.downloadQualities();
         };
 
-        let webpageData = await this.downloadWebpage(youtubeUrl);
+        let videoInfo = await this.downloadVideoInfo(youtubeUrl);
                 
         if(!this.signatureDecryptor.isDecrypted()) {
-            await this.downloadPlayer(webpageData);
+            await this.downloadPlayer(videoInfo.playerUrl);
         }
 
-        return this.extractQualities(webpageData);
+        return this.extractQualities(videoInfo);
     }
 
     async downloadQualities() {
         try {
-            let response = await this.makeGetRequest(URL_QUALITY, true);
+            const headers = {  
+                "Authorization": AUTH_CODE
+            };
 
-            this.videoQualities = JSON.parse(response);
+            let response = await this.makeRequest(URL_QUALITY, headers);
+
+            this.videoQualities = await response.json();
         }
         catch (e) {
             console.error(e);
@@ -40,11 +42,18 @@ export default class YoutubeUrlParser {
         }
     }
 
-    async downloadWebpage(youtubeUrl) {
+    async downloadVideoInfo(youtubeUrl) {
         try {
-            let response = await this.makeGetRequest(youtubeUrl, false);
+            const headers = {  
+                "x-youtube-client-name": "1",
+                "x-youtube-client-version": "2.20200123.00.01"
+            };
 
-            return this.extractWebpageData(response, youtubeUrl);
+            let response = await this.makeRequest(youtubeUrl, headers);
+
+            let content = await response.json();
+
+            return this.extractWebpageData(content);
         }
         catch (e) {    
             console.error(e);
@@ -53,11 +62,13 @@ export default class YoutubeUrlParser {
         }
     }
 
-    async downloadPlayer(webpageData) {
+    async downloadPlayer(playerUrl) {
         try {
-            let response = await this.makeGetRequest(webpageData.playerUrl, false);
+            let response = await this.makeRequest(playerUrl, null);
 
-            if(this.signatureDecryptor.getCryptoFunctions(response)) {
+            let content = await response.text();
+
+            if(this.signatureDecryptor.getCryptoFunctions(content)) {
                 return Promise.resolve();
             }
             else {
@@ -71,23 +82,16 @@ export default class YoutubeUrlParser {
         }
     }
 
-    logGetVideoCall() {
-        this.makePostRequest(URL_STATISTIC, true);
+    async makeRequest(url, headers) {
+        return await fetch(url, {
+            method: "GET",
+            headers: headers
+        });
     }
 
     extractQualities(webpageData) {
-        let videoQualities = this.processSections(webpageData.fmtStreamMapSection, webpageData.adaptiveFmtSection);
-        let videoLength = 0;
+        let videoQualities = this.processSections(webpageData.standardFormats, webpageData.adaptiveFormats);
         let videoId = webpageData.videoId + Moment().format("x");
-
-        for(let i = 0; i < videoQualities.length; i++) {
-            if(videoLength <= 0) {
-                videoLength = this.extractVideoDuration(videoQualities[i].downloadUrl);
-            }
-            else {
-                break;
-            }  
-        }
 
         videoQualities.sort((a, b) => {
             if(a.type == 'Audio' && b.type == 'Video') {
@@ -107,21 +111,9 @@ export default class YoutubeUrlParser {
         return { 
             title: webpageData.title,
             videoQualities: videoQualities,
-            videoLength: videoLength,
+            videoLength: webpageData.duration,
             id: videoId
         };
-    }
-
-    extractVideoDuration(videoLink) {
-        let matches = new RegExp("dur=([0-9]+)").exec(videoLink);
-
-        let duration = 0;
-
-        if(matches && matches.length >= 2) {
-            duration = Number(matches[1]);
-        }
-
-        return duration == NaN ? 0 : duration;
     }
 
     processSections(fmtStreamMapSection, adaptiveFmtSection) {
@@ -194,6 +186,7 @@ export default class YoutubeUrlParser {
         return qualities;
     }
 
+    // Do we assume that all sigs are encrypted now?
     processSectionWithNoEncryption(section, qualities) {
         section = section.replace(/codecs=\"[\s\S]*?\"/g, "");
 
@@ -231,9 +224,11 @@ export default class YoutubeUrlParser {
         return qualities;
     }
 
+    // Pass the itag in here
     createVideoQuality(downloadUrl, qualities) {
         let itag = new RegExp("itag=(\\d+)").exec(downloadUrl)[1];
 
+        // This can be simplified
         let videoQuality = null;
 
         for(let i = 0; i < this.videoQualities.length; i++) {
@@ -266,100 +261,18 @@ export default class YoutubeUrlParser {
         return !new RegExp("signature=").test(fmtStreamMapSection);
     }
 
-    extractWebpageData(webpage, youtubeUrl) {
+    extractWebpageData(videoInfo) {
         return {
-            title: this.filenameCleaner.clean(this.extractTitle(webpage)),
-            fmtStreamMapSection: this.extractAdaptiveFmtSection(webpage),
-            adaptiveFmtSection: this.extractFmtStreamMapSection(webpage),
-            playerUrl: this.extractPlayerUrl(webpage),
-            videoId: new RegExp("v=(.*)").exec(youtubeUrl)[1]
+            title: videoInfo[3].playerResponse.videoDetails.title,
+            standardFormats: videoInfo[2].player.args.player_response.streamingData.formats,
+            adaptiveFormats: videoInfo[2].player.args.player_response.streamingData.adaptiveFormats,
+            playerUrl: `https://youtube.com${videoInfo[2].player.assets.js}`,
+            videoId: videoInfo[3].playerResponse.videoDetails.videoId,
+            duration: videoInfo[3].playerResponse.videoDetails.lengthSeconds
         };
-    }
-
-    extractTitle(webpage) {
-        let result = new RegExp("\"title\":\"(.+?)\"").exec(webpage);
-
-        if (result) {
-            return result[1];
-        }
-
-        console.warn("No title found");
-
-        return undefined;
-    }
-
-    extractFmtStreamMapSection(webpage) {
-        let result = new RegExp("\"url_encoded_fmt_stream_map\":\"([\\s\\S]*?)\",").exec(webpage);
-
-        if (result) {
-            return decodeURIComponent(result[1]);
-        }
-
-        console.warn("No url_encoded_fmt_stream_map section found");
-
-        return undefined;     
-    }
-
-    extractAdaptiveFmtSection(webpage) {
-        let result = new RegExp("\"adaptive_fmts\":\"([\\s\\S]*?)\",").exec(webpage);
-
-        if (result) {
-            return decodeURIComponent(result[1]);
-        }
-
-        console.warn("No adaptive_fmts section found");
-
-        return undefined;
-    }
-
-    extractPlayerUrl(webpage) {
-        let playerUrl = new RegExp("\"js\":(.*?).js\"").exec(webpage)[0];
-        playerUrl = playerUrl.replace(/"/g, "");
-        playerUrl = playerUrl.replace(/\\/g, "");
-        playerUrl = playerUrl.replace(" ", "");
-        playerUrl = playerUrl.replace("js:", "https://www.youtube.com");
-        return playerUrl;
     }
 
     noVideoQualities() {
         return !this.videoQualities || this.videoQualities.length === 0;
-    }
-
-    makeGetRequest(url, includeAuth) {
-        return new Promise((resolve, reject) => {
-            try {
-                let httpRequest = new XMLHttpRequest();
-                httpRequest.onload = () => {
-                    if (httpRequest.status == 200) {
-                        resolve(httpRequest.responseText);
-                    }
-                    else {
-                        reject("Get request failed");
-                    }
-                };
-                httpRequest.onerror = () => reject("Get request failed");
-                httpRequest.open("GET", url, true);
-                if(includeAuth) {
-                    httpRequest.setRequestHeader("Authorization", AUTH_CODE);
-                }
-                httpRequest.send();
-            }
-            catch (e) {
-                reject(e);
-            }
-        });
-    }
-
-    makePostRequest(url, includeAuth) {
-        try {
-            let httpRequest = new XMLHttpRequest();
-            httpRequest.open("POST", url, true);
-            if(includeAuth) {
-                httpRequest.setRequestHeader("Authorization", AUTH_CODE);
-            }
-            httpRequest.send();
-        }
-        catch(e) {
-        }
     }
 }
