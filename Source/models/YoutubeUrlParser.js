@@ -49,7 +49,7 @@ export default class YoutubeUrlParser {
                 "x-youtube-client-version": "2.20200123.00.01"
             };
 
-            let response = await this.makeRequest(youtubeUrl, headers);
+            let response = await this.makeRequest(`${youtubeUrl}&pbj=1`, headers);
 
             let content = await response.json();
 
@@ -64,7 +64,7 @@ export default class YoutubeUrlParser {
 
     async downloadPlayer(playerUrl) {
         try {
-            let response = await this.makeRequest(playerUrl, null);
+            let response = await this.makeRequest(playerUrl, {});
 
             let content = await response.text();
 
@@ -82,8 +82,8 @@ export default class YoutubeUrlParser {
         }
     }
 
-    async makeRequest(url, headers) {
-        return await fetch(url, {
+    makeRequest(url, headers) {
+        return fetch(url, {
             method: "GET",
             headers: headers
         });
@@ -116,18 +116,12 @@ export default class YoutubeUrlParser {
         };
     }
 
-    processSections(fmtStreamMapSection, adaptiveFmtSection) {
+    processSections(standardFormats, adaptiveFormats) {
         let qualities = [];
 
         try {
-            if(this.isSignatureEncrypted(fmtStreamMapSection)) {
-                qualities = this.processSectionWithEncryption(fmtStreamMapSection, qualities);
-                qualities = this.processSectionWithEncryption(adaptiveFmtSection, qualities);
-            }
-            else {
-                qualities = this.processSectionWithNoEncryption(fmtStreamMapSection, qualities);
-                qualities = this.processSectionWithNoEncryption(adaptiveFmtSection, qualities);
-            }
+            qualities = this.processSectionWithEncryption(standardFormats, qualities);
+            qualities = this.processSectionWithEncryption(adaptiveFormats, qualities);
         }
         catch (e) {
             console.error(e);
@@ -136,24 +130,14 @@ export default class YoutubeUrlParser {
         return qualities;
     }
 
-    processSectionWithEncryption(section, qualities) {
-        if (!section) {
+    processSectionWithEncryption(formats, qualities) {
+        if (!formats || formats.length === 0) {
             return qualities;
         }
 
-        section = section.replace(/codecs=\"[\s\S]*?\"/g, "");
-
-        let regex = /(?=^|,[^+])[\s\S]*?(?:itag=)[\s\S]*?(?=,[^+]|$)/g;
-        let matches = [];
-        let currentMatch;
-
-        while(currentMatch = regex.exec(section)) {
-            matches.push(currentMatch[0]);
-        }
-
-        matches.forEach((match) => {
+        formats.forEach(format => {
             try {
-                let url = match;
+                let url = decodeURIComponent(format.cipher);
 
                 let signatureItems = new RegExp(/(?:^|,|\\u0026|&)(?:s=|sig=)([\s\S]+?)(?=\\|\\"|,|&|$)/).exec(url);
 
@@ -162,7 +146,7 @@ export default class YoutubeUrlParser {
                     let signature = this.signatureDecryptor.decrypt(signatureItems[1]);
 
                     if(signature && signature.length > 0) {
-                        let quality = this.createVideoQuality(url, qualities);
+                        let quality = this.createVideoQuality(url, format.itag, qualities);
     
                         if(quality) {
                             url = url.substr(url.indexOf("url") + 4);
@@ -186,57 +170,8 @@ export default class YoutubeUrlParser {
         return qualities;
     }
 
-    // Do we assume that all sigs are encrypted now?
-    processSectionWithNoEncryption(section, qualities) {
-        section = section.replace(/codecs=\"[\s\S]*?\"/g, "");
-
-        let regex = /(?=^|,[^+])[\s\S]*?(?:itag=)[\s\S]*?(?=,[^+]|$)/g;
-        let matches = [];
-        let currentMatch;
-
-        while(currentMatch = regex.exec(section)) {
-            matches.push(currentMatch[0]);
-        }
-
-        matches.forEach((match) => {
-            try {
-                let url = match;
-
-                let quality = this.createVideoQuality(url, qualities);
-
-                if(quality) {
-                    url = url.substr(url.indexOf("url") + 4);
-
-                    if(url.includes("\\")) {
-                        url = url.substr(0, url.indexOf("\\"));
-                    }
-
-                    quality.downloadUrl = url;
-
-                    qualities.push(quality);
-                }
-            }
-            catch (e) {
-                console.error(e);
-            }
-        });
-
-        return qualities;
-    }
-
-    // Pass the itag in here
-    createVideoQuality(downloadUrl, qualities) {
-        let itag = new RegExp("itag=(\\d+)").exec(downloadUrl)[1];
-
-        // This can be simplified
-        let videoQuality = null;
-
-        for(let i = 0; i < this.videoQualities.length; i++) {
-            if(itag === this.videoQualities[i].itag) {
-                videoQuality = this.videoQualities[i];
-                break;
-            }
-        }
+    createVideoQuality(downloadUrl, itag, qualities) {
+        let videoQuality = this.videoQualities.find(x => x.itag == itag);
 
         if(videoQuality && !this.qualityAlreadyExists(qualities, videoQuality.description)) {
             return {
@@ -252,20 +187,16 @@ export default class YoutubeUrlParser {
     }
 
     qualityAlreadyExists(qualities, description) {
-        return qualities.some((quality) => {
-            return quality.description === description;
-        });
-    }
-
-    isSignatureEncrypted(fmtStreamMapSection) {
-        return !new RegExp("signature=").test(fmtStreamMapSection);
+        return qualities.some(quality => quality.description === description);
     }
 
     extractWebpageData(videoInfo) {
+        const playerResponse = JSON.parse(videoInfo[2].player.args.player_response);
+
         return {
             title: videoInfo[3].playerResponse.videoDetails.title,
-            standardFormats: videoInfo[2].player.args.player_response.streamingData.formats,
-            adaptiveFormats: videoInfo[2].player.args.player_response.streamingData.adaptiveFormats,
+            standardFormats: playerResponse.streamingData.formats,
+            adaptiveFormats: playerResponse.streamingData.adaptiveFormats,
             playerUrl: `https://youtube.com${videoInfo[2].player.assets.js}`,
             videoId: videoInfo[3].playerResponse.videoDetails.videoId,
             duration: videoInfo[3].playerResponse.videoDetails.lengthSeconds
