@@ -31,7 +31,7 @@
     "acorn": "^7.1.0",
     "adm-zip": "^0.4.13",
     "babel-polyfill": "^6.26.0",
-    "electron": "^7.1.0",
+    "electron": "^7.1.10",
     "moment": "^2.24.0",
     "rc-slider": "^8.7.1",
     "react": "^16.11.0",
