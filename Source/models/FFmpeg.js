@@ -1,6 +1,7 @@
 import ProcessStarter from './ProcessStarter';
 
 const path = window.require('path');
+const app = window.require('electron').remote.app;
 
 export default class FFmpeg {
     constructor() {
@@ -28,6 +29,6 @@ export default class FFmpeg {
     }
 
     ffmpegLocation() {
-        return path.join(path.dirname(window.require.main.filename), 'FFmpeg/bin/ffmpeg.exe');
+        return path.join(app.getAppPath(), 'dist/FFmpeg/bin/ffmpeg.exe');
     }
 }
