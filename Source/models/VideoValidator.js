@@ -28,6 +28,10 @@ export default class VideoValidator {
             result.isValid = false;
             result.message = "End time must be a number";
         }
+        else if(new RegExp("[\\/:\"*?<>|]").test(renameVideoTo)) {
+            result.isValid = false;
+            result.message = "Filename contains invalid characters";
+        }
 
         return result;
     }
