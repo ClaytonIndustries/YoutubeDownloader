@@ -14,7 +14,7 @@ import SliderBase from 'rc-slider';
 import ActionMenu from './ActionMenu';
 import WarningDialog from './WarningDialog';
 
-import AudioFormats from '../models/AudioFormats';
+import { audioFormats } from '../models/audioFormats';
 import VideoValidator from '../models/VideoValidator';
 import YoutubeVideo from '../models/YoutubeVideo';
 import ClipboardManager from '../models/ClipboardManager';
@@ -39,12 +39,12 @@ class UrlEntry extends React.Component {
         this.state = {
             youtubeUrl: "",
             videoQualities: [],
-            audioFormats: AudioFormats.getAllowedFormats(),
+            audioFormats: audioFormats,
             videoQualityMenuOpen: false,
             audioTypeMenuOpen: false,
             menuAnchor: null,
             selectedVideoQuality: null,
-            selectedAudioFormat: AudioFormats.getAllowedFormats()[0],
+            selectedAudioFormat: audioFormats[0],
             saveTo: this.props.settings.saveToPath,
             renameTo: "",
             startTime: 0,

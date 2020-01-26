@@ -1,6 +1,6 @@
 import FilenameCleaner from './FilenameCleaner';
 import SignatureDecryptor from './SignatureDecryptor';
-import { videoQualities } from '../videoQualities';
+import { videoQualities } from './videoQualities';
 
 import Moment from 'moment';
 
