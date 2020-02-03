@@ -1,4 +1,3 @@
-import FilenameCleaner from './FilenameCleaner';
 import SignatureDecryptor from './SignatureDecryptor';
 import { videoQualities } from './videoQualities';
 
@@ -6,7 +5,6 @@ import Moment from 'moment';
 
 export default class YoutubeUrlParser {
     constructor() {
-        this.filenameCleaner = new FilenameCleaner();
         this.signatureDecryptor = new SignatureDecryptor();
         this.videoQualities = videoQualities;
     }
