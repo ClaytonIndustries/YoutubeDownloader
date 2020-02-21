@@ -1,6 +1,5 @@
 const remote = window.require('electron').remote;
 const electronFs = remote.require('fs');
-const admZip = window.require('adm-zip');
 
 export default class FileAccess {
     delete(path) {
@@ -29,9 +28,5 @@ export default class FileAccess {
 
     getPath(dir) {
         return remote.app.getPath(dir);
-    }
-
-    unpackZipFile(zipPath, targetPath) {
-        new admZip(zipPath).extractAllTo(targetPath, true);
     }
 }

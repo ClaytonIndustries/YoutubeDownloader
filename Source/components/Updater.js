@@ -1,80 +1,49 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 
-import Button from '@material-ui/core/Button';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 import IconButton from '@material-ui/core/IconButton';
-import LinearProgress from '@material-ui/core/LinearProgress';
 
 import CloseIcon from '@material-ui/icons/Close';
 
-import UpdateManager from '../models/UpdateManager';
-import ProcessStarter from '../models/ProcessStarter';
-
-import { UD_UPDATE_AVAILABLE, UD_DOWNLOADING_UPDATE, UD_RETRY_DOWNLOAD, UD_INSTALL_READY } from '../models/Constants';
-
-const remote = window.require('electron').remote;
+import { VERSION_NUMBER, URL_VERSION } from '../models/Constants';
 
 class Updater extends React.Component {
     constructor(props) {
         super(props);
+
         this.state = {
             open: false,
-            update: null,
-            message: "A new version is available",
-            status: UD_UPDATE_AVAILABLE
+            message: "An update is available"
         };
-
-        this.updateManager = new UpdateManager();
-        this.processStarter = new ProcessStarter();
-
-        this.updateManager.checkForUpdates().then((update) => {
-            if(update != undefined) {
-                this.setState({
-                    open: true,
-                    update: update
-                });
-            }
-        });
     }
 
-    downloadUpdate() {
-        this.setState({
-            message: "Downloading update",
-            status: UD_DOWNLOADING_UPDATE
-        }, () => {
-            this.activeDownload = this.updateManager.downloadUpdate(this.state.update, (success) => {
-                if(success) {
-                    this.setState({
-                        message: "Download complete, close and install?",
-                        status: UD_INSTALL_READY
-                    });
-                }
-                else {
-                    this.setState({
-                        message: "Download failed, retry?",
-                        status: UD_RETRY_DOWNLOAD
-                    });
-                }
-            });
-        });
-    }
-
-    installUpdate() {
-        this.processStarter.openItem(this.state.update.extractedLocation());
-        remote.getCurrentWindow().close();
-    }
-
-    handleRequestClose() {
+    async componentDidMount() {
         try {
-            if(this.activeDownload && this.state.status === UD_DOWNLOADING_UPDATE) {
-                this.activeDownload.abort();
+            const args = {
+                method: "GET"
+            }
+    
+            let response = await fetch(URL_VERSION, args);
+            let update = await response.json();
+    
+            if(this.getFormattedVersionNumberFromString(update.data.versionNumber) > this.getFormattedVersionNumberFromString(VERSION_NUMBER)) {
+                this.setState({
+                    open: true
+                })
             }
         }
         catch (e) {
+            console.error(e);
         }
+    }
 
+    getFormattedVersionNumberFromString(versionNumber) {
+        return Number(versionNumber.replace(".", ""));
+    }
+
+    closeSnackbar() {
         this.setState({
             open: false
         });
@@ -83,28 +52,9 @@ class Updater extends React.Component {
     render() {
         const { classes } = this.props;
 
-        const content = this.state.status === UD_UPDATE_AVAILABLE || this.state.status === UD_RETRY_DOWNLOAD ? 
+        const content =
             [
-                <Button key="download" color="accent" size="small" onClick={() => {this.downloadUpdate()}}>
-                    {this.state.status === "updateAvailable" ? "DOWNLOAD" : "RETRY"}
-                </Button>,
-                <IconButton key="close" color="inherit" onClick={() => {this.handleRequestClose()}}>
-                    <CloseIcon />
-                </IconButton>
-            ]
-        : this.state.status === UD_DOWNLOADING_UPDATE ?
-            [
-                <LinearProgress key="progress" className={classes.progressBar} />,
-                <IconButton key="close" color="inherit" onClick={() => {this.handleRequestClose()}}>
-                    <CloseIcon />
-                </IconButton>
-            ]
-        :
-            [
-                <Button key="download" color="accent" dense onClick={() => {this.installUpdate()}}>
-                    INSTALL
-                </Button>,
-                <IconButton key="close" color="inherit" onClick={() => {this.handleRequestClose()}}>
+                <IconButton key="close" color="inherit" onClick={() => this.closeSnackbar()}>
                     <CloseIcon />
                 </IconButton>
             ];
@@ -126,13 +76,10 @@ class Updater extends React.Component {
     }
 }
 
-const styles = theme => ({
+const styles = () => ({
     snackbarContent: {
         marginLeft: 150,
         marginRight: 150
-    },
-    progressBar: {
-        width: 100
     }
 });
 
