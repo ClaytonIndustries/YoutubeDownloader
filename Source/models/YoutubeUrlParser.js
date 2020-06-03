@@ -109,7 +109,7 @@ export default class YoutubeUrlParser {
 
         formats.forEach(format => {
             try {
-                let url = decodeURIComponent(format.cipher ? format.cipher : format.url);
+                let url = decodeURIComponent(format.signatureCipher ? format.signatureCipher : format.url);
 
                 let signatureItems = new RegExp(/(?:^|,|\\u0026|&)(?:s=|sig=)([\s\S]+?)(?=\\|\\"|,|&|$)/).exec(url);
 
