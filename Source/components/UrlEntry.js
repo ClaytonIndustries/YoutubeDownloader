@@ -52,7 +52,7 @@ class UrlEntry extends React.Component {
             gettingVideo: false,
             warningDialogOpen: false,
             validationMessage: "",
-            searchStatus: "pending",
+            searchFailed: false,
             snackbarOpen: false
         };
     }
@@ -117,7 +117,8 @@ class UrlEntry extends React.Component {
                             renameTo: result.title,
                             endTime: Number(result.videoLength),
                             maxVideoLength: Number(result.videoLength),
-                            videoId: result.id
+                            videoId: result.id,
+                            volumePercentage: 100
                         }, () => {
                             if(this.props.settings.automaticallyDownload) {
                                 this.download();
@@ -131,8 +132,7 @@ class UrlEntry extends React.Component {
 
                 this.setState({
                     gettingVideo: false,
-                    searchStatus: result && result.videoQualities && result.videoQualities.length > 0 ? "success" : "failed",
-                    volumePercentage: 100
+                    searchFailed: !result || !result.videoQualities || !result.videoQualities.length
                 });
             });       
         }
@@ -218,9 +218,9 @@ class UrlEntry extends React.Component {
             renameTo: "",
             startTime: 0,
             endTime: 0,
-            maxVideoLength: 0,
+            maxVideoLength: 1,
             videoId: "",
-            searchStatus: "pending",
+            searchFailed: false,
             volumePercentage: 50
         });
     }
@@ -249,7 +249,7 @@ class UrlEntry extends React.Component {
                 maxVideoLength: this.props.lastState.maxVideoLength,
                 volumePercentage: this.props.lastState.volumePercentage,
                 videoId: this.props.lastState.videoId,
-                searchStatus: this.props.lastState.searchStatus
+                searchFailed: this.props.lastState.searchFailed
             });
         }
     }
@@ -269,7 +269,7 @@ class UrlEntry extends React.Component {
             maxVideoLength: this.state.maxVideoLength,
             volumePercentage: this.state.volumePercentage,
             videoId: this.state.videoId,
-            searchStatus: this.state.searchStatus
+            searchFailed: this.state.searchFailed
         }));
     }
 
@@ -289,10 +289,8 @@ class UrlEntry extends React.Component {
             <div>
                 <div className={classes.topSpacing}>
                     <div className={classes.row}>
-                        {this.state.searchStatus == "failed" ? <TextField fullWidth error placeholder="Enter the video url here and press get video"
-                            value={this.state.youtubeUrl} onChange={(event) => { this.setState({ youtubeUrl: event.target.value }) }} /> :
-                        <TextField fullWidth placeholder="Enter the video url here and press get video" value={this.state.youtubeUrl}
-                            onChange={(event) => { this.setState({ youtubeUrl: event.target.value }) }} />}   
+                        <TextField fullWidth error={this.state.searchFailed} placeholder="Enter the video url here and press get video"
+                                value={this.state.youtubeUrl} onChange={(event) => { this.setState({ youtubeUrl: event.target.value }) }} />
                     </div>
                 </div>
                 <div className={classes.topSpacing}>
