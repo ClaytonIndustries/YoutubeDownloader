@@ -42,12 +42,12 @@ class SettingsDialog extends React.Component {
     }
 
     onSave() {
-        this.props.dispatch(appSettings({
+        this.props.appSettings({
             ...this.props.settings,
             automaticallyPaste: this.state.automaticallyPaste,
             automaticallyGetVideo: this.state.automaticallyGetVideo,
             automaticallyDownload: this.state.automaticallyDownload,
-        }));
+        });
         this.props.onClose();       
     }
 
@@ -119,4 +119,8 @@ SettingsDialog.mapStateToProps = (state) => {
     }
 }
 
-export default connect(SettingsDialog.mapStateToProps)(withStyles(styles)(SettingsDialog));
+const mapDispatchToProps = {
+    appSettings
+}
+
+export default connect(SettingsDialog.mapStateToProps, mapDispatchToProps)(withStyles(styles)(SettingsDialog));

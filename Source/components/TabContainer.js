@@ -24,7 +24,7 @@ class TabContainer extends React.Component {
         this.youtubeUrlParser = new YoutubeUrlParser();
     }
 
-    handleTabChange(event, index) {
+    handleTabChange(index) {
         this.setState({ 
             selectedTabIndex: index
         });
@@ -36,7 +36,7 @@ class TabContainer extends React.Component {
         return (
             <div className={classes.tabContainer}>
                 <AppBar position="static">
-                    <Tabs variant="fullWidth" centered value={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(event, index)}}>
+                    <Tabs variant="fullWidth" centered value={this.state.selectedTabIndex} onChange={(event, index) => {this.handleTabChange(index)}}>
                         <Tab icon={<SearchIcon />} />
                         <Tab label={
                             <Badge className={classes.badge} color="secondary" badgeContent={this.props.queuedVideoCount}>
@@ -53,7 +53,7 @@ class TabContainer extends React.Component {
     }
 }
 
-const styles = theme => ({
+const styles = () => ({
     tabContainer: {
         marginTop: 10
     },

@@ -11,7 +11,7 @@ class Settings extends React.Component {
         super(props);
 
         this.load().then((settings) => {
-            this.props.dispatch(appSettings(settings));
+            this.props.appSettings(settings);
             this.setState({
                 loadCompleted: true
             });
@@ -86,4 +86,8 @@ Settings.mapStateToProps = (state) => {
     }
 }
 
-export default connect(Settings.mapStateToProps)(Settings);
+const mapDispatchToProps = {
+    appSettings
+}
+
+export default connect(Settings.mapStateToProps, mapDispatchToProps)(Settings);

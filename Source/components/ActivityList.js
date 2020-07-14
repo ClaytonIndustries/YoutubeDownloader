@@ -36,7 +36,7 @@ class ActivityList extends React.Component {
             if(video.isActive()) {
                 video.cancel();
             }
-            this.props.dispatch(removeVideo(this.state.selectedIndex));
+            this.props.removeVideo(this.state.selectedIndex);
             this.setState({
                 selectedIndex: -1
             });
@@ -139,7 +139,7 @@ class ActivityList extends React.Component {
     }
 }
 
-const styles = theme => ({
+const styles = () => ({
     row: {
         display: 'flex',
         justifyContent: 'center'
@@ -152,4 +152,8 @@ ActivityList.mapStateToProps = (state) => {
     }
 }
 
-export default connect(ActivityList.mapStateToProps)(withStyles(styles)(ActivityList));
+const mapDispatchToProps = {
+    removeVideo
+}
+
+export default connect(ActivityList.mapStateToProps, mapDispatchToProps)(withStyles(styles)(ActivityList));

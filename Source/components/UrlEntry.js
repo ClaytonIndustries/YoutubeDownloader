@@ -196,8 +196,8 @@ class UrlEntry extends React.Component {
             let settings = this.props.settings;
             settings.saveToPath = this.state.saveTo;
 
-            this.props.dispatch(addVideo(youtubeVideo));
-            this.props.dispatch(appSettings(settings));
+            this.props.addVideo(youtubeVideo);
+            this.props.appSettings(settings);
 
             this.setState({snackbarOpen: true});
 
@@ -257,7 +257,7 @@ class UrlEntry extends React.Component {
     componentWillUnmount() {
         this.clipboardManager.callback = null;
 
-        this.props.dispatch(urlEntryState({         
+        this.props.urlEntryState({         
             youtubeUrl: this.state.youtubeUrl,
             videoQualities: this.state.videoQualities,
             selectedVideoQuality: this.state.selectedVideoQuality,
@@ -270,7 +270,7 @@ class UrlEntry extends React.Component {
             volumePercentage: this.state.volumePercentage,
             videoId: this.state.videoId,
             searchFailed: this.state.searchFailed
-        }));
+        });
     }
 
     render() {
@@ -365,7 +365,7 @@ class UrlEntry extends React.Component {
     }
 }
 
-const styles = theme => ({
+const styles = () => ({
     topSpacing: {
         marginTop: 15
     },
@@ -412,4 +412,10 @@ UrlEntry.mapStateToProps = (state) => {
     }
 }
 
-export default connect(UrlEntry.mapStateToProps)(withStyles(styles)(UrlEntry));
+const mapDispatchToProps = {
+    addVideo, 
+    appSettings, 
+    urlEntryState
+}
+
+export default connect(UrlEntry.mapStateToProps, mapDispatchToProps)(withStyles(styles)(UrlEntry));
