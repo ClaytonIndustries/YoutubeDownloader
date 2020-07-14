@@ -1,34 +1,28 @@
-import ProcessStarter from './ProcessStarter';
+import { startProcess } from './ProcessStarter';
 
 const path = window.require('path');
 const app = window.require('electron').remote.app;
 
-export default class FFmpeg {
-    constructor() {
-        this.processStarter = new ProcessStarter();
-    }
+export function extractVideoAudio(videoPath, audioPath, volumePercentage, callback) {
+    let args = [
+        "-i", videoPath, "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", "-filter:a", "volume=" + volumePercentage, audioPath, "-y"
+    ];
 
-    extractVideoAudio(videoPath, audioPath, volumePercentage, callback) {
-        let args = [
-            "-i", videoPath, "-vn", "-ab", "128k", "-ac", "2", "-ar", "44100", "-filter:a", "volume=" + volumePercentage, audioPath, "-y"
-        ];
+    return startProcess(ffmpegLocation(), args, (success) => {
+        callback(success);
+    });
+}
 
-        return this.processStarter.start(this.ffmpegLocation(), args, (success) => {
-            callback(success);
-        });
-    }
+export function cutVideo(mediaPath, destinationMediaPath, startTime, endTime, callback) {
+    let args = [
+        "-i", mediaPath, "-ss", startTime, "-t", endTime, destinationMediaPath
+    ];
 
-    cutVideo(mediaPath, destinationMediaPath, startTime, endTime, callback) {
-        let args = [
-            "-i", mediaPath, "-ss", startTime, "-t", endTime, destinationMediaPath
-        ];
+    return startProcess(ffmpegLocation(), args, (success) => {
+        callback(success);
+    });
+}
 
-        return this.processStarter.start(this.ffmpegLocation(), args, (success) => {
-            callback(success);
-        });
-    }
-
-    ffmpegLocation() {
-        return path.join(app.getAppPath(), 'dist/FFmpeg/bin/ffmpeg.exe');
-    }
+function ffmpegLocation() {
+    return path.join(app.getAppPath(), 'dist/FFmpeg/bin/ffmpeg.exe');
 }

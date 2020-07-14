@@ -176,8 +176,4 @@ export default class YoutubeUrlParser {
             duration: videoInfoResponse[3].playerResponse.videoDetails.lengthSeconds
         };
     }
-
-    noVideoQualities() {
-        return !this.videoQualities || this.videoQualities.length === 0;
-    }
 }

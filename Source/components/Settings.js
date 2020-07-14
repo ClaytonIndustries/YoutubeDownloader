@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import FileAccess from '../models/FileAccess';
+import { write, read, getPath } from '../models/FileAccess';
 import { appSettings } from '../actions';
 
 const path = window.require('path');
@@ -9,8 +9,6 @@ const path = window.require('path');
 class Settings extends React.Component {
     constructor(props) {
         super(props);
-
-        this.fileAccess = new FileAccess();
 
         this.load().then((settings) => {
             this.props.dispatch(appSettings(settings));
@@ -25,14 +23,14 @@ class Settings extends React.Component {
     }
 
     save(settings) {
-        this.fileAccess.write(this.fileLocation(), JSON.stringify(settings));
+        write(this.fileLocation(), JSON.stringify(settings));
     }
 
     load() {
         let self = this;
 
         return new Promise((resolve) => {
-            self.fileAccess.read(self.fileLocation(), (error, data) => {
+            read(self.fileLocation(), (error, data) => {
                 if (!error) {
                     try {
                         let settingsData = JSON.parse(data);
@@ -43,6 +41,7 @@ class Settings extends React.Component {
                         return;
                     }
                     catch (e) {
+                        console.error(e);
                     }
                 }
                 
@@ -61,11 +60,11 @@ class Settings extends React.Component {
     }
 
     returnDefaultSettings(resolve) {
-        this.raiseResponseCallback(resolve, true, true, false, this.fileAccess.getPath("downloads"));
+        this.raiseResponseCallback(resolve, true, true, false, getPath("downloads"));
     }
 
     fileLocation() {
-        return path.join(this.fileAccess.getPath('userData'), "UserSettings.json");
+        return path.join(getPath('userData'), "UserSettings.json");
     }
 
     componentDidUpdate(prevProps) {

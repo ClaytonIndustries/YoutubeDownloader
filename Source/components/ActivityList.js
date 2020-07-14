@@ -18,7 +18,7 @@ import RetryIcon from '@material-ui/icons/Refresh';
 
 import VideoRow from './VideoRow';
 
-import ProcessStarter from '../models/ProcessStarter';
+import { openItem } from '../models/ProcessStarter';
 import { removeVideo } from '../actions';
 
 class ActivityList extends React.Component {
@@ -27,8 +27,6 @@ class ActivityList extends React.Component {
         this.state = {
             selectedIndex: -1
         };
-
-        this.processStarter = new ProcessStarter();
     }
 
     removeVideo() {
@@ -49,7 +47,7 @@ class ActivityList extends React.Component {
         let video = this.getSelectedVideoFromIndex();
 
         if(video) {
-            this.processStarter.openItem(video.destinationFolder);
+            openItem(video.destinationFolder);
         }
     }
 
@@ -58,10 +56,10 @@ class ActivityList extends React.Component {
         
         if(video && video.isComplete()) {
             if(video.shouldConvertAudio()) {
-                this.processStarter.openItem(video.destinationAudioPath());
+                openItem(video.destinationAudioPath());
             }
             else {
-                this.processStarter.openItem(video.destinationVideoPath());
+                openItem(video.destinationVideoPath());
             }
         }
     }

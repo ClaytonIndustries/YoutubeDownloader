@@ -13,7 +13,7 @@ export const VS_CUTTING_FAILED = "Cutting Failed";
 export const PR_XHR = "xhr";
 export const PR_FFMPEG = "ffmpeg";
 
-export const URL_VERSION = "https://api.claytoninds.com/youtubedownloader/version";
+export const URL_VERSION = "https://website.claytoninds.com/api/youtubedownloader/version";
 
 export const RS_ADD_VIDEO = "ADD_VIDEO";
 export const RS_REMOVE_VIDEO = "REMOVE_VIDEO";

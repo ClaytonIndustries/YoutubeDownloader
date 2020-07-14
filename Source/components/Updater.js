@@ -28,7 +28,7 @@ class Updater extends React.Component {
             let response = await fetch(URL_VERSION, args);
             let update = await response.json();
     
-            if(this.getFormattedVersionNumberFromString(update.data.versionNumber) > this.getFormattedVersionNumberFromString(VERSION_NUMBER)) {
+            if(this.getFormattedVersionNumberFromString(update.data) > this.getFormattedVersionNumberFromString(VERSION_NUMBER)) {
                 this.setState({
                     open: true
                 })

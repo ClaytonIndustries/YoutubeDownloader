@@ -9,7 +9,7 @@ import DeleteIcon from '@material-ui/icons/SettingsOutlined';
 
 import SettingsDialog from './SettingsDialog';
 
-import ProcessStarter from '../models/ProcessStarter';
+import { openItem } from '../models/ProcessStarter';
 import { VERSION_NUMBER } from '../models/Constants';
 
 class Header extends React.Component {
@@ -18,12 +18,10 @@ class Header extends React.Component {
         this.state = {
             settingsDialogOpen: false
         };
-
-        this.processStarter = new ProcessStarter();
     }
 
     openYoutube() {
-        this.processStarter.openItem("https://www.youtube.com");
+        openItem("https://www.youtube.com");
     }
 
     settingsDialogClose() {

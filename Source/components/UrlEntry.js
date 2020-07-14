@@ -15,10 +15,9 @@ import ActionMenu from './ActionMenu';
 import WarningDialog from './WarningDialog';
 
 import { audioFormats } from '../models/audioFormats';
-import VideoValidator from '../models/VideoValidator';
+import { validateProperties } from '../models/VideoValidator';
 import YoutubeVideo from '../models/YoutubeVideo';
 import ClipboardManager from '../models/ClipboardManager';
-import FileAccess from '../models/FileAccess';
 import { VS_PENDING } from '../models/Constants';
 import { addVideo, appSettings, urlEntryState } from '../actions';
 
@@ -32,9 +31,7 @@ class UrlEntry extends React.Component {
     constructor(props) {
         super(props);
 
-        this.videoValidator = new VideoValidator();
         this.clipboardManager = new ClipboardManager();
-        this.fileAccess = new FileAccess();
 
         this.state = {
             youtubeUrl: "",
@@ -179,7 +176,7 @@ class UrlEntry extends React.Component {
     }
 
     download() {
-        let validationResult = this.videoValidator.validateProperties(this.state.selectedVideoQuality, this.state.saveTo, 
+        let validationResult = validateProperties(this.state.selectedVideoQuality, this.state.saveTo, 
             this.state.renameTo, this.state.startTime, this.state.endTime);
 
         if(validationResult.isValid) {
