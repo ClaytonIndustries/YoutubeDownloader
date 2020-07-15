@@ -84,7 +84,9 @@ export default class YoutubeVideo {
             this.setVideoStatus(VS_COMPLETE);
         }
         catch (e) {
-            console.error(e);
+            if (e) {
+                console.error(e);
+            }
         }
     }
 
@@ -94,14 +96,16 @@ export default class YoutubeVideo {
                 try {
                     this.activeProcess.process.abort();
                 }
-                catch(e) {       
+                catch(e) {  
+                    console.error(e);     
                 }
             }
             else if(this.activeProcess.type === PR_FFMPEG && (this.status === VS_CONVERTING || this.status === VS_CUTTING)) {
                 try {
                     this.activeProcess.process.kill();
                 }
-                catch(e) {                
+                catch(e) {      
+                    console.error(e);            
                 }
             }
         }
