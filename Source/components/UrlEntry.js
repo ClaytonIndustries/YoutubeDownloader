@@ -282,6 +282,10 @@ class UrlEntry extends React.Component {
             },
             rail: {
                 background: '#C5B6FF'
+            },
+            handle: {
+                borderColor: this.noVideo() ? '#C5B6FF' : '#5f50e1',
+                boxShadow: 'none'
             }
         }
 
@@ -337,13 +341,13 @@ class UrlEntry extends React.Component {
                     <Typography type="subheading">Modify start / end time</Typography>
                     <Range min={0} max={this.state.maxVideoLength} value={[this.state.startTime, this.state.endTime]} className={classes.slider} 
                         tipFormatter={value => this.formatTime(value)} allowCross={false} disabled={this.noVideo()} trackStyle={[rcSliderStyles.track]}
-                        railStyle={rcSliderStyles.rail} onChange={(values) => {this.timeChanged(values)}} />
+                        railStyle={rcSliderStyles.rail} handleStyle={rcSliderStyles.handle} onChange={(values) => {this.timeChanged(values)}} />
                 </div>
                 <div className={classes.topSpacing}>
                     <Typography type="subheading">Modify volume</Typography>
                     <Slider min={50} max={200} value={this.state.volumePercentage} className={classes.slider}
                         tipFormatter={value => this.formatVolume(value)} disabled={this.noVideo()} trackStyle={[rcSliderStyles.track]}
-                        railStyle={rcSliderStyles.rail} onChange={(value) => { this.volumeChanged(value) }} />
+                        railStyle={rcSliderStyles.rail} handleStyle={rcSliderStyles.handle} onChange={(value) => { this.volumeChanged(value) }} />
                 </div>
                 <div className={classes.topSpacing}>
                     <Button variant="contained" size="small" disabled={this.noVideo()} color="primary" className={classes.downloadButton} 
