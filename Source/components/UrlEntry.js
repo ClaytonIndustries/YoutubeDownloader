@@ -17,7 +17,7 @@ import WarningDialog from './WarningDialog';
 import { audioFormats } from '../models/audioFormats';
 import { validateProperties } from '../models/VideoValidator';
 import YoutubeVideo from '../models/YoutubeVideo';
-import ClipboardManager from '../models/ClipboardManager';
+import { readText, isYoutubeUrl } from '../models/ClipboardManager';
 import { VS_PENDING } from '../models/Constants';
 import { addVideo, appSettings, urlEntryState } from '../actions';
 
@@ -31,7 +31,7 @@ class UrlEntry extends React.Component {
     constructor(props) {
         super(props);
 
-        this.clipboardManager = new ClipboardManager();
+        this.clipboardInterval = undefined;
 
         this.state = {
             youtubeUrl: "",
@@ -91,7 +91,7 @@ class UrlEntry extends React.Component {
 
     paste() {
         this.setState({
-            youtubeUrl: this.clipboardManager.readText()     
+            youtubeUrl: readText()
         }, () => {
             if(this.props.settings.automaticallyGetVideo) {
                 this.getVideo();
@@ -176,8 +176,7 @@ class UrlEntry extends React.Component {
     }
 
     download() {
-        let validationResult = validateProperties(this.state.selectedVideoQuality, this.state.saveTo, 
-            this.state.renameTo, this.state.startTime, this.state.endTime);
+        let validationResult = validateProperties(this.state.selectedVideoQuality, this.state.saveTo, this.state.renameTo, this.state.startTime, this.state.endTime);
 
         if(validationResult.isValid) {
             let youtubeVideo = new YoutubeVideo();
@@ -230,11 +229,14 @@ class UrlEntry extends React.Component {
     }
 
     componentDidMount() {
-        this.clipboardManager.callback = () => {
-            if(this.props.settings.automaticallyPaste) {
-                this.paste();
+        this.clipboardInterval = setInterval(() => {
+            let newText = readText();
+            if(newText !== this.state.youtubeUrl && isYoutubeUrl(newText)) {
+                if(this.props.settings.automaticallyPaste) {
+                    this.paste();
+                }
             }
-        };
+        }, 500);
 
         if(this.props.lastState) {
             this.setState({
@@ -255,7 +257,7 @@ class UrlEntry extends React.Component {
     }
 
     componentWillUnmount() {
-        this.clipboardManager.callback = null;
+        clearInterval(this.clipboardInterval);
 
         this.props.urlEntryState({         
             youtubeUrl: this.state.youtubeUrl,
