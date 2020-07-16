@@ -9,7 +9,7 @@ const path = window.require('path');
 
 export default class YoutubeVideo {
     constructor() {
-        this.size = 0;
+        this.sizeInBytes = 0;
         this.sizeInMBs = 0;
         this.progress = 0;
         this.lastUpdateTime = Moment();
@@ -49,15 +49,15 @@ export default class YoutubeVideo {
         return this.status === VS_DOWNLOADING && (Moment().unix() - this.lastUpdateTime.unix()) >= 10;
     }
 
-    setSize(size) {
-        this.size = size;
-        this.sizeInMBs = Number(size / 1000000).toFixed(2);
+    setSize(sizeInBytes) {
+        this.sizeInBytes = sizeInBytes;
+        this.sizeInMBs = Number(this.sizeInBytes / 1000000).toFixed(2);
         this.raiseChanged();
     }
 
     setProgress(bytesReceived) {
         this.lastUpdateTime = Moment();
-        this.progress = (bytesReceived / this.size) * 100;
+        this.progress = (bytesReceived / this.sizeInBytes) * 100;
         this.raiseChanged();
     }
 
@@ -111,13 +111,18 @@ export default class YoutubeVideo {
         }
     }
 
-    download() {
+    async download() {
         let self = this;
 
-        return new Promise((resolve, reject) => {
-            self.setVideoStatus(VS_DOWNLOADING);
+        self.setVideoStatus(VS_DOWNLOADING);
 
-            let process = getVideo(self.videoQuality.downloadUrl, (action, value) => {
+        try {
+            var controller = new AbortController();
+            var signal = controller.signal;
+
+            self.setActiveProcess(controller, PR_XHR);
+
+            let result = await getVideo(self.videoQuality.downloadUrl, signal, (action, value) => {
                 switch (action) {
                     case "size":
                         self.setSize(value);
@@ -125,25 +130,20 @@ export default class YoutubeVideo {
                     case "progress":
                         self.setProgress(value);
                         break;
-                    case "complete":
-                        write(self.destinationVideoPath(), value, (error) => {
-                            if (error) {
-                                self.setVideoStatus(VS_DOWNLOAD_FAILED);
-                                remove(self.destinationVideoPath());
-                                reject();
-                            } else {
-                                resolve();
-                            }
-                        });
-                        break;
-                    case "error":
-                        self.setVideoStatus(VS_DOWNLOAD_FAILED);
-                        reject();
-                        break;
                 }
             });
-            self.setActiveProcess(process, PR_XHR);
-        });
+            // This needs to be awaitable
+            write(self.destinationVideoPath(), result, (error) => {
+                if (error) {
+                    remove(self.destinationVideoPath());
+                    throw new Error('Failed to write download to file');
+                }
+            });
+        }
+        catch (e) {
+            self.setVideoStatus(VS_DOWNLOAD_FAILED);
+            throw e;
+        }
     }
 
     convertAudio() {

@@ -7,7 +7,7 @@ export default class SignatureDecryptor {
 
     getCryptoFunctions(player) {
         this.cryptoClassFunctionCalls = this.getCryptoClassFunctionCallsFromCryptoFunction(player);
-        this.mappedCryptoFunctions = this.getCrytoClassFunctions(player, this.cryptoClassFunctionCalls[0]);
+        this.mappedCryptoFunctions = this.getCryptoClassFunctions(player, this.cryptoClassFunctionCalls[0]);
 
         return this.isDecrypted();
     }
@@ -31,7 +31,7 @@ export default class SignatureDecryptor {
 		return cryptoFunctionNames;
 	}
 
-	getCrytoClassFunctions(webpage, anyCryptoClassFunctionCall) {
+	getCryptoClassFunctions(webpage, anyCryptoClassFunctionCall) {
         let cryptoClassName = new RegExp(".+\\.").exec(anyCryptoClassFunctionCall)[0];
 
 		cryptoClassName = this.escapeRegExp(cryptoClassName.replace('.', ''));
