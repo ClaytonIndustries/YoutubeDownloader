@@ -132,16 +132,12 @@ export default class YoutubeVideo {
                         break;
                 }
             });
-            // This needs to be awaitable
-            write(self.destinationVideoPath(), result, (error) => {
-                if (error) {
-                    remove(self.destinationVideoPath());
-                    throw new Error('Failed to write download to file');
-                }
-            });
+
+            await write(self.destinationVideoPath(), result);
         }
         catch (e) {
             self.setVideoStatus(VS_DOWNLOAD_FAILED);
+            remove(self.destinationVideoPath());
             throw e;
         }
     }

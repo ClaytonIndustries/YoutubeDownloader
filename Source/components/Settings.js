@@ -26,41 +26,30 @@ class Settings extends React.Component {
         write(this.fileLocation(), JSON.stringify(settings));
     }
 
-    load() {
+    async load() {
         let self = this;
 
-        return new Promise((resolve) => {
-            read(self.fileLocation(), (error, data) => {
-                if (!error) {
-                    try {
-                        let settingsData = JSON.parse(data);
+        try {
+            let data = await read(self.fileLocation());
 
-                        self.raiseResponseCallback(resolve, settingsData.automaticallyPaste, settingsData.automaticallyGetVideo,
-                            settingsData.automaticallyDownload, settingsData.saveToPath);
+            let settingsData = JSON.parse(data);
 
-                        return;
-                    }
-                    catch (e) {
-                        console.error(e);
-                    }
-                }
-                
-                self.returnDefaultSettings(resolve);
-            });
-        });
+            return self.createResponse(settingsData.automaticallyPaste, settingsData.automaticallyGetVideo, 
+                settingsData.automaticallyDownload, settingsData.saveToPath);
+        }
+        catch (e) {
+            console.error(e);
+            return self.createResponse(true, true, false, getPath("downloads"));
+        }       
     }
 
-    raiseResponseCallback(callback, automaticallyPaste, automaticallyGetVideo, automaticallyDownload, saveToPath) {
-        callback({
+    createResponse(automaticallyPaste, automaticallyGetVideo, automaticallyDownload, saveToPath) {
+        return {
             automaticallyPaste: automaticallyPaste,
             automaticallyGetVideo: automaticallyGetVideo,
             automaticallyDownload: automaticallyDownload,
             saveToPath: saveToPath
-        });
-    }
-
-    returnDefaultSettings(resolve) {
-        this.raiseResponseCallback(resolve, true, true, false, getPath("downloads"));
+        };
     }
 
     fileLocation() {
