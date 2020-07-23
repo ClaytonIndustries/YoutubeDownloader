@@ -31,7 +31,7 @@ const Header = (props) => {
                 <Typography variant="h5" color="textSecondary">Youtube Downloader</Typography>
                 <Typography variant="h5" color="textSecondary">{`Version ${VERSION_NUMBER}`}</Typography>
             </div>
-            <IconButton className={classes.settingsButton} onClick={() => { setSettingsDialogOpen(true); }}>
+            <IconButton className={classes.settingsButton} onClick={() => setSettingsDialogOpen(true)}>
                 <DeleteIcon className={classes.settingIcon} />
             </IconButton>
             <SettingsDialog open={settingsDialogOpen} onClose={settingsDialogClose} />

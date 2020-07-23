@@ -50,7 +50,7 @@ const Updater = (props) => {
     };
 
     const content = [
-        <IconButton key="close" color="inherit" onClick={() => closeSnackbar()}>
+        <IconButton key="close" color="inherit" onClick={closeSnackbar}>
             <CloseIcon />
         </IconButton>
     ];

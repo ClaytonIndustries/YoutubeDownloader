@@ -12,7 +12,7 @@ const WarningDialog = (props) => {
     const { open, onClose, content } = props;
 
     return (
-        <Dialog open={open} onClose={() => { onClose(); }}>
+        <Dialog open={open} onClose={onClose}>
             <DialogTitle>
                 Warning, please correct the following issue
             </DialogTitle>
@@ -22,7 +22,7 @@ const WarningDialog = (props) => {
                 </DialogContentText>
             </DialogContent>
             <DialogActions>
-                <Button onClick={() => { onClose(); }} color="primary">
+                <Button onClick={onClose} color="primary">
                     Ok
                 </Button>
             </DialogActions>

@@ -58,7 +58,7 @@ const SettingsDialog = (props) => {
     };
 
     return (
-        <Dialog open={open} onClose={() => onClose()}>
+        <Dialog open={open} onClose={onClose}>
             <DialogTitle>
                 Settings
             </DialogTitle>
@@ -67,31 +67,31 @@ const SettingsDialog = (props) => {
                     <ListItem>
                         <ListItemText primary="Automatically paste" />
                         <ListItemSecondaryAction>
-                            <Switch color="primary" onClick={() => onAutomaticallyPasteClicked()} checked={state.automaticallyPaste} />
+                            <Switch color="primary" onClick={onAutomaticallyPasteClicked} checked={state.automaticallyPaste} />
                         </ListItemSecondaryAction>
                     </ListItem>
                     <ListItem>
                         <ListItemText primary="Automatically get video" />
                         <ListItemSecondaryAction>
-                            <Switch color="primary" onClick={() => onAutomaticallyGetVideoClicked()} checked={state.automaticallyGetVideo} />
+                            <Switch color="primary" onClick={onAutomaticallyGetVideoClicked} checked={state.automaticallyGetVideo} />
                         </ListItemSecondaryAction>
                     </ListItem>
                     <ListItem>
                         <ListItemText primary="Automatically download" />
                         <ListItemSecondaryAction>
-                            <Switch color="primary" onClick={() => onAutomaticallyDownloadClicked()} checked={state.automaticallyDownload} />
+                            <Switch color="primary" onClick={onAutomaticallyDownloadClicked} checked={state.automaticallyDownload} />
                         </ListItemSecondaryAction>
                     </ListItem>
                 </List>
                 <div className={classes.devToolsButton}>
-                    <Button variant="contained" size="medium" color="primary" onClick={() => openDevTools()}>OPEN DEV TOOLS</Button>
+                    <Button variant="contained" size="medium" color="primary" onClick={openDevTools}>OPEN DEV TOOLS</Button>
                 </div>
             </DialogContent>
             <DialogActions>
-                <Button color="primary" onClick={() => onClose()}>
+                <Button color="primary" onClick={onClose}>
                     Cancel
                 </Button>
-                <Button color="primary" onClick={() => onSave()}>
+                <Button color="primary" onClick={onSave}>
                     Ok
                 </Button>
             </DialogActions>
