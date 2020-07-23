@@ -1,8 +1,7 @@
-
 export default class SignatureDecryptor {
     constructor() {
-        this.cryptoClassFunctionCalls;
-        this.mappedCryptoFunctions;
+        this.cryptoClassFunctionCalls = null;
+        this.mappedCryptoFunctions = null;
     }
 
     getCryptoFunctions(player) {
@@ -16,102 +15,100 @@ export default class SignatureDecryptor {
         return this.mappedCryptoFunctions && this.mappedCryptoFunctions.length > 0;
     }
 
-    getCryptoClassFunctionCallsFromCryptoFunction(webpage) {       
-        let functionBody = new RegExp("{([a-z]=[a-z]\\.split\\(\"\"\\).*?;return [a-z]\\.join\\(\"\"\\))}").exec(webpage)[1];
+    getCryptoClassFunctionCallsFromCryptoFunction(webpage) {
+        const functionBody = new RegExp('{([a-z]=[a-z]\\.split\\(""\\).*?;return [a-z]\\.join\\(""\\))}').exec(webpage)[1];
 
-		let cryptoFunctionNames = functionBody.split(";");
+        const cryptoFunctionNames = functionBody.split(';');
 
-		for(let i = 0; i < cryptoFunctionNames.length; i++) {
-			cryptoFunctionNames[i] = cryptoFunctionNames[i].replace("\n", "");
-		}
+        for (let i = 0; i < cryptoFunctionNames.length; i++) {
+            cryptoFunctionNames[i] = cryptoFunctionNames[i].replace('\n', '');
+        }
 
-		cryptoFunctionNames.shift();
-		cryptoFunctionNames.pop();
+        cryptoFunctionNames.shift();
+        cryptoFunctionNames.pop();
 
-		return cryptoFunctionNames;
-	}
+        return cryptoFunctionNames;
+    }
 
-	getCryptoClassFunctions(webpage, anyCryptoClassFunctionCall) {
-        let cryptoClassName = new RegExp(".+\\.").exec(anyCryptoClassFunctionCall)[0];
+    getCryptoClassFunctions(webpage, anyCryptoClassFunctionCall) {
+        let cryptoClassName = new RegExp('.+\\.').exec(anyCryptoClassFunctionCall)[0];
 
-		cryptoClassName = this.escapeRegExp(cryptoClassName.replace('.', ''));
+        cryptoClassName = this.escapeRegExp(cryptoClassName.replace('.', ''));
 
-		let cryptoClass = new RegExp("var " + cryptoClassName + "={([\\s\\S]*?)};").exec(webpage)[1];
+        const cryptoClass = new RegExp(`var ${cryptoClassName}={([\\s\\S]*?)};`).exec(webpage)[1];
 
-		let cryptoClassFunctions = cryptoClass.split("},");
+        const cryptoClassFunctions = cryptoClass.split('},');
 
-		for(let i = 0; i < cryptoClassFunctions.length; i++) {
-			cryptoClassFunctions[i] = cryptoClassFunctions[i].replace("\n", "");
-		}
+        for (let i = 0; i < cryptoClassFunctions.length; i++) {
+            cryptoClassFunctions[i] = cryptoClassFunctions[i].replace('\n', '');
+        }
 
-		return this.mapCryptoClassFunctionsToOperations(cryptoClassFunctions);
-	}
+        return this.mapCryptoClassFunctionsToOperations(cryptoClassFunctions);
+    }
 
-	escapeRegExp(item) {
-		return item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-	}
+    escapeRegExp(item) {
+        return item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    }
 
-	mapCryptoClassFunctionsToOperations(cryptoClassFunctions) {
-        let functions = [];
-        
-        for(let i = 0; i < cryptoClassFunctions.length; i++) {
-            if(cryptoClassFunctions[i].includes('splice')) {
-				functions.push({func: cryptoClassFunctions[i].substr(0, 2), action: 'splice'});
-			}
-			else if(cryptoClassFunctions[i].includes('reverse')) {
-				functions.push({func: cryptoClassFunctions[i].substr(0, 2), action: 'reverse'});
-			}
-			else {
-				functions.push({func: cryptoClassFunctions[i].substr(0, 2), action: 'swap'});
-			}
-		}
+    mapCryptoClassFunctionsToOperations(cryptoClassFunctions) {
+        const functions = [];
 
-		return functions;
+        for (let i = 0; i < cryptoClassFunctions.length; i++) {
+            if (cryptoClassFunctions[i].includes('splice')) {
+                functions.push({ func: cryptoClassFunctions[i].substr(0, 2), action: 'splice' });
+            } else if (cryptoClassFunctions[i].includes('reverse')) {
+                functions.push({ func: cryptoClassFunctions[i].substr(0, 2), action: 'reverse' });
+            } else {
+                functions.push({ func: cryptoClassFunctions[i].substr(0, 2), action: 'swap' });
+            }
+        }
+
+        return functions;
     }
 
     decrypt(signature) {
-		if(!signature || signature.length == 0) {
-			return '';
-		}
+        if (!signature || signature.length === 0) {
+            return '';
+        }
 
         let decryptedSignature = signature;
-        
+
         this.cryptoClassFunctionCalls.forEach((cryptoClassFunctionCall) => {
-            for(let i = 0; i < this.mappedCryptoFunctions.length; i++) {
-				if(cryptoClassFunctionCall.includes("." + this.mappedCryptoFunctions[i].func)) {
-                    decryptedSignature = this.executeCryptoFunction(cryptoClassFunctionCall.substr(cryptoClassFunctionCall.lastIndexOf(this.mappedCryptoFunctions[i].func)), 
+            for (let i = 0; i < this.mappedCryptoFunctions.length; i++) {
+                if (cryptoClassFunctionCall.includes(`.${this.mappedCryptoFunctions[i].func}`)) {
+                    decryptedSignature = this.executeCryptoFunction(cryptoClassFunctionCall.substr(cryptoClassFunctionCall.lastIndexOf(this.mappedCryptoFunctions[i].func)),
                         this.mappedCryptoFunctions[i].action, decryptedSignature);
-					break;
-				}
-			}
+                    break;
+                }
+            }
         });
 
-		return decryptedSignature;
-	}
+        return decryptedSignature;
+    }
 
-	executeCryptoFunction(args, action, signature) {
-        let items = new RegExp(",(.*?)\\)").exec(args);
+    executeCryptoFunction(args, action, signature) {
+        const items = new RegExp(',(.*?)\\)').exec(args);
 
         let arg = 0;
 
-        if(items && items.length >= 2) {
+        if (items && items.length >= 2) {
             arg = items[1];
         }
 
-		switch(action) {
-			case 'splice':
-				return this.splice(signature, arg);
-			case 'reverse':
-				return this.reverse(signature);
-			case 'swap':
-				return this.swap(signature, arg);
-		}
+        switch (action) {
+            case 'splice':
+                return this.splice(signature, arg);
+            case 'reverse':
+                return this.reverse(signature);
+            case 'swap':
+                return this.swap(signature, arg);
+        }
 
-		return signature;
-	}
+        return signature;
+    }
 
     splice(a, b) {
-		return a.substr(b);
+        return a.substr(b);
     }
 
     reverse(a) {
@@ -119,12 +116,12 @@ export default class SignatureDecryptor {
     }
 
     swap(a, b) {
-        let charArray = a.split('');
+        const charArray = a.split('');
 
-		let c = charArray[0];
-		
-		charArray[0] = charArray[b % charArray.length];
-		charArray[b % charArray.length] = c;
+        const c = charArray[0];
+
+        charArray[0] = charArray[b % charArray.length];
+        charArray[b % charArray.length] = c;
 
         return charArray.join('');
     }

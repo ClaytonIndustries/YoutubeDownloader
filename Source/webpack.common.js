@@ -14,10 +14,13 @@ module.exports = {
     path: path.resolve(__dirname, './dist'),
     publicPath: './'
   },
+  resolve: {
+    extensions: ['.js', '.jsx']
+  },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /(\.js|\.jsx)$/,
         exclude: /node_modules/,
         use: {
           loader: "babel-loader",

@@ -1,6 +1,5 @@
-
-export async function getVideo(url, signal, callback) {
-    const response = await fetch(url, {signal});
+export default async function getVideo(url, signal, callback) {
+    const response = await fetch(url, { signal });
 
     if (!response.ok) {
         throw new Error('Response status code did not indicate success');
@@ -9,7 +8,7 @@ export async function getVideo(url, signal, callback) {
     const contentEncoding = response.headers.get('content-encoding');
     const contentLength = response.headers.get(contentEncoding ? 'x-file-size' : 'content-length');
 
-    callback("size", contentLength);
+    callback('size', contentLength);
 
     let bytesRead = 0;
     const streamResponse = new Response(
@@ -25,11 +24,11 @@ export async function getVideo(url, signal, callback) {
                         }
 
                         bytesRead += value.byteLength;
-                        callback("progress", bytesRead);
+                        callback('progress', bytesRead);
 
                         controller.enqueue(value);
                         read();
-                    }).catch(e => {
+                    }).catch((e) => {
                         console.error(e);
                         controller.error(e);
                     });
@@ -41,5 +40,5 @@ export async function getVideo(url, signal, callback) {
     );
 
     const data = await streamResponse.arrayBuffer();
-    return new Uint8Array(data); 
+    return new Uint8Array(data);
 }

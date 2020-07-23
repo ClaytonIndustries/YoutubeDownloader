@@ -1,9 +1,28 @@
 import Moment from 'moment';
 
-import { getVideo } from './VideoDownloader';
-import { write, rename, remove, exists } from './FileAccess';
-import { extractVideoAudio, cutVideo } from './FFmpeg';
-import { VS_PENDING, VS_DOWNLOADING, VS_CONVERTING, VS_CUTTING, VS_COMPLETE, VS_DOWNLOAD_FAILED, VS_CONVERSION_FAILED, VS_CUTTING_FAILED, PR_XHR, PR_FFMPEG } from './Constants';
+import getVideo from './VideoDownloader';
+import {
+    write,
+    rename,
+    remove,
+    exists
+} from './FileAccess';
+import {
+    extractVideoAudio,
+    cutVideo
+} from './FFmpeg';
+import {
+    VS_PENDING,
+    VS_DOWNLOADING,
+    VS_CONVERTING,
+    VS_CUTTING,
+    VS_COMPLETE,
+    VS_DOWNLOAD_FAILED,
+    VS_CONVERSION_FAILED,
+    VS_CUTTING_FAILED,
+    PR_XHR,
+    PR_FFMPEG
+} from './Constants';
 
 const path = window.require('path');
 
@@ -13,8 +32,8 @@ export default class YoutubeVideo {
         this.sizeInMBs = 0;
         this.progress = 0;
         this.lastUpdateTime = Moment();
-        this.changed;
-        this.activeProcess;
+        this.changed = null;
+        this.activeProcess = null;
     }
 
     destinationVideoPath() {
@@ -26,7 +45,7 @@ export default class YoutubeVideo {
     }
 
     shouldConvertAudio() {
-        return this.audioFormat.extension !== "";
+        return this.audioFormat.extension !== '';
     }
 
     isPending() {
@@ -62,7 +81,7 @@ export default class YoutubeVideo {
     }
 
     setVideoStatus(newStatus) {
-        if(newStatus === VS_DOWNLOADING) {
+        if (newStatus === VS_DOWNLOADING) {
             this.lastUpdateTime = Moment();
         }
         this.status = newStatus;
@@ -70,7 +89,7 @@ export default class YoutubeVideo {
     }
 
     setActiveProcess(process, type) {
-        this.activeProcess = {process: process, type: type};
+        this.activeProcess = { process, type };
     }
 
     async start() {
@@ -82,8 +101,7 @@ export default class YoutubeVideo {
             await this.cutVideo();
 
             this.setVideoStatus(VS_COMPLETE);
-        }
-        catch (e) {
+        } catch (e) {
             if (e) {
                 console.error(e);
             }
@@ -91,44 +109,42 @@ export default class YoutubeVideo {
     }
 
     cancel() {
-        if(this.activeProcess) {
-            if((this.activeProcess.type === PR_XHR && this.status === VS_DOWNLOADING) || 
-                (this.activeProcess.type === PR_FFMPEG && (this.status === VS_CONVERTING || this.status === VS_CUTTING))) {
+        if (this.activeProcess) {
+            if ((this.activeProcess.type === PR_XHR && this.status === VS_DOWNLOADING)
+                || (this.activeProcess.type === PR_FFMPEG && (this.status === VS_CONVERTING || this.status === VS_CUTTING))) {
                 try {
                     this.activeProcess.process.abort();
-                }
-                catch(e) {  
-                    console.error(e);     
+                } catch (e) {
+                    console.error(e);
                 }
             }
         }
     }
 
     async download() {
-        let self = this;
+        const self = this;
 
         self.setVideoStatus(VS_DOWNLOADING);
 
         try {
-            let controller = new AbortController();
-            let signal = controller.signal;
+            const controller = new AbortController();
+            const { signal } = controller;
 
             self.setActiveProcess(controller, PR_XHR);
 
-            let result = await getVideo(self.videoQuality.downloadUrl, signal, (action, value) => {
+            const result = await getVideo(self.videoQuality.downloadUrl, signal, (action, value) => {
                 switch (action) {
-                    case "size":
+                    case 'size':
                         self.setSize(value);
                         break;
-                    case "progress":
+                    case 'progress':
                         self.setProgress(value);
                         break;
                 }
             });
 
             await write(self.destinationVideoPath(), result);
-        }
-        catch (e) {
+        } catch (e) {
             self.setVideoStatus(VS_DOWNLOAD_FAILED);
             this.deleteFile(self.destinationVideoPath());
             throw e;
@@ -136,7 +152,7 @@ export default class YoutubeVideo {
     }
 
     async convertAudio() {
-        let self = this;
+        const self = this;
 
         if (!self.shouldConvertAudio()) {
             return;
@@ -145,18 +161,17 @@ export default class YoutubeVideo {
         self.setVideoStatus(VS_CONVERTING);
 
         try {
-            let volume = self.volumePercentage / 100;
+            const volume = self.volumePercentage / 100;
 
-            let controller = new AbortController();
-            let signal = controller.signal;
+            const controller = new AbortController();
+            const { signal } = controller;
 
             self.setActiveProcess(controller, PR_FFMPEG);
-    
+
             await extractVideoAudio(self.destinationVideoPath(), self.destinationAudioPath(), volume, signal);
 
             this.deleteFile(self.destinationVideoPath());
-        }
-        catch (e) {
+        } catch (e) {
             self.setVideoStatus(VS_CONVERSION_FAILED);
             this.deleteFile(self.destinationAudioPath());
             throw e;
@@ -164,31 +179,30 @@ export default class YoutubeVideo {
     }
 
     async cutVideo() {
-        let self = this;
+        const self = this;
 
-        if (self.startTime == 0 && self.newEndTime == self.originalEndTime) {
+        if (self.startTime === 0 && self.newEndTime === self.originalEndTime) {
             return;
         }
 
         self.setVideoStatus(VS_CUTTING);
 
-        try {
-            let cuttingVideo = !self.shouldConvertAudio();
-            let mediaPath = cuttingVideo ? self.destinationVideoPath() : self.destinationAudioPath();
-            let renamedMediaPath = mediaPath.slice(0, mediaPath.lastIndexOf('\\') + 1) + "~" + mediaPath.slice(mediaPath.lastIndexOf('\\') + 1);
+        const cuttingVideo = !self.shouldConvertAudio();
+        const mediaPath = cuttingVideo ? self.destinationVideoPath() : self.destinationAudioPath();
+        const renamedMediaPath = `${mediaPath.slice(0, mediaPath.lastIndexOf('\\') + 1)} ~  ${mediaPath.slice(mediaPath.lastIndexOf('\\') + 1)}`;
 
+        try {
             rename(mediaPath, renamedMediaPath);
 
-            let controller = new AbortController();
-            let signal = controller.signal;
+            const controller = new AbortController();
+            const { signal } = controller;
 
             self.setActiveProcess(controller, PR_FFMPEG);
 
             await cutVideo(renamedMediaPath, mediaPath, self.startTime, self.newEndTime, signal);
 
             this.deleteFile(renamedMediaPath);
-        }
-        catch (e) {
+        } catch (e) {
             self.setVideoStatus(VS_CUTTING_FAILED);
             this.deleteFile(mediaPath);
             throw e;
@@ -208,6 +222,6 @@ export default class YoutubeVideo {
     }
 
     raiseChanged() {
-        if(this.changed) this.changed();
+        if (this.changed) this.changed();
     }
 }

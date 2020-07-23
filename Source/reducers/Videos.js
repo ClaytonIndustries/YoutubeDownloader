@@ -8,11 +8,11 @@ const videos = (state = [], action) => {
                 action.video
             ];
         case RS_REMOVE_VIDEO:
-            state.splice(action.index, 1)
+            state.splice(action.index, 1);
             return state.slice();
         default:
             return state;
     }
-}
+};
 
-export default videos
+export default videos;

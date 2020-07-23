@@ -5,5 +5,5 @@ export function readText() {
 }
 
 export function isYoutubeUrl(url) {
-    return new RegExp("https://www.youtube.com/watch?").test(url);
+    return new RegExp('https://www.youtube.com/watch?').test(url);
 }

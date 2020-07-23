@@ -14,8 +14,8 @@ import SliderBase from 'rc-slider';
 import ActionMenu from './ActionMenu';
 import WarningDialog from './WarningDialog';
 
-import { audioFormats } from '../models/audioFormats';
-import { validateProperties } from '../models/VideoValidator';
+import audioFormats from '../models/audioFormats';
+import validateProperties from '../models/VideoValidator';
 import YoutubeVideo from '../models/YoutubeVideo';
 import { readText, isYoutubeUrl } from '../models/ClipboardManager';
 import { VS_PENDING } from '../models/Constants';
@@ -23,7 +23,7 @@ import { addVideo, appSettings, urlEntryState } from '../actions';
 
 const { dialog, getCurrentWindow } = window.require('electron').remote;
 
-const createSliderWithTooltip = SliderBase.createSliderWithTooltip;
+const { createSliderWithTooltip } = SliderBase;
 const Slider = createSliderWithTooltip(SliderBase);
 const Range = createSliderWithTooltip(SliderBase.Range);
 
@@ -31,34 +31,34 @@ class UrlEntry extends React.Component {
     constructor(props) {
         super(props);
 
-        this.clipboardInterval = undefined;
+        this.clipboardInterval = null;
 
         this.state = {
-            youtubeUrl: "",
+            youtubeUrl: '',
             videoQualities: [],
-            audioFormats: audioFormats,
+            audioFormats,
             videoQualityMenuOpen: false,
             audioTypeMenuOpen: false,
             menuAnchor: null,
             selectedVideoQuality: null,
             selectedAudioFormat: audioFormats[0],
             saveTo: this.props.settings.saveToPath,
-            renameTo: "",
+            renameTo: '',
             startTime: 0,
             endTime: 0,
             maxVideoLength: 0,
             volumePercentage: 50,
-            videoId: "",
+            videoId: '',
             gettingVideo: false,
             warningDialogOpen: false,
-            validationMessage: "",
+            validationMessage: '',
             searchFailed: false,
             snackbarOpen: false
         };
     }
 
     showVideoQualityMenu(event) {
-        if(this.state.videoQualities.length > 0) {
+        if (this.state.videoQualities.length > 0) {
             this.setState({
                 videoQualityMenuOpen: true,
                 menuAnchor: event.currentTarget
@@ -67,7 +67,7 @@ class UrlEntry extends React.Component {
     }
 
     showAudioTypeMenu(event) {
-        if(this.state.audioFormats.length > 0) {
+        if (this.state.audioFormats.length > 0) {
             this.setState({
                 audioTypeMenuOpen: true,
                 menuAnchor: event.currentTarget
@@ -78,14 +78,14 @@ class UrlEntry extends React.Component {
     videoQualityMenuClosed(index) {
         this.setState({
             videoQualityMenuOpen: false,
-            selectedVideoQuality : index != undefined ? this.state.videoQualities[index] : this.state.selectedVideoQuality
+            selectedVideoQuality: index !== undefined ? this.state.videoQualities[index] : this.state.selectedVideoQuality
         });
     }
 
     audioTypeMenuClosed(index) {
         this.setState({
             audioTypeMenuOpen: false,
-            selectedAudioFormat : index != undefined ? this.state.audioFormats[index] : this.state.selectedAudioFormat
+            selectedAudioFormat: index !== undefined ? this.state.audioFormats[index] : this.state.selectedAudioFormat
         });
     }
 
@@ -93,14 +93,14 @@ class UrlEntry extends React.Component {
         this.setState({
             youtubeUrl: readText()
         }, () => {
-            if(this.props.settings.automaticallyGetVideo) {
+            if (this.props.settings.automaticallyGetVideo) {
                 this.getVideo();
             }
         });
     }
 
     getVideo() {
-        if(!this.state.gettingVideo) {
+        if (!this.state.gettingVideo) {
             this.clearCurrentVideo();
             this.setState({
                 gettingVideo: true
@@ -110,7 +110,7 @@ class UrlEntry extends React.Component {
                 try {
                     result = await this.props.youtubeUrlParser.parse(this.state.youtubeUrl);
 
-                    if(result && result.videoQualities && result.videoQualities.length > 0) {
+                    if (result && result.videoQualities && result.videoQualities.length > 0) {
                         this.setState({
                             videoQualities: result.videoQualities,
                             selectedVideoQuality: result.videoQualities[0],
@@ -120,32 +120,31 @@ class UrlEntry extends React.Component {
                             videoId: result.id,
                             volumePercentage: 100
                         }, () => {
-                            if(this.props.settings.automaticallyDownload) {
+                            if (this.props.settings.automaticallyDownload) {
                                 this.download();
                             }
                         });
                     }
-                }
-                catch (e) { 
-                    console.error(e);              
+                } catch (e) {
+                    console.error(e);
                 }
 
                 this.setState({
                     gettingVideo: false,
                     searchFailed: !result || !result.videoQualities || !result.videoQualities.length
                 });
-            });       
+            });
         }
     }
 
     selectSaveFolder() {
-        if(!this.noVideo()) {
+        if (!this.noVideo()) {
             dialog.showOpenDialog(getCurrentWindow(), {
                 properties: ['openDirectory']
             }).then(result => {
                 if (!result.canceled && result.filePaths && result.filePaths.length > 0) {
                     this.setState({
-                        saveTo: result.filePaths[0] + "\\"
+                        saveTo: `${result.filePaths[0]}\\`
                     });
                 }
             });
@@ -166,19 +165,20 @@ class UrlEntry extends React.Component {
     }
 
     formatTime(value) {
-        let minutes = Math.floor(value / 60);
-        let seconds = value % 60;
-        return minutes + ":" + (seconds >= 10 ? seconds : "0" + seconds);
+        const minutes = Math.floor(value / 60);
+        const seconds = value % 60;
+        const formattedSeconds = seconds >= 10 ? seconds : `0${seconds}`;
+        return `${minutes}:${formattedSeconds}`;
     }
 
     formatVolume(value) {
-        return value + "%";
+        return `${value}%`;
     }
 
     download() {
         let validationResult = validateProperties(this.state.selectedVideoQuality, this.state.saveTo, this.state.renameTo, this.state.startTime, this.state.endTime);
 
-        if(validationResult.isValid) {
+        if (validationResult.isValid) {
             let youtubeVideo = new YoutubeVideo();
             youtubeVideo.title = this.state.renameTo;
             youtubeVideo.videoId = this.state.videoId;
@@ -198,11 +198,10 @@ class UrlEntry extends React.Component {
             this.props.addVideo(youtubeVideo);
             this.props.appSettings(settings);
 
-            this.setState({snackbarOpen: true});
+            this.setState({ snackbarOpen: true });
 
             this.clearCurrentVideo();
-        }
-        else {
+        } else {
             this.setState({
                 warningDialogOpen: true,
                 validationMessage: validationResult.message
@@ -214,11 +213,11 @@ class UrlEntry extends React.Component {
         this.setState({
             selectedVideoQuality: null,
             videoQualities: [],
-            renameTo: "",
+            renameTo: '',
             startTime: 0,
             endTime: 0,
             maxVideoLength: 1,
-            videoId: "",
+            videoId: '',
             searchFailed: false,
             volumePercentage: 50
         });
@@ -230,15 +229,15 @@ class UrlEntry extends React.Component {
 
     componentDidMount() {
         this.clipboardInterval = setInterval(() => {
-            let newText = readText();
-            if(newText !== this.state.youtubeUrl && isYoutubeUrl(newText)) {
-                if(this.props.settings.automaticallyPaste) {
+            const newText = readText();
+            if (newText !== this.state.youtubeUrl && isYoutubeUrl(newText)) {
+                if (this.props.settings.automaticallyPaste) {
                     this.paste();
                 }
             }
         }, 500);
 
-        if(this.props.lastState) {
+        if (this.props.lastState) {
             this.setState({
                 youtubeUrl: this.props.lastState.youtubeUrl,
                 videoQualities: this.props.lastState.videoQualities,
@@ -259,7 +258,7 @@ class UrlEntry extends React.Component {
     componentWillUnmount() {
         clearInterval(this.clipboardInterval);
 
-        this.props.urlEntryState({         
+        this.props.urlEntryState({
             youtubeUrl: this.state.youtubeUrl,
             videoQualities: this.state.videoQualities,
             selectedVideoQuality: this.state.selectedVideoQuality,
@@ -289,7 +288,7 @@ class UrlEntry extends React.Component {
                 borderColor: this.noVideo() ? '#C5B6FF' : '#5f50e1',
                 boxShadow: 'none'
             }
-        }
+        };
 
         return (
             <div>

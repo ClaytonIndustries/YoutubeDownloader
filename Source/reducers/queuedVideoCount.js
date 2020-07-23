@@ -7,6 +7,6 @@ const queuedVideoCount = (state = 0, action) => {
         default:
             return state;
     }
-}
+};
 
-export default queuedVideoCount
+export default queuedVideoCount;

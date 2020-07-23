@@ -1,4 +1,4 @@
-const remote = window.require('electron').remote;
+const { remote } = window.require('electron');
 const electronFs = remote.require('fs');
 
 export function remove(path) {
@@ -11,11 +11,10 @@ export function exists(path) {
 
 export function read(path) {
     return new Promise((resolve, reject) => {
-        electronFs.readFile(path, "utf-8", (error, data) => {
+        electronFs.readFile(path, 'utf-8', (error, data) => {
             if (error) {
                 reject(new Error(error));
-            }
-            else {
+            } else {
                 resolve(data);
             }
         });
@@ -31,11 +30,10 @@ export function write(path, value) {
         electronFs.writeFile(path, value, (error) => {
             if (error) {
                 reject(new Error(error));
-            }
-            else {
+            } else {
                 resolve();
             }
-        });  
+        });
     });
 }
 

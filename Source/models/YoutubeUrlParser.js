@@ -1,7 +1,7 @@
-import SignatureDecryptor from './SignatureDecryptor';
-import { videoQualities } from './videoQualities';
-
 import Moment from 'moment';
+
+import SignatureDecryptor from './SignatureDecryptor';
+import videoQualities from './videoQualities';
 
 export default class YoutubeUrlParser {
     constructor() {
@@ -10,9 +10,9 @@ export default class YoutubeUrlParser {
     }
 
     async parse(youtubeUrl) {
-        let videoInfo = await this.downloadVideoInfo(youtubeUrl);
-                
-        if(!this.signatureDecryptor.isDecrypted()) {
+        const videoInfo = await this.downloadVideoInfo(youtubeUrl);
+
+        if (!this.signatureDecryptor.isDecrypted()) {
             await this.downloadPlayer(videoInfo.playerUrl);
         }
 
@@ -21,73 +21,69 @@ export default class YoutubeUrlParser {
 
     async downloadVideoInfo(youtubeUrl) {
         try {
-            const headers = {  
-                "x-youtube-client-name": "1",
-                "x-youtube-client-version": "2.20200123.00.01"
+            const headers = {
+                'x-youtube-client-name': '1',
+                'x-youtube-client-version': '2.20200123.00.01'
             };
 
-            let response = await this.makeRequest(`${youtubeUrl}&pbj=1`, headers);
+            const response = await this.makeRequest(`${youtubeUrl}&pbj=1`, headers);
 
-            let content = await response.json();
+            const content = await response.json();
 
             return this.extractVideoInfo(content);
-        }
-        catch (e) {    
+        } catch (e) {
             console.error(e);
 
-            return Promise.reject("Download webpage failed");
+            return Promise.reject(new Error('Download webpage failed'));
         }
     }
 
     async downloadPlayer(playerUrl) {
         try {
-            let response = await this.makeRequest(playerUrl, {});
+            const response = await this.makeRequest(playerUrl, {});
 
-            let content = await response.text();
+            const content = await response.text();
 
-            if(this.signatureDecryptor.getCryptoFunctions(content)) {
+            if (this.signatureDecryptor.getCryptoFunctions(content)) {
                 return Promise.resolve();
             }
-            else {
-                return Promise.reject("Signature decryptor failed");
-            }
-        }
-        catch (e) {
+
+            return Promise.reject(new Error('Signature decryptor failed'));
+        } catch (e) {
             console.error(e);
 
-            return Promise.reject("Download player failed");
+            return Promise.reject(new Error('Download player failed'));
         }
     }
 
     makeRequest(url, headers) {
         return fetch(url, {
-            method: "GET",
-            headers: headers
+            method: 'GET',
+            headers
         });
     }
 
     extractQualities(videoInfo) {
-        let videoQualities = this.processFormats(videoInfo.standardFormats, videoInfo.adaptiveFormats);
-        let videoId = videoInfo.videoId + Moment().format("x");
+        const qualities = this.processFormats(videoInfo.standardFormats, videoInfo.adaptiveFormats);
+        const videoId = videoInfo.videoId + Moment().format('x');
 
-        videoQualities.sort((a, b) => {
-            if(a.type == 'Audio' && b.type == 'Video') {
+        qualities.sort((a, b) => {
+            if (a.type === 'Audio' && b.type === 'Video') {
                 return -1;
             }
-            else if(a.type == 'Video' && b.type == 'Audio') {
+            if (a.type === 'Video' && b.type === 'Audio') {
                 return 1;
             }
-            else if(a.type == b.type) {
+            if (a.type === b.type) {
                 return (a.uiSortOrder > b.uiSortOrder) ? -1 : 1;
             }
-            else {
-                return 0;
-            }
+
+            return 0;
         });
 
-        return { 
+        return {
             title: videoInfo.title,
-            videoQualities: videoQualities,
+            videoQualities: qualities,
             videoLength: videoInfo.duration,
             id: videoId
         };
@@ -107,36 +103,34 @@ export default class YoutubeUrlParser {
             return qualities;
         }
 
-        formats.forEach(format => {
+        formats.forEach((format) => {
             try {
                 let url = decodeURIComponent(format.signatureCipher ? format.signatureCipher : format.url);
 
-                let signatureItems = new RegExp(/(?:^|,|\\u0026|&)(?:s=|sig=)([\s\S]+?)(?=\\|\\"|,|&|$)/).exec(url);
+                const signatureItems = new RegExp(/(?:^|,|\\u0026|&)(?:s=|sig=)([\s\S]+?)(?=\\|\\"|,|&|$)/).exec(url);
 
-                if(signatureItems)
-                {
-                    let signature = this.signatureDecryptor.decrypt(signatureItems[1]);
+                if (signatureItems) {
+                    const signature = this.signatureDecryptor.decrypt(signatureItems[1]);
 
-                    if(signature && signature.length > 0) {
-                        let quality = this.createVideoQuality(url, format.itag, qualities);
-    
-                        if(quality) {
-                            if (url.includes("url")) {
-                                url = url.substr(url.indexOf("url") + 4);
+                    if (signature && signature.length > 0) {
+                        const quality = this.createVideoQuality(url, format.itag, qualities);
+
+                        if (quality) {
+                            if (url.includes('url')) {
+                                url = url.substr(url.indexOf('url') + 4);
                             }
 
-                            if(url.includes("\\")) {
-                                url = url.substr(0, url.indexOf("\\"));
+                            if (url.includes('\\')) {
+                                url = url.substr(0, url.indexOf('\\'));
                             }
-    
-                            quality.downloadUrl = url + "&sig=" + signature;
-    
+
+                            quality.downloadUrl = `${url} &sig= ${signature}`;
+
                             qualities.push(quality);
                         }
                     }
-                }                
-            }
-            catch (e) {
+                }
+            } catch (e) {
                 console.error(e);
             }
         });
@@ -145,11 +139,11 @@ export default class YoutubeUrlParser {
     }
 
     createVideoQuality(downloadUrl, itag, qualities) {
-        let videoQuality = this.videoQualities.find(x => x.itag === itag);
+        const videoQuality = this.videoQualities.find((x) => x.itag === itag);
 
-        if(videoQuality && !this.qualityAlreadyExists(qualities, videoQuality.itag)) {
+        if (videoQuality && !this.qualityAlreadyExists(qualities, videoQuality.itag)) {
             return {
-                downloadUrl: downloadUrl,
+                downloadUrl,
                 extension: videoQuality.extension,
                 type: videoQuality.type,
                 description: videoQuality.description,
@@ -161,7 +155,7 @@ export default class YoutubeUrlParser {
     }
 
     qualityAlreadyExists(qualities, itag) {
-        return qualities.some(quality => quality.itag === itag);
+        return qualities.some((quality) => quality.itag === itag);
     }
 
     extractVideoInfo(videoInfoResponse) {
