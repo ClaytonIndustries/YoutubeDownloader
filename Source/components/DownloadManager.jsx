@@ -1,71 +1,51 @@
-import React from 'react';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+
+import useInterval from '../hooks/useInterval';
 
 import { queuedVideoCount } from '../actions';
 
-class DownloadManager extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+const DownloadManager = () => {
+    const videos = useSelector((state) => state.videos);
+    const queuedVideoTotal = useSelector((state) => state.queuedVideoCount);
 
-    startNewDownload() {
-        if(this.canNewDownloadBeStarted()) {
-            let video = this.props.videos.find((item) => {
-                return item.isPending();
-            });
+    const dispatch = useDispatch();
 
-            video.start();
-        }
-    }
-
-    cancelStalledDownloads() {
-        this.props.videos.forEach((item) => {
-            if(item.noContentDownloadedInLastTenSeconds()) {
-                item.cancel();
-            }
-        });
-    }
-
-    canNewDownloadBeStarted() {
+    const canNewDownloadBeStarted = () => {
         const maxActiveDownloads = 2;
 
-        let activeDownloads = this.props.videos.reduce((total, item) => {
-            return item.isActive() ? total + 1 : total;
-        }, 0);
+        const activeDownloads = videos.reduce((total, item) => (item.isActive() ? total + 1 : total), 0);
 
-        let pendingDownloads = this.props.videos.reduce((total, item) => {
-            return item.isPending() ? total + 1 : total;
-        }, 0);
+        const pendingDownloads = videos.reduce((total, item) => (item.isPending() ? total + 1 : total), 0);
 
-        if (activeDownloads + pendingDownloads !== this.props.queuedVideoCount) {
-            this.props.queuedVideoCount(activeDownloads + pendingDownloads);
+        if (activeDownloads + pendingDownloads !== queuedVideoTotal) {
+            dispatch(queuedVideoCount(activeDownloads + pendingDownloads));
         }
 
         return activeDownloads < maxActiveDownloads && pendingDownloads > 0;
-    }
+    };
 
-    componentDidMount() {
-        this.timer = setInterval(() => {this.cancelStalledDownloads(); this.startNewDownload();}, 1000);
-    }
+    const startNewDownload = () => {
+        if (canNewDownloadBeStarted()) {
+            const video = videos.find((item) => item.isPending());
 
-    componentWillUnmount() {
-        clearInterval(this.timer);
-    }
+            video.start();
+        }
+    };
 
-    render() {
-        return null;
-    }
-}
+    const cancelStalledDownloads = () => {
+        videos.forEach((item) => {
+            if (item.noContentDownloadedInLastTenSeconds()) {
+                item.cancel();
+            }
+        });
+    };
 
-DownloadManager.mapStateToProps = (state) => {
-    return {
-        videos: state.videos,
-        queuedVideoCount: state.queuedVideoCount
-    }
-}
+    useInterval(() => {
+        cancelStalledDownloads();
+        startNewDownload();
+    }, 1000);
 
-const mapDispatchToProps = {
-    queuedVideoCount
-}
+    return null;
+};
 
-export default connect(DownloadManager.mapStateToProps, mapDispatchToProps)(DownloadManager);
+export default DownloadManager;

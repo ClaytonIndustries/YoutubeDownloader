@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
@@ -21,123 +21,109 @@ import VideoRow from './VideoRow';
 import { openItem } from '../models/ProcessStarter';
 import { removeVideo } from '../actions';
 
-class ActivityList extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            selectedIndex: -1
-        };
-    }
+const ActivityList = (props) => {
+    const { classes } = props;
 
-    removeVideo() {
-        let video = this.getSelectedVideoFromIndex();
+    const [selectedIndex, setSelectedIndex] = useState(-1);
 
-        if(video) {
-            if(video.isActive()) {
-                video.cancel();
-            }
-            this.props.removeVideo(this.state.selectedIndex);
-            this.setState({
-                selectedIndex: -1
-            });
-        }
-    }
+    const videos = useSelector((state) => state.videos);
 
-    openMediaFileLocation() {
-        let video = this.getSelectedVideoFromIndex();
+    const dispatch = useDispatch();
 
-        if(video) {
-            openItem(video.destinationFolder);
-        }
-    }
-
-    playMedia() {
-        let video = this.getSelectedVideoFromIndex();
-        
-        if(video && video.isComplete()) {
-            if(video.shouldConvertAudio()) {
-                openItem(video.destinationAudioPath());
-            }
-            else {
-                openItem(video.destinationVideoPath());
-            }
-        }
-    }
-
-    retryDownload() {
-        let video = this.getSelectedVideoFromIndex();
-
-        if(video && video.hasFailed()) {
-            video.resetStatus();
-        }
-    }
-
-    getSelectedVideoFromIndex() {
-        if(this.state.selectedIndex >= 0 && this.state.selectedIndex < this.props.videos.length) {
-            return this.props.videos[this.state.selectedIndex];
+    const getSelectedVideoFromIndex = () => {
+        if (selectedIndex >= 0 && selectedIndex < videos.length) {
+            return videos[selectedIndex];
         }
 
         return undefined;
-    }
+    };
 
-    videoClicked(id) {
-        this.setState({
-           selectedIndex: id === this.state.selectedIndex ? -1 : id
-        });
-    }
+    const removeSelectedVideo = () => {
+        const video = getSelectedVideoFromIndex();
 
-    render() {
-        const { classes } = this.props;
+        if (video) {
+            if (video.isActive()) {
+                video.cancel();
+            }
+            dispatch(removeVideo(selectedIndex));
+            setSelectedIndex(-1);
+        }
+    };
 
-        const tooltipEnterDelayInMilliseconds = 400;
+    const openMediaFileLocation = () => {
+        const video = getSelectedVideoFromIndex();
 
-        return (
-            <div>
-                <div className={classes.row}>
-                    <Tooltip title="Cancel / Remove" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
-                        <Button size="small" color="primary" onClick={() => this.removeVideo()}>
-                            <RemoveIcon />
-                        </Button>
-                    </Tooltip>
-                    <Tooltip title="Open File Location" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
-                        <Button size="small" color="primary" onClick={() => this.openMediaFileLocation()}>
-                            <FolderIcon />
-                        </Button>
-                    </Tooltip>
-                    <Tooltip title="Play" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
-                        <Button size="small" color="primary" onClick={() => this.playMedia()}>
-                            <PlayIcon />
-                        </Button>
-                    </Tooltip>
-                    <Tooltip title="Retry Download" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
-                        <Button size="small" color="primary" onClick={() => this.retryDownload()}>
-                            <RetryIcon />
-                        </Button>
-                    </Tooltip>
-                </div>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell padding="checkbox"></TableCell>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Size (MB/s)</TableCell>
-                            <TableCell>Progress</TableCell>
-                            <TableCell>Status</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {this.props.videos.map((item, index) => {
-                            return (
-                                <VideoRow key={item.videoId} id={index} video={item} isSelected={index === this.state.selectedIndex} 
-                                    onSelected={(id) => this.videoClicked(id)} />
-                            );
-                        })}
-                    </TableBody>
-                </Table>
+        if (video) {
+            openItem(video.destinationFolder);
+        }
+    };
+
+    const playMedia = () => {
+        const video = getSelectedVideoFromIndex();
+
+        if (video && video.isComplete()) {
+            if (video.shouldConvertAudio()) {
+                openItem(video.destinationAudioPath());
+            } else {
+                openItem(video.destinationVideoPath());
+            }
+        }
+    };
+
+    const retryDownload = () => {
+        const video = getSelectedVideoFromIndex();
+
+        if (video && video.hasFailed()) {
+            video.resetStatus();
+        }
+    };
+
+    const videoClicked = (id) => setSelectedIndex(id === selectedIndex ? -1 : id);
+
+    const tooltipEnterDelayInMilliseconds = 400;
+
+    return (
+        <div>
+            <div className={classes.row}>
+                <Tooltip title="Cancel / Remove" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
+                    <Button size="small" color="primary" onClick={removeSelectedVideo}>
+                        <RemoveIcon />
+                    </Button>
+                </Tooltip>
+                <Tooltip title="Open File Location" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
+                    <Button size="small" color="primary" onClick={openMediaFileLocation}>
+                        <FolderIcon />
+                    </Button>
+                </Tooltip>
+                <Tooltip title="Play" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
+                    <Button size="small" color="primary" onClick={playMedia}>
+                        <PlayIcon />
+                    </Button>
+                </Tooltip>
+                <Tooltip title="Retry Download" placement="bottom" enterDelay={tooltipEnterDelayInMilliseconds}>
+                    <Button size="small" color="primary" onClick={retryDownload}>
+                        <RetryIcon />
+                    </Button>
+                </Tooltip>
             </div>
-        );
-    }
-}
+            <Table>
+                <TableHead>
+                    <TableRow>
+                        <TableCell padding="checkbox" />
+                        <TableCell>Title</TableCell>
+                        <TableCell>Size (MB/s)</TableCell>
+                        <TableCell>Progress</TableCell>
+                        <TableCell>Status</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    {videos.map((item, index) => (
+                        <VideoRow key={item.videoId} id={index} video={item} isSelected={index === selectedIndex} onSelected={(id) => videoClicked(id)} />))}
+                </TableBody>
+            </Table>
+        </div>
+    );
+};
 
 const styles = () => ({
     row: {
@@ -146,14 +132,4 @@ const styles = () => ({
     }
 });
 
-ActivityList.mapStateToProps = (state) => {
-    return {
-        videos: state.videos
-    }
-}
-
-const mapDispatchToProps = {
-    removeVideo
-}
-
-export default connect(ActivityList.mapStateToProps, mapDispatchToProps)(withStyles(styles)(ActivityList));
+export default withStyles(styles)(ActivityList);

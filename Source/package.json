@@ -8,7 +8,7 @@
     "start": "electron .",
     "watch": "webpack --watch --config webpack.dev.js",
     "prod": "webpack --config webpack.prod.js",
-    "lint": "eslint actions components models reducers --ext .js --ext .jsx"
+    "lint": "eslint actions components hooks models reducers --ext .js --ext .jsx"
   },
   "devDependencies": {
     "@babel/core": "^7.10.4",
