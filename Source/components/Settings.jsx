@@ -47,8 +47,10 @@ const Settings = (props) => {
     }, []);
 
     useEffect(() => {
-        save();
-    }, settings);
+        if (settings) {
+            save();
+        }
+    }, [settings]);
 
     return (
         loadCompleted ? children : null

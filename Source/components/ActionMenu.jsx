@@ -23,12 +23,13 @@ const ActionMenu = (props) => {
 ActionMenu.propTypes = {
     items: PropTypes.array.isRequired,
     open: PropTypes.bool.isRequired,
-    anchor: PropTypes.object.isRequired,
+    anchor: PropTypes.object,
     selectedItem: PropTypes.object,
     onClose: PropTypes.func.isRequired
 };
 
 ActionMenu.defaultProps = {
+    anchor: null,
     selectedItem: null
 };
 
