@@ -9,7 +9,7 @@ const ActionMenu = (props) => {
         items, open, anchor, selectedItem, onClose
     } = props;
 
-    const onMenuAction = (index) => onClose(index);
+    const onMenuAction = (index) => onClose(Number.isInteger(index) ? index : undefined);
 
     return (
         <Menu anchorEl={anchor} open={open} onClose={onMenuAction}>
