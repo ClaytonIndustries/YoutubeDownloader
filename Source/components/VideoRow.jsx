@@ -39,16 +39,16 @@ const VideoRow = (props) => {
                 <Checkbox color="primary" checked={isSelected} />
             </TableCell>
             <TableCell>
-                { state.title }
+                {state.title}
             </TableCell>
             <TableCell>
-                { state.size === 0 ? '' : state.size }
+                {state.size === 0 ? '' : state.size}
             </TableCell>
             <TableCell>
                 <LinearProgress variant="determinate" value={state.progress} />
             </TableCell>
             <TableCell>
-                { state.status }
+                {state.status}
             </TableCell>
         </TableRow>
     );

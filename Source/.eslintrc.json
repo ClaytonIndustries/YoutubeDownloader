@@ -30,7 +30,6 @@
         "react/jsx-indent-props": ["off"],
         "react/jsx-wrap-multilines": ["off"],
         "react/jsx-indent": ["error", 4],
-        "react/prop-types": ["error", { "ignore": ["classes"] }],
         "react/forbid-prop-types": ["error", { "forbid": ["any"] }],
         "no-plusplus": ["error", { "allowForLoopAfterthoughts": true }],
         "no-param-reassign": ["error", { "props": false }],

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '@material-ui/core/Button';
@@ -21,8 +21,15 @@ import VideoRow from './VideoRow';
 import { openItem } from '../models/ProcessStarter';
 import { removeVideo } from '../actions';
 
-const ActivityList = (props) => {
-    const { classes } = props;
+const useStyles = makeStyles(() => ({
+    row: {
+        display: 'flex',
+        justifyContent: 'center'
+    }
+}));
+
+const ActivityList = () => {
+    const classes = useStyles();
 
     const [selectedIndex, setSelectedIndex] = useState(-1);
 
@@ -125,11 +132,4 @@ const ActivityList = (props) => {
     );
 };
 
-const styles = () => ({
-    row: {
-        display: 'flex',
-        justifyContent: 'center'
-    }
-});
-
-export default withStyles(styles)(ActivityList);
+export default ActivityList;

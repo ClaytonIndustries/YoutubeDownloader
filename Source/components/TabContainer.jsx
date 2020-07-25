@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import { makeStyles } from '@material-ui/core/styles';
+import { useSelector } from 'react-redux';
 
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -16,15 +15,32 @@ import ActivityList from './ActivityList';
 
 import YoutubeUrlParser from '../models/YoutubeUrlParser';
 
-const TabContainer = (props) => {
-    const { queuedVideoCount, classes } = props;
+const useStyles = makeStyles(() => ({
+    tabContainer: {
+        marginTop: 10
+    },
+    childContainer: {
+        marginLeft: 5,
+        marginRight: 5,
+        marginTop: 15,
+        marginBottom: 5
+    },
+    badge: {
+        paddingRight: 8
+    }
+}));
+
+const TabContainer = () => {
+    const classes = useStyles();
 
     const [state, setState] = useState({
         selectedTabIndex: 0,
         youtubeUrlParser: new YoutubeUrlParser()
     });
 
-    const handleTabChange = (index) => {
+    const queuedVideoCount = useSelector((s) => s.queuedVideoCount);
+
+    const handleTabChange = (event, index) => {
         setState({
             ...state,
             selectedTabIndex: index
@@ -34,7 +50,7 @@ const TabContainer = (props) => {
     return (
         <div className={classes.tabContainer}>
             <AppBar position="static">
-                <Tabs variant="fullWidth" centered value={state.selectedTabIndex} onChange={(event, index) => { handleTabChange(index); }}>
+                <Tabs variant="fullWidth" centered value={state.selectedTabIndex} onChange={handleTabChange}>
                     <Tab icon={<SearchIcon />} />
                     <Tab label={
                         <Badge className={classes.badge} color="secondary" badgeContent={queuedVideoCount}>
@@ -51,25 +67,4 @@ const TabContainer = (props) => {
     );
 };
 
-TabContainer.propTypes = {
-    queuedVideoCount: PropTypes.number.isRequired,
-};
-
-const styles = () => ({
-    tabContainer: {
-        marginTop: 10
-    },
-    childContainer: {
-        marginLeft: 5,
-        marginRight: 5,
-        marginTop: 15,
-        marginBottom: 5
-    },
-    badge: {
-        paddingRight: 8
-    }
-});
-
-TabContainer.mapStateToProps = (state) => ({ queuedVideoCount: state.queuedVideoCount });
-
-export default connect(TabContainer.mapStateToProps)(withStyles(styles)(TabContainer));
+export default TabContainer;

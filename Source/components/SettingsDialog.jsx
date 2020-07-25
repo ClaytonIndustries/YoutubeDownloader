@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -18,10 +18,23 @@ import { appSettings } from '../actions';
 
 const { remote } = window.require('electron');
 
+const useStyles = makeStyles(() => ({
+    list: {
+        width: 300
+    },
+    devToolsButton: {
+        display: 'flex',
+        justifyContent: 'center',
+        marginTop: '10px'
+    }
+}));
+
 const SettingsDialog = (props) => {
     const {
-        open, onClose, classes
+        open, onClose
     } = props;
+
+    const classes = useStyles();
 
     const settings = useSelector((state) => state.appSettings);
 
@@ -96,20 +109,9 @@ const SettingsDialog = (props) => {
     );
 };
 
-const styles = () => ({
-    list: {
-        width: 300
-    },
-    devToolsButton: {
-        display: 'flex',
-        justifyContent: 'center',
-        marginTop: '10px'
-    }
-});
-
 SettingsDialog.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired
 };
 
-export default withStyles(styles)(SettingsDialog);
+export default SettingsDialog;

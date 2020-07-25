@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
@@ -9,8 +9,15 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import { VERSION_NUMBER, URL_VERSION } from '../models/Constants';
 
-const Updater = (props) => {
-    const { classes } = props;
+const useStyles = makeStyles(() => ({
+    snackbarContent: {
+        marginLeft: 150,
+        marginRight: 150
+    }
+}));
+
+const Updater = () => {
+    const classes = useStyles();
 
     const [state, setState] = useState({
         open: false,
@@ -70,11 +77,4 @@ const Updater = (props) => {
     );
 };
 
-const styles = () => ({
-    snackbarContent: {
-        marginLeft: 150,
-        marginRight: 150
-    }
-});
-
-export default withStyles(styles)(Updater);
+export default Updater;
