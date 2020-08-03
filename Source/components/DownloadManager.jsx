@@ -11,7 +11,7 @@ const DownloadManager = () => {
     const dispatch = useDispatch();
 
     const canNewDownloadBeStarted = () => {
-        const maxActiveDownloads = 2;
+        const maxActiveDownloads = 3;  
 
         const activeDownloads = videos.reduce((total, item) => (item.isActive() ? total + 1 : total), 0);
 
