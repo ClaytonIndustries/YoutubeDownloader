@@ -1,7 +1,3 @@
-*.suo
-
-Dist/Binary/*
-Dist/Setup/Windows/YoutubeDownloaderSetup/Debug/*
-Dist/Setup/Windows/YoutubeDownloaderSetup/Release/*
-Source/Dist/*
+dist/*
+Source/dist/*
 Source/node_modules/*
