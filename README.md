@@ -6,7 +6,7 @@ Download videos from Youtube and optionally convert them to audio files
 
 No installtion is necessary, just download the release .zip, extract and run Youtube Downloader.exe
 
-You can download the last release [here](https://github.com/ClaytonIndustries/YoutubeDownloader/releases), as well as see all the full version history
+You can download the last release [here](https://github.com/ClaytonIndustries/YoutubeDownloader/releases), as well as see the full version history
 
 ## Source
 
