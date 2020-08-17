@@ -27,4 +27,4 @@ FFmpeg is required for full functionality, it should be added to the dist folder
 
 Electron packager is used to build the final distribution
 
-electron-packager ./ --platform=win32 --arch=ia32 --icon="./images/YoutubeIcon.ico" --electron-version="9.1.0"
+electron-packager ./ --platform=win32 --arch=ia32 --icon="./images/YoutubeIcon.ico" --electron-version="9.2.0"
