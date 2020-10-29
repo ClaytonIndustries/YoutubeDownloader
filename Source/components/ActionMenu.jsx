@@ -14,7 +14,7 @@ const ActionMenu = (props) => {
     return (
         <Menu anchorEl={anchor} open={open} onClose={onMenuAction}>
             {items.map((item, index) => (
-                <MenuItem key={index} selected={item === selectedItem} onClick={() => onMenuAction(index)}>{item.description}</MenuItem>
+                <MenuItem key={item.id} selected={item === selectedItem} onClick={() => onMenuAction(index)}>{item.description}</MenuItem>
             ))}
         </Menu>
     );

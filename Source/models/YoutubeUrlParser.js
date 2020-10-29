@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 
-import {  
+import {
     FORMAT_AUDIO,
     FORMAT_VIDEO
 } from './Constants';
@@ -117,7 +117,7 @@ export default class YoutubeUrlParser {
                     const signature = this.signatureDecryptor.decrypt(signatureItems[1]);
 
                     if (signature && signature.length > 0) {
-                        if (url.includes('url')) { 
+                        if (url.includes('url')) {
                             url = url.substr(url.indexOf('url') + 4);
                         }
 
@@ -147,7 +147,8 @@ export default class YoutubeUrlParser {
             type,
             extension: `.${extension}`,
             description: this.generateDescription(extension, type, format),
-            uiSortOrder: format.bitrate
+            uiSortOrder: format.bitrate,
+            id: format.itag
         };
     }
 
@@ -164,11 +165,11 @@ export default class YoutubeUrlParser {
     generateDescription(extension, type, format) {
         if (type === FORMAT_VIDEO) {
             return `${type}, ${format.qualityLabel} Quality, ${extension.toUpperCase()}`;
-        } else {
-            const quality = format.audioQuality.substring(format.audioQuality.lastIndexOf('_') + 1);
-
-            return `${type}, ${this.capitaliseFirstLetter(quality)} Quality, ${extension.toUpperCase()}`;
         }
+
+        const quality = format.audioQuality.substring(format.audioQuality.lastIndexOf('_') + 1);
+
+        return `${type}, ${this.capitaliseFirstLetter(quality)} Quality, ${extension.toUpperCase()}`;
     }
 
     capitaliseFirstLetter(string) {
