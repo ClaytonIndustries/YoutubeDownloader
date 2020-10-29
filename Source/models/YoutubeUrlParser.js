@@ -1,19 +1,21 @@
-import Moment from 'moment';
+import Moment from 'moment'; // Can we replace moment?
 
+import {  
+    FORMAT_AUDIO,
+    FORMAT_VIDEO
+} from './Constants';
 import SignatureDecryptor from './SignatureDecryptor';
-import videoQualities from './videoQualities';
 
 export default class YoutubeUrlParser {
     constructor() {
         this.signatureDecryptor = new SignatureDecryptor();
-        this.videoQualities = videoQualities;
     }
 
     async parse(youtubeUrl) {
         const videoInfo = await this.downloadVideoInfo(youtubeUrl);
 
         if (!this.signatureDecryptor.isDecrypted()) {
-            await this.downloadPlayer(videoInfo.playerUrl);
+            await this.downloadPlayer(youtubeUrl);
         }
 
         return this.extractQualities(videoInfo);
@@ -23,11 +25,10 @@ export default class YoutubeUrlParser {
         try {
             const headers = {
                 'x-youtube-client-name': '1',
-                'x-youtube-client-version': '2.20200123.00.01'
+                'x-youtube-client-version': '2.20201028.00.00'
             };
 
             const response = await this.makeRequest(`${youtubeUrl}&pbj=1`, headers);
-
             const content = await response.json();
 
             return this.extractVideoInfo(content);
@@ -38,13 +39,18 @@ export default class YoutubeUrlParser {
         }
     }
 
-    async downloadPlayer(playerUrl) {
+    async downloadPlayer(videoUrl) {
         try {
-            const response = await this.makeRequest(playerUrl, {});
+            const videoPageResponse = await this.makeRequest(videoUrl, {});
+            const videoPageContent = await videoPageResponse.text();
 
-            const content = await response.text();
+            const playerVersion = new RegExp(/\/s\/player\/(.*?)\//).exec(videoPageContent)[1];
+            const playerUrl = `https://www.youtube.com/s/player/${playerVersion}/player_ias.vflset/en_GB/base.js`;
 
-            if (this.signatureDecryptor.getCryptoFunctions(content)) {
+            const playerResponse = await this.makeRequest(playerUrl, {});
+            const playerContent = await playerResponse.text();
+
+            if (this.signatureDecryptor.getCryptoFunctions(playerContent)) {
                 return Promise.resolve();
             }
 
@@ -64,18 +70,18 @@ export default class YoutubeUrlParser {
     }
 
     extractQualities(videoInfo) {
-        const qualities = this.processFormats(videoInfo.standardFormats, videoInfo.adaptiveFormats);
+        const qualities = this.processFormats(videoInfo.adaptiveFormats);
         const videoId = videoInfo.videoId + Moment().format('x');
 
         qualities.sort((a, b) => {
-            if (a.type === 'Audio' && b.type === 'Video') {
+            if (a.type === FORMAT_AUDIO && b.type === FORMAT_VIDEO) {
                 return -1;
             }
-            if (a.type === 'Video' && b.type === 'Audio') {
+            if (a.type === FORMAT_VIDEO && b.type === FORMAT_AUDIO) {
                 return 1;
             }
             if (a.type === b.type) {
-                return (a.uiSortOrder > b.uiSortOrder) ? -1 : 1;
+                return (a.uiSortOrder >= b.uiSortOrder) ? -1 : 1;
             }
 
             return 0;
@@ -89,22 +95,20 @@ export default class YoutubeUrlParser {
         };
     }
 
-    processFormats(standardFormats, adaptiveFormats) {
-        let qualities = [];
+    processFormats(formats) {
+        const qualities = [];
 
-        qualities = this.processFormatsWithEncryption(standardFormats, qualities);
-        qualities = this.processFormatsWithEncryption(adaptiveFormats, qualities);
-
-        return qualities;
-    }
-
-    processFormatsWithEncryption(formats, qualities) {
         if (!formats || formats.length === 0) {
             return qualities;
         }
 
         formats.forEach((format) => {
             try {
+                if (!format.audioQuality) {
+                    return;
+                }
+
+                // signatureCipher is probably always set now
                 let url = decodeURIComponent(format.signatureCipher ? format.signatureCipher : format.url);
 
                 const signatureItems = new RegExp(/(?:^|,|\\u0026|&)(?:s=|sig=)([\s\S]+?)(?=\\|\\"|,|&|$)/).exec(url);
@@ -113,21 +117,17 @@ export default class YoutubeUrlParser {
                     const signature = this.signatureDecryptor.decrypt(signatureItems[1]);
 
                     if (signature && signature.length > 0) {
-                        const quality = this.createVideoQuality(url, format.itag, qualities);
-
-                        if (quality) {
-                            if (url.includes('url')) {
-                                url = url.substr(url.indexOf('url') + 4);
-                            }
-
-                            if (url.includes('\\')) {
-                                url = url.substr(0, url.indexOf('\\'));
-                            }
-
-                            quality.downloadUrl = `${url} &sig= ${signature}`;
-
-                            qualities.push(quality);
+                        if (url.includes('url')) { 
+                            url = url.substr(url.indexOf('url') + 4);
                         }
+
+                        if (url.includes('\\')) {
+                            url = url.substr(0, url.indexOf('\\'));
+                        }
+
+                        const quality = this.createVideoQuality(`${url} &sig= ${signature}`, format);
+
+                        qualities.push(quality);
                     }
                 }
             } catch (e) {
@@ -138,36 +138,51 @@ export default class YoutubeUrlParser {
         return qualities;
     }
 
-    createVideoQuality(downloadUrl, itag, qualities) {
-        const videoQuality = this.videoQualities.find((x) => x.itag === itag);
+    createVideoQuality(downloadUrl, format) {
+        const extension = this.parseExtension(format.mimeType);
+        const type = this.parseType(format.mimeType);
 
-        if (videoQuality && !this.qualityAlreadyExists(qualities, videoQuality.itag)) {
-            return {
-                downloadUrl,
-                extension: videoQuality.extension,
-                type: videoQuality.type,
-                description: videoQuality.description,
-                uiSortOrder: videoQuality.uiSortOrder
-            };
-        }
-
-        return undefined;
+        return {
+            downloadUrl,
+            type,
+            extension: `.${extension}`,
+            description: this.generateDescription(extension, type, format),
+            uiSortOrder: format.bitrate
+        };
     }
 
-    qualityAlreadyExists(qualities, itag) {
-        return qualities.some((quality) => quality.itag === itag);
+    parseExtension(mimeType) {
+        return new RegExp(/.*?\/([a-zA-Z0-9]+);/).exec(mimeType)[1];
+    }
+
+    parseType(mimeType) {
+        const type = new RegExp(/(.*?)\//).exec(mimeType)[1];
+
+        return this.capitaliseFirstLetter(type);
+    }
+
+    generateDescription(extension, type, format) {
+        if (type === FORMAT_VIDEO) {
+            return `${type}, ${format.qualityLabel} Quality, ${extension.toUpperCase()}`;
+        } else {
+            const quality = format.audioQuality.substring(format.audioQuality.lastIndexOf('_') + 1);
+
+            return `${type}, ${this.capitaliseFirstLetter(quality)} Quality, ${extension.toUpperCase()}`;
+        }
+    }
+
+    capitaliseFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
     }
 
     extractVideoInfo(videoInfoResponse) {
-        const playerResponse = JSON.parse(videoInfoResponse[2].player.args.player_response);
+        const playerResponse = videoInfoResponse[2].playerResponse;
 
         return {
-            title: videoInfoResponse[3].playerResponse.videoDetails.title,
-            standardFormats: playerResponse.streamingData.formats,
+            title: playerResponse.videoDetails.title,
             adaptiveFormats: playerResponse.streamingData.adaptiveFormats,
-            playerUrl: `https://youtube.com${videoInfoResponse[2].player.assets.js}`,
-            videoId: videoInfoResponse[3].playerResponse.videoDetails.videoId,
-            duration: videoInfoResponse[3].playerResponse.videoDetails.lengthSeconds
+            videoId: playerResponse.videoDetails.videoId,
+            duration: playerResponse.videoDetails.lengthSeconds
         };
     }
 }
