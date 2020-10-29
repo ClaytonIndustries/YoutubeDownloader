@@ -18,7 +18,8 @@ function createWindow() {
         useContentSize: false,
         icon: path.join(__dirname, 'images/YoutubeIcon.png'),
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            enableRemoteModule: true
         }
     })
 
