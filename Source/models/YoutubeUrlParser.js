@@ -1,4 +1,4 @@
-import Moment from 'moment'; // Can we replace moment?
+import { DateTime } from 'luxon';
 
 import {  
     FORMAT_AUDIO,
@@ -71,7 +71,7 @@ export default class YoutubeUrlParser {
 
     extractQualities(videoInfo) {
         const qualities = this.processFormats(videoInfo.adaptiveFormats);
-        const videoId = videoInfo.videoId + Moment().format('x');
+        const videoId = `${videoInfo.videoId}${DateTime.local().toMillis()}`;
 
         qualities.sort((a, b) => {
             if (a.type === FORMAT_AUDIO && b.type === FORMAT_VIDEO) {

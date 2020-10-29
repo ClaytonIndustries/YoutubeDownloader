@@ -1,4 +1,4 @@
-import Moment from 'moment';
+import { DateTime } from 'luxon';
 
 import getVideo from './VideoDownloader';
 import {
@@ -31,7 +31,7 @@ export default class YoutubeVideo {
         this.sizeInBytes = 0;
         this.sizeInMBs = 0;
         this.progress = 0;
-        this.lastUpdateTime = Moment();
+        this.lastUpdateTime = DateTime.local();
         this.changed = null;
         this.activeProcess = null;
     }
@@ -65,7 +65,7 @@ export default class YoutubeVideo {
     }
 
     noContentDownloadedInLastTenSeconds() {
-        return this.status === VS_DOWNLOADING && (Moment().unix() - this.lastUpdateTime.unix()) >= 10;
+        return this.status === VS_DOWNLOADING && (DateTime.local().toSeconds() - this.lastUpdateTime.toSeconds()) >= 10;
     }
 
     setSize(sizeInBytes) {
@@ -75,14 +75,14 @@ export default class YoutubeVideo {
     }
 
     setProgress(bytesReceived) {
-        this.lastUpdateTime = Moment();
+        this.lastUpdateTime = DateTime.local();
         this.progress = (bytesReceived / this.sizeInBytes) * 100;
         this.raiseChanged();
     }
 
     setVideoStatus(newStatus) {
         if (newStatus === VS_DOWNLOADING) {
-            this.lastUpdateTime = Moment();
+            this.lastUpdateTime = DateTime.local();
         }
         this.status = newStatus;
         this.raiseChanged();
