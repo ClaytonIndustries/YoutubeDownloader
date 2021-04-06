@@ -1,4 +1,4 @@
-export const VERSION_NUMBER = '1.14';
+export const VERSION_NUMBER = '1.15';
 
 export const VS_PENDING = 'Pending';
 export const VS_DOWNLOADING = 'Downloading';
