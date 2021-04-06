@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { orange } from '@material-ui/core/colors';
 import { MuiThemeProvider, createMuiTheme, makeStyles } from '@material-ui/core/styles';
+const { session } = window.require('electron').remote;
 
 import Header from './Header';
 import TabContainer from './TabContainer';
@@ -19,6 +20,14 @@ const useStyles = makeStyles(() => ({
 
 const App = () => {
     const classes = useStyles();
+
+    useEffect(() => {
+        async function setConsentCookie() {
+            const cookie = { url: 'https://www.youtube.com', name: 'CONSENT', value: 'YES+cb.20210328-17-p0.en+FX+142', expirationDate: 1838215253 }
+            await session.defaultSession.cookies.set(cookie);
+        }
+        setConsentCookie();
+    }, []);
 
     const theme = createMuiTheme({
         palette: {

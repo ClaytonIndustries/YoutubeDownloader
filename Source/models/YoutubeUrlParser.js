@@ -63,9 +63,10 @@ export default class YoutubeUrlParser {
     }
 
     makeRequest(url, headers) {
-        return fetch(url, {
+         return fetch(url, {
             method: 'GET',
-            headers
+            headers,
+            credentials: 'include'
         });
     }
 
